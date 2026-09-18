@@ -1,0 +1,6 @@
+{
+  "name": "EventSync",
+  "description": "Curated live experiences and digital passes ticketing platform with interactive seat selection and booking management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

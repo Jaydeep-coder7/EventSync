@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useState } from "react";
+import { motion } from "motion/react";
 import {
   Search,
   ArrowRight,
@@ -14,9 +14,10 @@ import {
   Sparkles,
   QrCode,
   Users,
-} from 'lucide-react';
-import { EventCategory } from '../types';
-import stageBackground from '../assets/eventsync-stage-background.jpg';
+  type LucideIcon,
+} from "lucide-react";
+import { EventCategory } from "../types";
+import stageBackground from "../assets/eventsync-stage-background.jpg";
 
 interface HeroProps {
   onSearchSubmit: (query: string, category: EventCategory) => void;
@@ -30,13 +31,29 @@ interface HeroProps {
   } | null;
 }
 
-const CATEGORY_CHIPS: { label: EventCategory; icon: any; glowColor: string }[] = [
-  { label: 'Music', icon: Music, glowColor: 'hover:border-rose-400/50 hover:bg-rose-500/10' },
-  { label: 'Technology', icon: Cpu, glowColor: 'hover:border-blue-400/50 hover:bg-blue-500/10' },
-  { label: 'Food & Drink', icon: Utensils, glowColor: 'hover:border-amber-400/50 hover:bg-amber-500/10' },
-  { label: 'Arts & Theatre', icon: Palette, glowColor: 'hover:border-purple-400/50 hover:bg-purple-500/10' },
-  { label: 'Sports & Fitness', icon: Trophy, glowColor: 'hover:border-emerald-400/50 hover:bg-emerald-500/10' },
-  { label: 'Business & Networking', icon: Briefcase, glowColor: 'hover:border-indigo-400/50 hover:bg-indigo-500/10' },
+const CATEGORY_CHIPS: { label: EventCategory; icon: LucideIcon; glowColor: string }[] = [
+  { label: "Music", icon: Music, glowColor: "hover:border-rose-400/50 hover:bg-rose-500/10" },
+  { label: "Technology", icon: Cpu, glowColor: "hover:border-blue-400/50 hover:bg-blue-500/10" },
+  {
+    label: "Food & Drink",
+    icon: Utensils,
+    glowColor: "hover:border-amber-400/50 hover:bg-amber-500/10",
+  },
+  {
+    label: "Arts & Theatre",
+    icon: Palette,
+    glowColor: "hover:border-purple-400/50 hover:bg-purple-500/10",
+  },
+  {
+    label: "Sports & Fitness",
+    icon: Trophy,
+    glowColor: "hover:border-emerald-400/50 hover:bg-emerald-500/10",
+  },
+  {
+    label: "Business & Networking",
+    icon: Briefcase,
+    glowColor: "hover:border-indigo-400/50 hover:bg-indigo-500/10",
+  },
 ];
 
 export const Hero: React.FC<HeroProps> = ({
@@ -45,8 +62,8 @@ export const Hero: React.FC<HeroProps> = ({
   onBookFeaturedClick,
   stats,
 }) => {
-  const [searchInput, setSearchInput] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory>('All');
+  const [searchInput, setSearchInput] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<EventCategory>("All");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +84,7 @@ export const Hero: React.FC<HeroProps> = ({
         height={1080}
         initial={{ scale: 1.04, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1.4, ease: 'easeOut' }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
         className="eventsync-hero-image pointer-events-none absolute inset-0 h-full w-full object-cover"
       />
       <div className="eventsync-hero-shade pointer-events-none absolute inset-0" />
@@ -100,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="font-display max-w-4xl text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight break-words px-1 sm:px-0"
           >
-            Don't Just Hear About It.{' '}
+            Don't Just Hear About It.{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 inline-block break-words">
               Be There With EventSync.
             </span>
@@ -113,8 +130,9 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="mt-4 sm:mt-5 max-w-2xl text-xs sm:text-base text-slate-300 leading-relaxed break-words px-1 sm:px-0"
           >
-            Discover premier music tours, AI tech summits, stadium sports, and culinary festivals across India. 
-            Real-time seat synchronisation, instant Gmail authentication, and verified digital passes with zero hidden fees.
+            Discover premier music tours, AI tech summits, stadium sports, and culinary festivals
+            across India. Real-time seat synchronisation, instant Gmail authentication, and verified
+            digital passes with zero hidden fees.
           </motion.p>
 
           {/* Interactive Search & Filter Card */}
@@ -124,7 +142,10 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 sm:mt-8 w-full max-w-3xl rounded-3xl border border-white/15 bg-slate-900/85 p-3 sm:p-4 shadow-2xl shadow-black/60 backdrop-blur-2xl transition-all hover:border-white/25"
           >
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-2.5 sm:flex-row sm:items-center"
+            >
               {/* Keyword Search Input */}
               <div className="relative flex-1 flex items-center">
                 <Search className="absolute left-3.5 h-4 w-4 text-slate-400" />
@@ -186,11 +207,11 @@ export const Hero: React.FC<HeroProps> = ({
                     key={cat.label}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    id={`hero-chip-${cat.label.toLowerCase().replace(/[^a-z]/g, '')}`}
+                    id={`hero-chip-${cat.label.toLowerCase().replace(/[^a-z]/g, "")}`}
                     onClick={() => handleCategorySelect(cat.label)}
                     className={`flex items-center gap-1.5 rounded-xl border px-3 py-1 font-medium transition-all shrink-0 cursor-pointer ${
                       isActive
-                        ? 'border-amber-400 bg-amber-500/20 text-amber-300 font-semibold shadow-xs'
+                        ? "border-amber-400 bg-amber-500/20 text-amber-300 font-semibold shadow-xs"
                         : `border-white/10 bg-white/5 text-slate-300 ${cat.glowColor}`
                     }`}
                   >
@@ -241,38 +262,32 @@ export const Hero: React.FC<HeroProps> = ({
           >
             <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <span className="font-display text-2xl sm:text-3xl font-extrabold text-white">
-                {stats ? `${stats.totalEvents} Live` : '9 Active'}
+                {stats ? `${stats.totalEvents} Live` : "9 Active"}
               </span>
-              <span className="text-xs font-medium text-slate-400 mt-0.5">
-                Curated Events
-              </span>
+              <span className="text-xs font-medium text-slate-400 mt-0.5">Curated Events</span>
             </div>
 
             <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <span className="font-display text-2xl sm:text-3xl font-extrabold text-white">
-                {stats && stats.totalAvailableSeats ? `${stats.totalAvailableSeats.toLocaleString()}+` : '18,500+'}
+                {stats && stats.totalAvailableSeats
+                  ? `${stats.totalAvailableSeats.toLocaleString()}+`
+                  : "18,500+"}
               </span>
-              <span className="text-xs font-medium text-slate-400 mt-0.5">
-                Remaining Seats
-              </span>
+              <span className="text-xs font-medium text-slate-400 mt-0.5">Remaining Seats</span>
             </div>
 
             <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <span className="font-display text-2xl sm:text-3xl font-extrabold text-amber-400 flex items-center gap-1">
                 4.9 <span className="text-xs">★</span>
               </span>
-              <span className="text-xs font-medium text-slate-400 mt-0.5">
-                Attendee Rating
-              </span>
+              <span className="text-xs font-medium text-slate-400 mt-0.5">Attendee Rating</span>
             </div>
 
             <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <span className="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400 flex items-center gap-1">
                 100%
               </span>
-              <span className="text-xs font-medium text-slate-400 mt-0.5">
-                Digital Pass Entry
-              </span>
+              <span className="text-xs font-medium text-slate-400 mt-0.5">Digital Pass Entry</span>
             </div>
           </motion.div>
         </div>

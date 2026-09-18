@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import QRCode from 'qrcode';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import QRCode from "qrcode";
 import {
   X,
   Ticket,
@@ -26,12 +26,12 @@ import {
   User,
   Mail,
   Phone,
-} from 'lucide-react';
-import { EventItem, TicketTier, Booking, UserProfile } from '../types';
-import { validateBookingForm, BookingFormData } from '../utils/validation';
-import { createBookingApi } from '../services/api';
-import { ScanAtEntryPass } from './ScanAtEntryPass';
-import { PaymentSuccessOverlay } from './PaymentSuccessOverlay';
+} from "lucide-react";
+import { EventItem, TicketTier, Booking, UserProfile } from "../types";
+import { validateBookingForm, BookingFormData } from "../utils/validation";
+import { createBookingApi } from "../services/api";
+import { ScanAtEntryPass } from "./ScanAtEntryPass";
+import { PaymentSuccessOverlay } from "./PaymentSuccessOverlay";
 
 interface MemberDetail {
   id: string;
@@ -49,18 +49,23 @@ interface BookingModalProps {
 }
 
 const POPULAR_BANKS = [
-  { id: 'sbi', name: 'State Bank of India', short: 'SBI', icon: '🏛️' },
-  { id: 'hdfc', name: 'HDFC Bank', short: 'HDFC', icon: '🏦' },
-  { id: 'icici', name: 'ICICI Bank', short: 'ICICI', icon: '💳' },
-  { id: 'axis', name: 'Axis Bank', short: 'Axis', icon: '📈' },
-  { id: 'kotak', name: 'Kotak Mahindra', short: 'Kotak', icon: '🛡️' },
-  { id: 'pnb', name: 'Punjab National Bank', short: 'PNB', icon: '🏛️' },
-  { id: 'gpay', name: 'Google Pay UPI', short: 'GPay', icon: '⚡' },
-  { id: 'phonepe', name: 'PhonePe UPI', short: 'PhonePe', icon: '🟣' },
-  { id: 'paytm', name: 'Paytm UPI', short: 'Paytm', icon: '📱' },
+  { id: "sbi", name: "State Bank of India", short: "SBI", icon: "🏛️" },
+  { id: "hdfc", name: "HDFC Bank", short: "HDFC", icon: "🏦" },
+  { id: "icici", name: "ICICI Bank", short: "ICICI", icon: "💳" },
+  { id: "axis", name: "Axis Bank", short: "Axis", icon: "📈" },
+  { id: "kotak", name: "Kotak Mahindra", short: "Kotak", icon: "🛡️" },
+  { id: "pnb", name: "Punjab National Bank", short: "PNB", icon: "🏛️" },
+  { id: "gpay", name: "Google Pay UPI", short: "GPay", icon: "⚡" },
+  { id: "phonepe", name: "PhonePe UPI", short: "PhonePe", icon: "🟣" },
+  { id: "paytm", name: "Paytm UPI", short: "Paytm", icon: "📱" },
 ];
 
-export const BookingModal: React.FC<BookingModalProps> = ({
+export const BookingModal: React.FC<BookingModalProps> = (props) => {
+  if (!props.isOpen || !props.event) return null;
+  return <BookingModalContent {...props} event={props.event} />;
+};
+
+const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = ({
   isOpen,
   event,
   initialTier,
@@ -69,40 +74,38 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onBookingConfirmed,
   onViewBookings,
 }) => {
-  if (!isOpen || !event) return null;
-
   // Step 1: select members & show total price
   // Step 2: UPI scanner / number + select bank details + enter user details
   // Step 2.5: payment processing
   // Step 3: confirmed - give passes directly to the user
   const [currentStep, setCurrentStep] = useState<
-    'members-and-price' | 'upi-bank-payment' | 'payment-processing' | 'confirmed'
-  >('members-and-price');
+    "members-and-price" | "upi-bank-payment" | "payment-processing" | "confirmed"
+  >("members-and-price");
 
   // Member management state
   const [members, setMembers] = useState<MemberDetail[]>(() => [
-    { id: '1', name: currentUser?.name || '' },
+    { id: "1", name: currentUser?.name || "" },
   ]);
 
   // Primary attendee form state
   const [formData, setFormData] = useState<BookingFormData>({
-    attendeeName: currentUser?.name || '',
-    attendeeEmail: currentUser?.email || '',
-    attendeePhone: currentUser?.phone || '+91 98765 43210',
-    ticketTierId: initialTier?.id || event.ticketTiers?.[0]?.id || '',
+    attendeeName: currentUser?.name || "",
+    attendeeEmail: currentUser?.email || "",
+    attendeePhone: currentUser?.phone || "+91 98765 43210",
+    ticketTierId: initialTier?.id || event.ticketTiers?.[0]?.id || "",
     ticketQuantity: 1,
-    selectedSeats: ['Member 1 (Primary)'],
-    specialRequests: '',
+    selectedSeats: ["Member 1 (Primary)"],
+    specialRequests: "",
   });
 
   // Bank & UPI Payment State - strictly EMPTY by default (users fill these themselves)
-  const [selectedBank, setSelectedBank] = useState<string>('sbi');
-  const [bankAccountHolder, setBankAccountHolder] = useState<string>(currentUser?.name || '');
-  const [upiNumberId, setUpiNumberId] = useState<string>(''); // empty by user request
-  const [bankRefNo, setBankRefNo] = useState<string>(''); // empty by user request
-  const [upiPin, setUpiPin] = useState<string>(''); // empty by user request
-  const [copiedField, setCopiedField] = useState<'upi-id' | 'upi-number' | null>(null);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
+  const [selectedBank, setSelectedBank] = useState<string>("sbi");
+  const [bankAccountHolder, setBankAccountHolder] = useState<string>(currentUser?.name || "");
+  const [upiNumberId, setUpiNumberId] = useState<string>(""); // empty by user request
+  const [bankRefNo, setBankRefNo] = useState<string>(""); // empty by user request
+  const [upiPin, setUpiPin] = useState<string>(""); // empty by user request
+  const [copiedField, setCopiedField] = useState<"upi-id" | "upi-number" | null>(null);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
@@ -115,7 +118,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         ...prev,
         attendeeName: prev.attendeeName || currentUser.name,
         attendeeEmail: prev.attendeeEmail || currentUser.email,
-        attendeePhone: prev.attendeePhone || currentUser.phone || '+91 98765 43210',
+        attendeePhone: prev.attendeePhone || currentUser.phone || "+91 98765 43210",
       }));
       setBankAccountHolder((prev) => prev || currentUser.name);
       setMembers((prev) => {
@@ -131,8 +134,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Derive active tier & pricing
   const currentTier =
-    event.ticketTiers.find((t) => t.id === formData.ticketTierId) ||
-    event.ticketTiers[0];
+    event.ticketTiers.find((t) => t.id === formData.ticketTierId) || event.ticketTiers[0];
 
   const pricePerTicket = currentTier?.price || 0;
   const memberCount = members.length;
@@ -145,22 +147,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       width: 260,
       margin: 1,
       color: {
-        dark: '#020617',
-        light: '#ffffff',
+        dark: "#020617",
+        light: "#ffffff",
       },
     })
       .then((url) => {
         setQrCodeDataUrl(url);
       })
       .catch((err) => {
-        console.error('Failed to render UPI QR Code:', err);
+        console.error("Failed to render UPI QR Code:", err);
       });
   }, [totalAmount, memberCount]);
 
-  const handleInputChange = (
-    field: keyof BookingFormData,
-    value: string | number
-  ) => {
+  const handleInputChange = (field: keyof BookingFormData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setApiError(null);
     if (errors[field]) {
@@ -175,13 +174,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   // Add a member
   const handleAddMember = () => {
     if (members.length >= 10) {
-      setApiError('Maximum 10 members allowed per booking.');
+      setApiError("Maximum 10 members allowed per booking.");
       return;
     }
     const nextNum = members.length + 1;
     const newMember: MemberDetail = {
       id: String(Date.now() + Math.random()),
-      name: '',
+      name: "",
     };
     const updated = [...members, newMember];
     setMembers(updated);
@@ -190,8 +189,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       ticketQuantity: updated.length,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || 'Primary'})`
-          : `Member ${i + 1}${m.name ? ` (${m.name})` : ''}`
+          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
     setApiError(null);
@@ -207,8 +206,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       ticketQuantity: updated.length,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || 'Primary'})`
-          : `Member ${i + 1}${m.name ? ` (${m.name})` : ''}`
+          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
     setApiError(null);
@@ -220,14 +219,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     updated[index] = { ...updated[index], name };
     setMembers(updated);
     if (index === 0) {
-      handleInputChange('attendeeName', name);
+      handleInputChange("attendeeName", name);
     }
     setFormData((prev) => ({
       ...prev,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${name || prev.attendeeName || 'Primary'})`
-          : `Member ${i + 1}${m.name ? ` (${m.name})` : ''}`
+          ? `Member 1 (${name || prev.attendeeName || "Primary"})`
+          : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
   };
@@ -241,7 +240,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       while (nextMembers.length < safeCount) {
         nextMembers.push({
           id: String(Date.now() + Math.random()),
-          name: '',
+          name: "",
         });
       }
     } else if (safeCount < nextMembers.length) {
@@ -254,8 +253,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       ticketQuantity: nextMembers.length,
       selectedSeats: nextMembers.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || 'Primary'})`
-          : `Member ${i + 1}${m.name ? ` (${m.name})` : ''}`
+          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
     setApiError(null);
@@ -276,11 +275,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       return;
     }
 
-    setCurrentStep('upi-bank-payment');
+    setCurrentStep("upi-bank-payment");
   };
 
   // Copy helper
-  const handleCopy = (text: string, type: 'upi-id' | 'upi-number') => {
+  const handleCopy = (text: string, type: "upi-id" | "upi-number") => {
     navigator.clipboard.writeText(text);
     setCopiedField(type);
     setTimeout(() => {
@@ -300,7 +299,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
     // Validation: make sure user entered UPI ID / phone or UTR
     if (!upiNumberId.trim() && !bankRefNo.trim()) {
-      setApiError('Please enter your UPI ID, linked phone number, or 12-digit UTR reference to verify payment.');
+      setApiError(
+        "Please enter your UPI ID, linked phone number, or 12-digit UTR reference to verify payment.",
+      );
       return;
     }
 
@@ -312,7 +313,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         if (i === 0) {
           return `Member 1 (Primary: ${formData.attendeeName.trim()})`;
         }
-        return `Member ${i + 1}${m.name.trim() ? `: ${m.name.trim()}` : ''}`;
+        return `Member ${i + 1}${m.name.trim() ? `: ${m.name.trim()}` : ""}`;
       });
 
       // Call backend API: POST /api/bookings
@@ -329,10 +330,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
       onBookingConfirmed(result.booking, result.updatedEvent);
       setConfirmedBooking(result.booking);
-      setCurrentStep('payment-processing');
-    } catch (err: any) {
-      console.error('Booking submission error:', err);
-      setApiError(err.message || 'Payment processing failed. Please check payment authorization.');
+      setCurrentStep("payment-processing");
+    } catch (err: unknown) {
+      console.error("Booking submission error:", err);
+      setApiError(
+        (err as Error)?.message || "Payment processing failed. Please check payment authorization.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -353,7 +356,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         initial={{ opacity: 0, scale: 0.94, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 15 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+        transition={{ type: "spring", stiffness: 350, damping: 28 }}
         className="relative w-full max-w-2xl rounded-3xl bg-slate-900 border border-white/10 shadow-2xl my-4 sm:my-8 text-white overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -365,16 +368,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
             <div className="min-w-0">
               <h2 className="font-display text-sm sm:text-base font-bold text-white truncate">
-                {currentStep === 'confirmed'
-                  ? 'Your Admission Passes Are Ready!'
-                  : currentStep === 'upi-bank-payment'
-                  ? 'Scan UPI QR & Enter Bank Details'
-                  : 'Add Members & Book Tickets'}
+                {currentStep === "confirmed"
+                  ? "Your Admission Passes Are Ready!"
+                  : currentStep === "upi-bank-payment"
+                    ? "Scan UPI QR & Enter Bank Details"
+                    : "Add Members & Book Tickets"}
               </h2>
               <span className="text-[11px] text-amber-300/80 font-medium block truncate">
-                {currentStep === 'confirmed'
-                  ? 'Valid for Direct Gate Entry'
-                  : '100% Zero Convenience & Processing Fees'}
+                {currentStep === "confirmed"
+                  ? "Valid for Direct Gate Entry"
+                  : "100% Zero Convenience & Processing Fees"}
               </span>
             </div>
           </div>
@@ -393,27 +396,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         <div className="grid grid-cols-3 border-b border-white/10 bg-slate-950/50 text-[11px] sm:text-xs font-semibold">
           <div
             className={`py-2.5 px-2 text-center transition-colors truncate ${
-              currentStep === 'members-and-price'
-                ? 'text-amber-400 border-b-2 border-amber-400 bg-amber-500/5'
-                : 'text-slate-400'
+              currentStep === "members-and-price"
+                ? "text-amber-400 border-b-2 border-amber-400 bg-amber-500/5"
+                : "text-slate-400"
             }`}
           >
             1. Members & Price
           </div>
           <div
             className={`py-2.5 px-2 text-center transition-colors truncate ${
-              currentStep === 'upi-bank-payment'
-                ? 'text-amber-400 border-b-2 border-amber-400 bg-amber-500/5'
-                : 'text-slate-400'
+              currentStep === "upi-bank-payment"
+                ? "text-amber-400 border-b-2 border-amber-400 bg-amber-500/5"
+                : "text-slate-400"
             }`}
           >
             2. UPI & Bank Details
           </div>
           <div
             className={`py-2.5 px-2 text-center transition-colors truncate ${
-              currentStep === 'confirmed'
-                ? 'text-amber-400 border-b-2 border-amber-400 bg-amber-500/5'
-                : 'text-slate-400'
+              currentStep === "confirmed"
+                ? "text-amber-400 border-b-2 border-amber-400 bg-amber-500/5"
+                : "text-slate-400"
             }`}
           >
             3. Issued Passes
@@ -423,20 +426,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         {/* ==================================================== */}
         {/* STEP 2.5: PAYMENT SUCCESS ANIMATION OVERLAY */}
         {/* ==================================================== */}
-        {currentStep === 'payment-processing' && confirmedBooking && (
+        {currentStep === "payment-processing" && confirmedBooking && (
           <PaymentSuccessOverlay
             amount={totalAmount}
             currencySymbol="₹"
             eventName={event.title}
             ticketCount={members.length}
-            onComplete={() => setCurrentStep('confirmed')}
+            onComplete={() => setCurrentStep("confirmed")}
           />
         )}
 
         {/* ==================================================== */}
         {/* STEP 3: CONFIRMED - PASSES DELIVERED DIRECTLY */}
         {/* ==================================================== */}
-        {currentStep === 'confirmed' && confirmedBooking ? (
+        {currentStep === "confirmed" && confirmedBooking ? (
           <div className="p-5 sm:p-7 space-y-4">
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-center text-xs text-emerald-300 flex items-center justify-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -485,7 +488,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </button>
             </div>
           </div>
-        ) : currentStep === 'upi-bank-payment' ? (
+        ) : currentStep === "upi-bank-payment" ? (
           /* ==================================================== */
           /* STEP 2: SHOW UPI SCANNER OR NUMBER -> SELECT BANK DETAILS & ENTER -> PROCEED PAYMENT */
           /* ==================================================== */
@@ -503,7 +506,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     {event.title}
                   </h4>
                   <p className="text-[11px] text-slate-300 truncate">
-                    {members.length} Member{members.length > 1 ? 's' : ''} • {currentTier.name}
+                    {members.length} Member{members.length > 1 ? "s" : ""} • {currentTier.name}
                   </p>
                 </div>
               </div>
@@ -511,7 +514,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="text-left sm:text-right shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-white/10">
                 <span className="text-[10px] text-slate-400 block uppercase">Total Payable</span>
                 <span className="font-display text-lg sm:text-xl font-black text-amber-400">
-                  {totalAmount === 0 ? 'FREE' : `₹${totalAmount.toLocaleString('en-IN')}`}
+                  {totalAmount === 0 ? "FREE" : `₹${totalAmount.toLocaleString("en-IN")}`}
                 </span>
               </div>
             </div>
@@ -555,7 +558,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     {/* Animated scanning laser line */}
                     <motion.div
                       animate={{ y: [0, 130, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                       className="absolute left-2 right-2 h-[2px] bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500 shadow-[0_0_8px_#f59e0b] pointer-events-none"
                     />
                   </div>
@@ -577,10 +580,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </span>
                       <button
                         type="button"
-                        onClick={() => handleCopy('+919876543210', 'upi-number')}
+                        onClick={() => handleCopy("+919876543210", "upi-number")}
                         className="flex items-center gap-1 rounded-lg bg-white/10 px-2 py-1 text-[11px] font-semibold text-amber-300 hover:bg-white/20 transition-colors cursor-pointer shrink-0"
                       >
-                        {copiedField === 'upi-number' ? (
+                        {copiedField === "upi-number" ? (
                           <>
                             <Check className="h-3 w-3 text-emerald-400" />
                             <span className="text-emerald-400">Copied!</span>
@@ -606,10 +609,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </span>
                       <button
                         type="button"
-                        onClick={() => handleCopy('eventhive.pay@icici', 'upi-id')}
+                        onClick={() => handleCopy("eventhive.pay@icici", "upi-id")}
                         className="flex items-center gap-1 rounded-lg bg-white/10 px-2 py-1 text-[11px] font-semibold text-amber-300 hover:bg-white/20 transition-colors cursor-pointer shrink-0"
                       >
-                        {copiedField === 'upi-id' ? (
+                        {copiedField === "upi-id" ? (
                           <>
                             <Check className="h-3 w-3 text-emerald-400" />
                             <span className="text-emerald-400">Copied!</span>
@@ -625,7 +628,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   </div>
 
                   <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-2.5 text-[11px] text-amber-300/90 leading-tight">
-                    Amount: <strong className="text-white">₹{totalAmount.toLocaleString('en-IN')}</strong> will populate in your UPI app upon scan.
+                    Amount:{" "}
+                    <strong className="text-white">₹{totalAmount.toLocaleString("en-IN")}</strong>{" "}
+                    will populate in your UPI app upon scan.
                   </div>
                 </div>
               </div>
@@ -656,8 +661,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       onClick={() => setSelectedBank(b.id)}
                       className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[11px] font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/30'
-                          : 'border-white/10 bg-slate-950/40 text-slate-400 hover:border-white/20 hover:text-white'
+                          ? "border-amber-500 bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/30"
+                          : "border-white/10 bg-slate-950/40 text-slate-400 hover:border-white/20 hover:text-white"
                       }`}
                     >
                       <span className="text-sm mb-0.5">{b.icon}</span>
@@ -753,7 +758,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
               <button
                 type="button"
-                onClick={() => setCurrentStep('members-and-price')}
+                onClick={() => setCurrentStep("members-and-price")}
                 className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-semibold text-slate-300 hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
@@ -775,7 +780,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 ) : (
                   <>
                     <ShieldCheck className="h-4 w-4" />
-                    <span>Proceed Payment & Confirm ({totalAmount === 0 ? 'FREE' : `₹${totalAmount.toLocaleString('en-IN')}`})</span>
+                    <span>
+                      Proceed Payment & Confirm (
+                      {totalAmount === 0 ? "FREE" : `₹${totalAmount.toLocaleString("en-IN")}`})
+                    </span>
                   </>
                 )}
               </button>
@@ -817,11 +825,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   return (
                     <div
                       key={tier.id}
-                      onClick={() => handleInputChange('ticketTierId', tier.id)}
+                      onClick={() => handleInputChange("ticketTierId", tier.id)}
                       className={`flex flex-col justify-between rounded-xl border p-3 transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-500/15 ring-1 ring-amber-500/30'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? "border-amber-500 bg-amber-500/15 ring-1 ring-amber-500/30"
+                          : "border-white/10 bg-white/5 hover:border-white/20"
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -829,8 +837,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           {tier.name}
                         </span>
                         <span className="font-display font-extrabold text-xs text-amber-400">
-                          {tier.price === 0 ? 'FREE' : `₹${tier.price.toLocaleString('en-IN')}`}
-                          <span className="text-[10px] text-slate-400 font-normal ml-0.5">/member</span>
+                          {tier.price === 0 ? "FREE" : `₹${tier.price.toLocaleString("en-IN")}`}
+                          <span className="text-[10px] text-slate-400 font-normal ml-0.5">
+                            /member
+                          </span>
                         </span>
                       </div>
                       <span className="text-[10px] text-slate-400 mt-1 line-clamp-1">
@@ -872,7 +882,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       {members.length}
                     </span>
                     <span className="text-[10px] font-medium text-slate-400 uppercase">
-                      {members.length === 1 ? 'Member' : 'Members'}
+                      {members.length === 1 ? "Member" : "Members"}
                     </span>
                   </div>
 
@@ -900,11 +910,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       onClick={() => handleSetMemberCount(num)}
                       className={`rounded-xl px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
                         isCur
-                          ? 'bg-amber-400 text-slate-950 font-bold shadow-xs'
-                          : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/5'
+                          ? "bg-amber-400 text-slate-950 font-bold shadow-xs"
+                          : "bg-white/5 text-slate-300 hover:bg-white/10 border border-white/5"
                       }`}
                     >
-                      {num} {num === 1 ? 'Member' : 'Members'}
+                      {num} {num === 1 ? "Member" : "Members"}
                     </button>
                   );
                 })}
@@ -944,7 +954,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           onChange={(e) => handleMemberNameChange(idx, e.target.value)}
                           placeholder={
                             idx === 0
-                              ? 'Primary Member Name (Required)'
+                              ? "Primary Member Name (Required)"
                               : `Member ${idx + 1} Name (Optional)`
                           }
                           className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none font-medium truncate"
@@ -978,7 +988,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   Total Amount Calculation
                 </span>
                 <span className="text-[11px] font-mono text-slate-300">
-                  {members.length} Member{members.length > 1 ? 's' : ''} × {pricePerTicket === 0 ? 'FREE' : `₹${pricePerTicket.toLocaleString('en-IN')}`}
+                  {members.length} Member{members.length > 1 ? "s" : ""} ×{" "}
+                  {pricePerTicket === 0 ? "FREE" : `₹${pricePerTicket.toLocaleString("en-IN")}`}
                 </span>
               </div>
 
@@ -987,7 +998,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <div className="rounded-xl bg-white/5 p-2 border border-white/5">
                   <span className="text-[10px] text-slate-400 block">Rate / Member</span>
                   <span className="font-bold text-white truncate block">
-                    {pricePerTicket === 0 ? 'FREE' : `₹${pricePerTicket.toLocaleString('en-IN')}`}
+                    {pricePerTicket === 0 ? "FREE" : `₹${pricePerTicket.toLocaleString("en-IN")}`}
                   </span>
                 </div>
                 <div className="rounded-xl bg-white/5 p-2 border border-white/5">
@@ -1005,11 +1016,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <div>
                   <span className="text-xs font-bold text-white block">Total Payable Amount</span>
                   <span className="text-[10px] text-emerald-400 font-semibold">
-                    Includes entry for {members.length} {members.length === 1 ? 'member' : 'members'}
+                    Includes entry for {members.length}{" "}
+                    {members.length === 1 ? "member" : "members"}
                   </span>
                 </div>
                 <div className="font-display text-xl sm:text-2xl font-black text-amber-400">
-                  {totalAmount === 0 ? 'FREE PASS' : `₹${totalAmount.toLocaleString('en-IN')}`}
+                  {totalAmount === 0 ? "FREE PASS" : `₹${totalAmount.toLocaleString("en-IN")}`}
                 </div>
               </div>
             </div>
@@ -1031,12 +1043,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     type="text"
                     value={formData.attendeeName}
                     onChange={(e) => {
-                      handleInputChange('attendeeName', e.target.value);
+                      handleInputChange("attendeeName", e.target.value);
                       handleMemberNameChange(0, e.target.value);
                     }}
                     placeholder="Jaydeep Sharma"
                     className={`w-full rounded-xl border bg-white/5 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400 ${
-                      errors.attendeeName ? 'border-rose-500' : 'border-white/10'
+                      errors.attendeeName ? "border-rose-500" : "border-white/10"
                     }`}
                   />
                 </div>
@@ -1050,10 +1062,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <input
                     type="email"
                     value={formData.attendeeEmail}
-                    onChange={(e) => handleInputChange('attendeeEmail', e.target.value)}
+                    onChange={(e) => handleInputChange("attendeeEmail", e.target.value)}
                     placeholder="jaydeep@example.com"
                     className={`w-full rounded-xl border bg-white/5 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400 ${
-                      errors.attendeeEmail ? 'border-rose-500' : 'border-white/10'
+                      errors.attendeeEmail ? "border-rose-500" : "border-white/10"
                     }`}
                   />
                 </div>
@@ -1067,10 +1079,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <input
                     type="tel"
                     value={formData.attendeePhone}
-                    onChange={(e) => handleInputChange('attendeePhone', e.target.value)}
+                    onChange={(e) => handleInputChange("attendeePhone", e.target.value)}
                     placeholder="+91 98765 43210"
                     className={`w-full rounded-xl border bg-white/5 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400 ${
-                      errors.attendeePhone ? 'border-rose-500' : 'border-white/10'
+                      errors.attendeePhone ? "border-rose-500" : "border-white/10"
                     }`}
                   />
                 </div>
@@ -1092,7 +1104,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-3.5 text-xs sm:text-sm font-bold text-slate-950 hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
               >
                 <span>
-                  Book Tickets for {members.length} {members.length === 1 ? 'Member' : 'Members'} • Total {totalAmount === 0 ? 'FREE' : `₹${totalAmount.toLocaleString('en-IN')}`}
+                  Book Tickets for {members.length} {members.length === 1 ? "Member" : "Members"} •
+                  Total {totalAmount === 0 ? "FREE" : `₹${totalAmount.toLocaleString("en-IN")}`}
                 </span>
                 <ArrowRight className="h-4 w-4" />
               </button>

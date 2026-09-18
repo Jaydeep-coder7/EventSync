@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { motion } from 'motion/react';
-import { Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
+import React, { useEffect } from "react";
+import { motion } from "motion/react";
+import { Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
 
 interface PaymentSuccessOverlayProps {
   amount: number;
@@ -12,7 +12,7 @@ interface PaymentSuccessOverlayProps {
 
 export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
   amount,
-  currencySymbol = '₹',
+  currencySymbol = "₹",
   eventName,
   ticketCount,
   onComplete,
@@ -31,7 +31,7 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
       <motion.div
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: [0.8, 1.2, 1], opacity: [0.2, 0.5, 0.3] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         className="absolute h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none"
       />
 
@@ -40,13 +40,13 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
         <motion.div
           initial={{ scale: 0.5, opacity: 0.8 }}
           animate={{ scale: [1, 1.6, 2], opacity: [0.8, 0.3, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
           className="absolute h-28 w-28 rounded-full border-2 border-emerald-400/40 pointer-events-none"
         />
         <motion.div
           initial={{ scale: 0.5, opacity: 0.6 }}
           animate={{ scale: [1, 1.4, 1.8], opacity: [0.6, 0.2, 0] }}
-          transition={{ duration: 1.8, delay: 0.4, repeat: Infinity, ease: 'easeOut' }}
+          transition={{ duration: 1.8, delay: 0.4, repeat: Infinity, ease: "easeOut" }}
           className="absolute h-28 w-28 rounded-full border border-teal-300/30 pointer-events-none"
         />
 
@@ -54,7 +54,7 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
         <motion.div
           initial={{ scale: 0, rotate: -45 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 20 }}
+          transition={{ type: "spring", stiffness: 320, damping: 20 }}
           className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-xl shadow-emerald-500/30"
         >
           <svg className="h-12 w-12 text-slate-950" viewBox="0 0 52 52" fill="none">
@@ -67,7 +67,7 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
               strokeLinecap="round"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5, ease: 'easeInOut' }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
             />
             <motion.path
               d="M15 27 L23 35 L37 19"
@@ -77,7 +77,7 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
               strokeLinejoin="round"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
             />
           </svg>
         </motion.div>
@@ -96,12 +96,17 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
         </div>
 
         <h3 className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          {amount === 0 ? 'Pass Claimed Successfully!' : `${currencySymbol}${amount.toLocaleString('en-IN')} Paid!`}
+          {amount === 0
+            ? "Pass Claimed Successfully!"
+            : `${currencySymbol}${amount.toLocaleString("en-IN")} Paid!`}
         </h3>
 
         <p className="text-xs sm:text-sm text-slate-300 max-w-sm mx-auto">
-          Reserved <span className="font-bold text-white">{ticketCount} {ticketCount > 1 ? 'tickets' : 'ticket'}</span> for{' '}
-          <span className="font-bold text-amber-300">{eventName}</span>.
+          Reserved{" "}
+          <span className="font-bold text-white">
+            {ticketCount} {ticketCount > 1 ? "tickets" : "ticket"}
+          </span>{" "}
+          for <span className="font-bold text-amber-300">{eventName}</span>.
         </p>
       </motion.div>
 
@@ -114,7 +119,7 @@ export const PaymentSuccessOverlay: React.FC<PaymentSuccessOverlayProps> = ({
       >
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
         >
           <Sparkles className="h-3.5 w-3.5 text-amber-400" />
         </motion.div>

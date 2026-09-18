@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React from "react";
+import { motion } from "motion/react";
 import {
   Calendar,
   MapPin,
@@ -12,8 +12,8 @@ import {
   Zap,
   Ban,
   ArrowRight,
-} from 'lucide-react';
-import { EventItem, TicketTier } from '../types';
+} from "lucide-react";
+import { EventItem, TicketTier } from "../types";
 
 interface HorizontalEventCardProps {
   event: EventItem;
@@ -25,12 +25,27 @@ interface HorizontalEventCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, { badge: string; border: string }> = {
-  Music: { badge: 'bg-rose-500/20 text-rose-300 border-rose-500/30', border: 'border-rose-500/30' },
-  Technology: { badge: 'bg-blue-500/20 text-blue-300 border-blue-500/30', border: 'border-blue-500/30' },
-  'Food & Drink': { badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30', border: 'border-amber-500/30' },
-  'Arts & Theatre': { badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30', border: 'border-purple-500/30' },
-  'Sports & Fitness': { badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', border: 'border-emerald-500/30' },
-  'Business & Networking': { badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30', border: 'border-indigo-500/30' },
+  Music: { badge: "bg-rose-500/20 text-rose-300 border-rose-500/30", border: "border-rose-500/30" },
+  Technology: {
+    badge: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    border: "border-blue-500/30",
+  },
+  "Food & Drink": {
+    badge: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    border: "border-amber-500/30",
+  },
+  "Arts & Theatre": {
+    badge: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    border: "border-purple-500/30",
+  },
+  "Sports & Fitness": {
+    badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    border: "border-emerald-500/30",
+  },
+  "Business & Networking": {
+    badge: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+    border: "border-indigo-500/30",
+  },
 };
 
 export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
@@ -46,14 +61,14 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
   const isHighDemand = percentageBooked >= 80 || seatsRemaining < 50;
 
   const categoryStyle = CATEGORY_COLORS[event.category] || {
-    badge: 'bg-white/10 text-slate-300 border-white/20',
-    border: 'border-white/10',
+    badge: "bg-white/10 text-slate-300 border-white/20",
+    border: "border-white/10",
   };
 
   const dateObj = new Date(event.date);
-  const monthDay = dateObj.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  const monthDay = dateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
 
   return (
@@ -65,8 +80,8 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
       onClick={() => onViewDetails(event)}
       className={`group relative flex flex-col sm:flex-row w-full overflow-hidden rounded-2xl sm:rounded-3xl border bg-slate-900/90 shadow-xl transition-all duration-300 hover:shadow-2xl cursor-pointer min-w-0 ${
         event.isCancelled
-          ? 'border-rose-500/30 shadow-rose-950/10 hover:border-rose-500/50'
-          : 'border-white/10 hover:border-amber-400/40 shadow-black/40 hover:shadow-amber-500/10'
+          ? "border-rose-500/30 shadow-rose-950/10 hover:border-rose-500/50"
+          : "border-white/10 hover:border-amber-400/40 shadow-black/40 hover:shadow-amber-500/10"
       }`}
     >
       {/* LEFT COLUMN: Landscape Image Banner (Horizontal on all screens sm+) */}
@@ -114,12 +129,12 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
           }}
           className={`absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-xl backdrop-blur-md transition-all cursor-pointer ${
             isFavorite
-              ? 'bg-rose-500/30 text-rose-400 border border-rose-500/50 shadow-md'
-              : 'bg-black/50 text-slate-300 border border-white/15 hover:bg-black/70 hover:text-white'
+              ? "bg-rose-500/30 text-rose-400 border border-rose-500/50 shadow-md"
+              : "bg-black/50 text-slate-300 border border-white/15 hover:bg-black/70 hover:text-white"
           }`}
-          title={isFavorite ? 'Remove from favorites' : 'Save event'}
+          title={isFavorite ? "Remove from favorites" : "Save event"}
         >
-          <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current text-rose-500' : ''}`} />
+          <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-rose-500" : ""}`} />
         </motion.button>
 
         {/* Bottom Metadata on Image: Date & Rating */}
@@ -170,7 +185,9 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
             <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-2.5 text-xs text-rose-300 flex items-start gap-2">
               <Ban className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
               <span className="break-words font-semibold">
-                Event Cancelled: {event.cancellationReason || 'Cancelled by organizers. 100% instant refund guarantee.'}
+                Event Cancelled:{" "}
+                {event.cancellationReason ||
+                  "Cancelled by organizers. 100% instant refund guarantee."}
               </span>
             </div>
           )}
@@ -190,8 +207,8 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
                   percentageBooked >= 85
-                    ? 'bg-gradient-to-r from-amber-500 to-rose-500'
-                    : 'bg-emerald-400'
+                    ? "bg-gradient-to-r from-amber-500 to-rose-500"
+                    : "bg-emerald-400"
                 }`}
                 style={{ width: `${Math.min(percentageBooked, 100)}%` }}
               />
@@ -202,14 +219,16 @@ export const HorizontalEventCard: React.FC<HorizontalEventCardProps> = ({
         {/* BOTTOM ROW: Transparent Price + Actions */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10 min-w-0">
           <div className="min-w-0">
-            <span className="text-[10px] text-slate-400 uppercase font-medium block">Starting from</span>
+            <span className="text-[10px] text-slate-400 uppercase font-medium block">
+              Starting from
+            </span>
             <div className="flex items-baseline gap-1.5 flex-wrap">
               <span className="font-display text-lg sm:text-xl font-black text-white">
-                {event.price === 0 ? 'FREE' : `₹${event.price.toLocaleString('en-IN')}`}
+                {event.price === 0 ? "FREE" : `₹${event.price.toLocaleString("en-IN")}`}
               </span>
               {event.originalPrice && event.originalPrice > event.price && (
                 <span className="text-xs text-slate-500 line-through">
-                  ₹{event.originalPrice.toLocaleString('en-IN')}
+                  ₹{event.originalPrice.toLocaleString("en-IN")}
                 </span>
               )}
             </div>

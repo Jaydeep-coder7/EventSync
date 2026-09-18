@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Bell,
   BellRing,
@@ -18,8 +18,8 @@ import {
   Ticket,
   ChevronRight,
   ExternalLink,
-} from 'lucide-react';
-import { Booking } from '../types';
+} from "lucide-react";
+import { Booking } from "../types";
 import {
   getNotificationPermission,
   requestNotificationPermission,
@@ -30,14 +30,14 @@ import {
   getUpcomingAlertSchedule,
   NotificationPermissionStatus,
   NotificationSettings,
-} from '../services/notificationService';
+} from "../services/notificationService";
 
 interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   bookings: Booking[];
   onViewBookingPass?: (booking: Booking) => void;
-  onShowToast?: (type: 'success' | 'error' | 'info', title: string, message?: string) => void;
+  onShowToast?: (type: "success" | "error" | "info", title: string, message?: string) => void;
 }
 
 export const NotificationModal: React.FC<NotificationModalProps> = ({
@@ -47,7 +47,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
   onViewBookingPass,
   onShowToast,
 }) => {
-  const [permission, setPermission] = useState<NotificationPermissionStatus>('default');
+  const [permission, setPermission] = useState<NotificationPermissionStatus>("default");
   const [settings, setSettings] = useState<NotificationSettings>(getNotificationSettings());
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testingBookingId, setTestingBookingId] = useState<string | null>(null);
@@ -66,18 +66,26 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
     const result = await requestNotificationPermission();
     setPermission(result);
 
-    if (result === 'granted') {
-      onShowToast?.('success', 'Notifications Enabled', 'You will now receive alerts for all your booked events.');
+    if (result === "granted") {
+      onShowToast?.(
+        "success",
+        "Notifications Enabled",
+        "You will now receive alerts for all your booked events.",
+      );
       sendTestNotification();
-    } else if (result === 'denied') {
-      onShowToast?.('error', 'Permission Denied', 'Browser notifications were blocked. Please enable them in site settings.');
+    } else if (result === "denied") {
+      onShowToast?.(
+        "error",
+        "Permission Denied",
+        "Browser notifications were blocked. Please enable them in site settings.",
+      );
     }
   };
 
   const handleToggleSetting = (key: keyof NotificationSettings) => {
     const updated = saveNotificationSettings({ [key]: !settings[key] });
     setSettings(updated);
-    onShowToast?.('info', 'Settings Updated', 'Notification preferences saved.');
+    onShowToast?.("info", "Settings Updated", "Notification preferences saved.");
   };
 
   const handleSendTest = async () => {
@@ -86,23 +94,31 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
     setIsSendingTest(false);
 
     if (success) {
-      onShowToast?.('success', 'Test Notification Sent', 'Check your device notification tray.');
+      onShowToast?.("success", "Test Notification Sent", "Check your device notification tray.");
     } else {
-      onShowToast?.('info', 'Notification Sent', 'If no banner appeared, please verify browser notification permissions.');
+      onShowToast?.(
+        "info",
+        "Notification Sent",
+        "If no banner appeared, please verify browser notification permissions.",
+      );
     }
   };
 
   const handleTestEventAlert = async (booking: Booking) => {
     setTestingBookingId(booking.id);
-    const success = await notifyUpcomingEvent(booking, 'Upcoming Event Reminder', () => {
+    const success = await notifyUpcomingEvent(booking, "Upcoming Event Reminder", () => {
       onViewBookingPass?.(booking);
     });
     setTestingBookingId(null);
 
     if (success) {
-      onShowToast?.('success', 'Event Alert Dispatched', `Browser alert sent for "${booking.eventTitle}".`);
+      onShowToast?.(
+        "success",
+        "Event Alert Dispatched",
+        `Browser alert sent for "${booking.eventTitle}".`,
+      );
     } else {
-      onShowToast?.('info', 'Alert Triggered', `Notification sent for "${booking.eventTitle}".`);
+      onShowToast?.("info", "Alert Triggered", `Notification sent for "${booking.eventTitle}".`);
     }
   };
 
@@ -153,7 +169,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
           <div className="overflow-y-auto p-4 sm:p-6 space-y-5 flex-1 divide-y divide-white/10">
             {/* Permission Banner Card */}
             <div className="rounded-2xl border p-4 transition-all">
-              {permission === 'granted' ? (
+              {permission === "granted" ? (
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0 mt-0.5">
@@ -164,7 +180,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                         Browser Push Notifications Active
                       </h4>
                       <p className="text-[11px] sm:text-xs text-slate-300 mt-0.5">
-                        Your browser will automatically alert you when upcoming booked events draw near.
+                        Your browser will automatically alert you when upcoming booked events draw
+                        near.
                       </p>
                     </div>
                   </div>
@@ -177,10 +194,10 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer shrink-0"
                   >
                     <Send className="h-3.5 w-3.5" />
-                    <span>{isSendingTest ? 'Sending...' : 'Send Test Alert'}</span>
+                    <span>{isSendingTest ? "Sending..." : "Send Test Alert"}</span>
                   </button>
                 </div>
-              ) : permission === 'denied' ? (
+              ) : permission === "denied" ? (
                 <div className="flex items-start gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/20 text-rose-400 shrink-0 mt-0.5">
                     <AlertCircle className="h-4 w-4" />
@@ -190,11 +207,13 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                       Notifications Blocked by Browser
                     </h4>
                     <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">
-                      Your browser has blocked push notifications for this site. To re-enable, click the tune / lock icon in your browser address bar and switch Notifications to <strong>Allow</strong>.
+                      Your browser has blocked push notifications for this site. To re-enable, click
+                      the tune / lock icon in your browser address bar and switch Notifications to{" "}
+                      <strong>Allow</strong>.
                     </p>
                   </div>
                 </div>
-              ) : permission === 'unsupported' ? (
+              ) : permission === "unsupported" ? (
                 <div className="flex items-start gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-800 text-slate-400 shrink-0 mt-0.5">
                     <BellOff className="h-4 w-4" />
@@ -204,7 +223,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                       Web Notification API Unsupported
                     </h4>
                     <p className="text-[11px] sm:text-xs text-slate-400">
-                      This environment or in-app browser does not support the Web Notification API. In-app banner alerts will be used.
+                      This environment or in-app browser does not support the Web Notification API.
+                      In-app banner alerts will be used.
                     </p>
                   </div>
                 </div>
@@ -219,7 +239,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                         Enable Browser Push Notifications
                       </h4>
                       <p className="text-[11px] sm:text-xs text-slate-300 mt-0.5">
-                        Get live notifications on your device for upcoming showtimes, gate opening, and digital passes.
+                        Get live notifications on your device for upcoming showtimes, gate opening,
+                        and digital passes.
                       </p>
                     </div>
                   </div>
@@ -254,7 +275,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
               {schedule.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
                   <p className="text-xs text-slate-400">
-                    You have no active event bookings yet. Book an event to receive automated browser push reminders!
+                    You have no active event bookings yet. Book an event to receive automated
+                    browser push reminders!
                   </p>
                 </div>
               ) : (
@@ -288,11 +310,11 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                           <div className="pt-1">
                             <span
                               className={`inline-block rounded-md px-2 py-0.5 text-[10px] font-bold ${
-                                status === 'imminent'
-                                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                                  : status === 'today'
-                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                                  : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                status === "imminent"
+                                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                                  : status === "today"
+                                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                    : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                               }`}
                             >
                               {label}
@@ -312,7 +334,9 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                           title="Trigger a browser push notification for this event now"
                         >
                           <BellRing className="h-3 w-3" />
-                          <span>{testingBookingId === booking.id ? 'Sending...' : 'Test Alert'}</span>
+                          <span>
+                            {testingBookingId === booking.id ? "Sending..." : "Test Alert"}
+                          </span>
                         </button>
 
                         {onViewBookingPass && (
@@ -345,7 +369,9 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                 {/* Master Switch */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
                   <div>
-                    <span className="text-xs font-bold text-white block">Event Alerts Master Switch</span>
+                    <span className="text-xs font-bold text-white block">
+                      Event Alerts Master Switch
+                    </span>
                     <span className="text-[11px] text-slate-400 block">
                       Enable or pause all automated event notifications
                     </span>
@@ -353,7 +379,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                   <input
                     type="checkbox"
                     checked={settings.enabled}
-                    onChange={() => handleToggleSetting('enabled')}
+                    onChange={() => handleToggleSetting("enabled")}
                     className="h-4 w-4 rounded border-white/20 bg-slate-800 text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-400"
                   />
                 </div>
@@ -361,7 +387,9 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                 {/* 24-hour reminder */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
                   <div>
-                    <span className="text-xs font-bold text-white block">24 Hours Advance Reminder</span>
+                    <span className="text-xs font-bold text-white block">
+                      24 Hours Advance Reminder
+                    </span>
                     <span className="text-[11px] text-slate-400 block">
                       Alert you the day before the event with timing and venue details
                     </span>
@@ -370,7 +398,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     type="checkbox"
                     checked={settings.alert24h}
                     disabled={!settings.enabled}
-                    onChange={() => handleToggleSetting('alert24h')}
+                    onChange={() => handleToggleSetting("alert24h")}
                     className="h-4 w-4 rounded border-white/20 bg-slate-800 text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-400"
                   />
                 </div>
@@ -378,7 +406,9 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                 {/* 1-hour gate pass reminder */}
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
                   <div>
-                    <span className="text-xs font-bold text-white block">1 Hour Gate Pass Reminder</span>
+                    <span className="text-xs font-bold text-white block">
+                      1 Hour Gate Pass Reminder
+                    </span>
                     <span className="text-[11px] text-slate-400 block">
                       Remind you to have your digital QR pass ready as gates open
                     </span>
@@ -387,7 +417,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     type="checkbox"
                     checked={settings.alert1h}
                     disabled={!settings.enabled}
-                    onChange={() => handleToggleSetting('alert1h')}
+                    onChange={() => handleToggleSetting("alert1h")}
                     className="h-4 w-4 rounded border-white/20 bg-slate-800 text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-400"
                   />
                 </div>
@@ -401,7 +431,9 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                       <VolumeX className="h-4 w-4 text-slate-500 shrink-0" />
                     )}
                     <div>
-                      <span className="text-xs font-bold text-white block">Notification Chime Sound</span>
+                      <span className="text-xs font-bold text-white block">
+                        Notification Chime Sound
+                      </span>
                       <span className="text-[11px] text-slate-400 block">
                         Play subtle harmonic chime when notifications arrive
                       </span>
@@ -410,7 +442,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                   <input
                     type="checkbox"
                     checked={settings.sound}
-                    onChange={() => handleToggleSetting('sound')}
+                    onChange={() => handleToggleSetting("sound")}
                     className="h-4 w-4 rounded border-white/20 bg-slate-800 text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-400"
                   />
                 </div>

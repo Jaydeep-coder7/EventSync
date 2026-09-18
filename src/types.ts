@@ -16,13 +16,13 @@ export interface Organizer {
 }
 
 export type EventCategory =
-  | 'All'
-  | 'Music'
-  | 'Technology'
-  | 'Food & Drink'
-  | 'Arts & Theatre'
-  | 'Sports & Fitness'
-  | 'Business & Networking';
+  | "All"
+  | "Music"
+  | "Technology"
+  | "Food & Drink"
+  | "Arts & Theatre"
+  | "Sports & Fitness"
+  | "Business & Networking";
 
 export interface EventItem {
   id: string;
@@ -74,21 +74,16 @@ export interface Booking {
   serviceFee: number;
   totalAmount: number;
   bookingDate: string;
-  status: 'confirmed' | 'cancelled';
+  status: "confirmed" | "cancelled";
   cancelledAt?: string;
   cancellationReason?: string;
   refundStatus?: string;
   specialRequests?: string;
 }
 
-export type DateFilterOption = 'all' | 'today' | 'weekend' | 'month';
-export type PriceFilterOption = 'all' | 'free' | 'under1000' | '1000to3000' | 'above3000';
-export type SortOption =
-  | 'featured'
-  | 'price-asc'
-  | 'price-desc'
-  | 'date-asc'
-  | 'name-asc';
+export type DateFilterOption = "all" | "today" | "weekend" | "month";
+export type PriceFilterOption = "all" | "free" | "under1000" | "1000to3000" | "above3000";
+export type SortOption = "featured" | "price-asc" | "price-desc" | "date-asc" | "name-asc";
 
 export interface FilterState {
   searchQuery: string;
@@ -96,12 +91,12 @@ export interface FilterState {
   dateFilter: DateFilterOption;
   priceFilter: PriceFilterOption;
   sortBy: SortOption;
-  statusFilter?: 'all' | 'active' | 'cancelled';
+  statusFilter?: "all" | "active" | "cancelled";
 }
 
 export interface ToastNotification {
   id: string;
-  type: 'success' | 'error' | 'info';
+  type: "success" | "error" | "info";
   title: string;
   message?: string;
 }
@@ -110,9 +105,9 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar: string;
-  gender?: 'boy' | 'girl' | 'male' | 'female';
+  gender?: "boy" | "girl" | "male" | "female";
   username?: string;
   phone?: string;
   loginTime: string;
-  themePreference?: 'dark' | 'light';
+  themePreference?: "dark" | "light";
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   X,
   Calendar,
@@ -21,8 +21,8 @@ import {
   MessageCircle,
   AlertTriangle,
   Ban,
-} from 'lucide-react';
-import { EventItem, TicketTier } from '../types';
+} from "lucide-react";
+import { EventItem, TicketTier } from "../types";
 
 interface EventDetailsModalProps {
   event: EventItem | null;
@@ -33,7 +33,12 @@ interface EventDetailsModalProps {
   onToggleFavorite?: (eventId: string) => void;
 }
 
-export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
+export const EventDetailsModal: React.FC<EventDetailsModalProps> = (props) => {
+  if (!props.isOpen || !props.event) return null;
+  return <EventDetailsModalContent {...props} event={props.event} />;
+};
+
+const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: EventItem }> = ({
   event,
   isOpen,
   onClose,
@@ -41,19 +46,14 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
   isFavorite = false,
   onToggleFavorite,
 }) => {
-  if (!isOpen || !event) return null;
-
   const allImages = [event.image, ...(event.gallery || [])];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedTierId, setSelectedTierId] = useState<string>(
-    event.ticketTiers?.[0]?.id || ''
-  );
+  const [selectedTierId, setSelectedTierId] = useState<string>(event.ticketTiers?.[0]?.id || "");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
   const selectedTier =
-    event.ticketTiers.find((t) => t.id === selectedTierId) ||
-    event.ticketTiers[0];
+    event.ticketTiers.find((t) => t.id === selectedTierId) || event.ticketTiers[0];
 
   // Web Share API Handler with graceful social links fallback
   const handleShareClick = async () => {
@@ -67,8 +67,8 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
       try {
         await navigator.share(shareData);
         return;
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
+      } catch (err: unknown) {
+        if ((err as { name?: string })?.name !== "AbortError") {
           setShareMenuOpen(true);
         }
       }
@@ -90,7 +90,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
   // Social Share URLs
   const encodedUrl = encodeURIComponent(window.location.href);
   const encodedText = encodeURIComponent(
-    `Join me at ${event.title} on ${event.displayDate} at ${event.venue}, ${event.city}!`
+    `Join me at ${event.title} on ${event.displayDate} at ${event.venue}, ${event.city}!`,
   );
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
@@ -107,7 +107,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
         initial={{ opacity: 0, scale: 0.94, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 15 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+        transition={{ type: "spring", stiffness: 350, damping: 28 }}
         className="relative w-full max-w-4xl rounded-3xl bg-slate-900 border border-white/10 shadow-2xl transition-all my-4 sm:my-8 text-white overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -199,7 +199,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                         ) : (
                           <Copy className="h-4 w-4 text-amber-400" />
                         )}
-                        <span>{copySuccess ? 'Link Copied!' : 'Copy Event Link'}</span>
+                        <span>{copySuccess ? "Link Copied!" : "Copy Event Link"}</span>
                       </span>
                     </button>
                   </motion.div>
@@ -215,12 +215,12 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                 onClick={() => onToggleFavorite(event.id)}
                 className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-colors cursor-pointer ${
                   isFavorite
-                    ? 'border-rose-500/40 bg-rose-500/20 text-rose-400'
-                    : 'border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                    ? "border-rose-500/40 bg-rose-500/20 text-rose-400"
+                    : "border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
                 }`}
-                title={isFavorite ? 'Saved in favorites' : 'Add to favorites'}
+                title={isFavorite ? "Saved in favorites" : "Add to favorites"}
               >
-                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current text-rose-500' : ''}`} />
+                <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-rose-500" : ""}`} />
               </motion.button>
             )}
 
@@ -252,7 +252,8 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                 </h3>
               </div>
               <p className="text-xs text-rose-200/90 leading-relaxed">
-                {event.cancellationReason || 'This event has been cancelled by the organizers. If you have already booked tickets, a 100% full refund has been automatically credited to your original payment method.'}
+                {event.cancellationReason ||
+                  "This event has been cancelled by the organizers. If you have already booked tickets, a 100% full refund has been automatically credited to your original payment method."}
               </p>
               <div className="pt-2 border-t border-rose-500/20 flex items-center justify-between text-[11px] font-semibold text-rose-300">
                 <span>Refund Policy: 100% Guaranteed</span>
@@ -299,11 +300,15 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${
                       activeImageIndex === idx
-                        ? 'border-amber-400 ring-2 ring-amber-500/20 shadow'
-                        : 'border-transparent opacity-60 hover:opacity-100'
+                        ? "border-amber-400 ring-2 ring-amber-500/20 shadow"
+                        : "border-transparent opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
+                    <img
+                      src={img}
+                      alt={`Preview ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
@@ -359,7 +364,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
             <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
-                  percentageBooked > 85 ? 'bg-amber-500' : 'bg-emerald-500'
+                  percentageBooked > 85 ? "bg-amber-500" : "bg-emerald-500"
                 }`}
                 style={{ width: `${Math.min(percentageBooked, 100)}%` }}
               />
@@ -402,9 +407,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-sm text-white">{event.organizer.name}</span>
-                  {event.organizer.verified && (
-                    <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                  )}
+                  {event.organizer.verified && <ShieldCheck className="h-4 w-4 text-emerald-400" />}
                 </div>
                 <span className="text-xs text-slate-400">{event.organizer.role}</span>
               </div>
@@ -422,9 +425,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
           <div className="space-y-4 pt-2 border-t border-white/10">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-display text-lg font-bold text-white">
-                  Select Ticket Option
-                </h2>
+                <h2 className="font-display text-lg font-bold text-white">Select Ticket Option</h2>
                 <p className="text-xs text-slate-400">
                   Zero convenience fees. Choose your pass type before booking.
                 </p>
@@ -441,8 +442,8 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                     onClick={() => setSelectedTierId(tier.id)}
                     className={`relative flex flex-col justify-between rounded-2xl border p-4 transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-amber-400 bg-amber-500/15 shadow-md ring-1 ring-amber-400/30'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? "border-amber-400 bg-amber-500/15 shadow-md ring-1 ring-amber-400/30"
+                        : "border-white/10 bg-white/5 hover:border-white/20"
                     }`}
                   >
                     <div>
@@ -451,7 +452,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                           {tier.name}
                         </span>
                         <span className="font-display text-base font-extrabold text-amber-400">
-                          {tier.price === 0 ? 'FREE' : `₹${tier.price.toLocaleString('en-IN')}`}
+                          {tier.price === 0 ? "FREE" : `₹${tier.price.toLocaleString("en-IN")}`}
                         </span>
                       </div>
                       <p className="mt-1.5 text-xs text-slate-300 leading-relaxed">
@@ -465,10 +466,10 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
                       </span>
                       <span
                         className={`font-semibold text-xs ${
-                          isSelected ? 'text-amber-300' : 'text-slate-500'
+                          isSelected ? "text-amber-300" : "text-slate-500"
                         }`}
                       >
-                        {isSelected ? '✓ Selected' : 'Select'}
+                        {isSelected ? "✓ Selected" : "Select"}
                       </span>
                     </div>
                   </div>
@@ -483,13 +484,13 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({
           <div>
             <span className="text-xs text-slate-400">Selected: </span>
             <span className="text-xs font-bold text-white">
-              {selectedTier?.name || 'General Admission'}
+              {selectedTier?.name || "General Admission"}
             </span>
             <div className="flex items-baseline gap-1.5">
               <span className="font-display text-2xl font-extrabold text-white">
                 {selectedTier?.price === 0
-                  ? 'FREE'
-                  : `₹${(selectedTier?.price || event.price).toLocaleString('en-IN')}`}
+                  ? "FREE"
+                  : `₹${(selectedTier?.price || event.price).toLocaleString("en-IN")}`}
               </span>
               <span className="text-xs text-slate-400">/ person (₹0 surcharge)</span>
             </div>

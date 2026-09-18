@@ -1,6 +1,6 @@
-import React from 'react';
-import { EventItem } from '../types';
-import { HorizontalEventCard } from './HorizontalEventCard';
+import React from "react";
+import { EventItem } from "../types";
+import { HorizontalEventCard } from "./HorizontalEventCard";
 
 interface HorizontalStackedEventDeckProps {
   events: EventItem[];
@@ -23,9 +23,7 @@ export const HorizontalStackedEventDeck: React.FC<HorizontalStackedEventDeckProp
       <div className="flex items-center justify-between px-1 text-xs text-slate-400">
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-ping" />
-          <span className="font-semibold text-amber-300">
-            Horizontal Event Cards
-          </span>
+          <span className="font-semibold text-amber-300">Horizontal Event Cards</span>
           <span className="hidden sm:inline text-slate-500">•</span>
           <span className="hidden sm:inline text-slate-400">
             Scroll down vertically through landscape event cards

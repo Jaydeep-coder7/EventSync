@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Mail,
   User,
@@ -9,8 +9,8 @@ import {
   Ticket,
   Lock,
   CheckCircle2,
-} from 'lucide-react';
-import { UserProfile } from '../types';
+} from "lucide-react";
+import { UserProfile } from "../types";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -24,28 +24,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   onLoginSuccess,
-  defaultEmail = 'jaydeepch137@gmail.com',
+  defaultEmail = "jaydeepch137@gmail.com",
   forceLogin = true,
 }) => {
   const [email, setEmail] = useState(defaultEmail);
-  const [name, setName] = useState('Jaydeep');
-  const [phone, setPhone] = useState('+91 98765 43210');
+  const [name, setName] = useState("Jaydeep");
+  const [phone, setPhone] = useState("+91 98765 43210");
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   if (!isOpen) return null;
 
   const handleOneClickGoogleLogin = () => {
     setIsSubmitting(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     setTimeout(() => {
       const user: UserProfile = {
-        name: name.trim() || 'Jaydeep',
+        name: name.trim() || "Jaydeep",
         email: email.trim() || defaultEmail,
-        gender: 'boy',
-        avatar: 'boy-animated-svg',
+        gender: "boy",
+        avatar: "boy-animated-svg",
         phone: phone.trim(),
         loginTime: new Date().toISOString(),
       };
@@ -57,12 +57,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setErrorMessage('Please enter your full name');
+      setErrorMessage("Please enter your full name");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setErrorMessage('Please enter a valid Gmail / email address');
+      setErrorMessage("Please enter a valid Gmail / email address");
       return;
     }
 
@@ -71,8 +71,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const user: UserProfile = {
         name: name.trim(),
         email: email.trim(),
-        gender: 'boy',
-        avatar: 'boy-animated-svg',
+        gender: "boy",
+        avatar: "boy-animated-svg",
         phone: phone.trim() || undefined,
         loginTime: new Date().toISOString(),
       };
@@ -192,9 +192,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           ) : (
             <form onSubmit={handleCustomSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Full Name
-                </label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <input
@@ -254,7 +252,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   disabled={isSubmitting}
                   className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-2.5 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-yellow-400 shadow-md shadow-amber-500/20 cursor-pointer"
                 >
-                  {isSubmitting ? 'Logging in...' : 'Sign In with Gmail'}
+                  {isSubmitting ? "Logging in..." : "Sign In with Gmail"}
                 </button>
               </div>
             </form>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React from "react";
+import { motion } from "motion/react";
 import {
   QrCode,
   Printer,
@@ -11,8 +11,8 @@ import {
   CheckCircle2,
   Download,
   Share2,
-} from 'lucide-react';
-import { Booking } from '../types';
+} from "lucide-react";
+import { Booking } from "../types";
 
 interface ScanAtEntryPassProps {
   booking: Booking;
@@ -20,11 +20,7 @@ interface ScanAtEntryPassProps {
   onShare?: () => void;
 }
 
-export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
-  booking,
-  onPrint,
-  onShare,
-}) => {
+export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({ booking, onPrint, onShare }) => {
   return (
     <div className="w-full space-y-4">
       {/* Physical Ticket Pass Container with Perforations */}
@@ -72,7 +68,9 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
           </div>
           <p className="text-xs text-slate-400 flex items-center justify-center gap-1 mt-1">
             <MapPin className="h-3 w-3 text-slate-500" />
-            <span className="truncate max-w-xs">{booking.venue}, {booking.city}</span>
+            <span className="truncate max-w-xs">
+              {booking.venue}, {booking.city}
+            </span>
           </p>
         </div>
 
@@ -93,7 +91,7 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
               {/* Animated Laser Scan Beam */}
               <motion.div
                 animate={{ y: [0, 110, 0] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute left-3 right-3 h-[2.5px] bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 shadow-[0_0_8px_#f59e0b] opacity-80 pointer-events-none"
               />
             </div>
@@ -143,7 +141,10 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
               {booking.ticketQuantity}x {booking.ticketTierName}
             </span>
             <span className="text-[10px] text-emerald-400 font-semibold block">
-              Total: {booking.totalAmount === 0 ? 'FREE PASS' : `₹${booking.totalAmount.toLocaleString('en-IN')}`}
+              Total:{" "}
+              {booking.totalAmount === 0
+                ? "FREE PASS"
+                : `₹${booking.totalAmount.toLocaleString("en-IN")}`}
             </span>
           </div>
         </div>
@@ -155,7 +156,7 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
               Admitted Member Passes ({booking.ticketQuantity})
             </span>
             <span className="font-mono font-bold text-amber-300 break-words text-left sm:text-right">
-              {booking.selectedSeats.join(' • ')}
+              {booking.selectedSeats.join(" • ")}
             </span>
           </div>
         )}
@@ -166,9 +167,7 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
             <CheckCircle2 className="h-3 w-3" />
             <span>₹0 Convenience & Verification Fee</span>
           </span>
-          <span className="font-mono text-[10px] text-slate-500">
-            EventSync Verified
-          </span>
+          <span className="font-mono text-[10px] text-slate-500">EventSync Verified</span>
         </div>
       </motion.div>
 

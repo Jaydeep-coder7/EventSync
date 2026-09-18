@@ -1,19 +1,13 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import {
-  Search,
-  X,
-  RotateCcw,
-  Calendar,
-  ArrowUpDown,
-} from 'lucide-react';
+import React from "react";
+import { motion } from "motion/react";
+import { Search, X, RotateCcw, Calendar, ArrowUpDown } from "lucide-react";
 import {
   DateFilterOption,
   EventCategory,
   FilterState,
   PriceFilterOption,
   SortOption,
-} from '../types';
+} from "../types";
 
 interface EventFilterBarProps {
   filters: FilterState;
@@ -23,13 +17,13 @@ interface EventFilterBarProps {
 }
 
 const CATEGORIES: EventCategory[] = [
-  'All',
-  'Music',
-  'Technology',
-  'Food & Drink',
-  'Arts & Theatre',
-  'Sports & Fitness',
-  'Business & Networking',
+  "All",
+  "Music",
+  "Technology",
+  "Food & Drink",
+  "Arts & Theatre",
+  "Sports & Fitness",
+  "Business & Networking",
 ];
 
 export const EventFilterBar: React.FC<EventFilterBarProps> = ({
@@ -39,12 +33,12 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
   totalResults,
 }) => {
   const isFiltered =
-    filters.searchQuery.trim() !== '' ||
-    filters.category !== 'All' ||
-    filters.dateFilter !== 'all' ||
-    filters.priceFilter !== 'all' ||
-    filters.sortBy !== 'featured' ||
-    (filters.statusFilter && filters.statusFilter !== 'all');
+    filters.searchQuery.trim() !== "" ||
+    filters.category !== "All" ||
+    filters.dateFilter !== "all" ||
+    filters.priceFilter !== "all" ||
+    filters.sortBy !== "featured" ||
+    (filters.statusFilter && filters.statusFilter !== "all");
 
   return (
     <div className="space-y-4 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl p-4 shadow-xl shadow-black/40 sm:p-5">
@@ -64,7 +58,7 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
           {filters.searchQuery && (
             <button
               id="clear-search-btn"
-              onClick={() => onFilterChange({ searchQuery: '' })}
+              onClick={() => onFilterChange({ searchQuery: "" })}
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
               title="Clear search"
             >
@@ -75,7 +69,10 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
 
         {/* Sort Dropdown */}
         <div className="flex items-center gap-2">
-          <label htmlFor="sort-events-select" className="text-xs font-semibold text-slate-400 flex items-center gap-1.5 shrink-0">
+          <label
+            htmlFor="sort-events-select"
+            className="text-xs font-semibold text-slate-400 flex items-center gap-1.5 shrink-0"
+          >
             <ArrowUpDown className="h-3.5 w-3.5 text-amber-400" />
             <span>Sort by:</span>
           </label>
@@ -106,12 +103,12 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
               key={cat}
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.95 }}
-              id={`filter-category-${cat.toLowerCase().replace(/[^a-z]/g, '')}`}
+              id={`filter-category-${cat.toLowerCase().replace(/[^a-z]/g, "")}`}
               onClick={() => onFilterChange({ category: cat })}
               className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/30'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/5'
+                  ? "bg-amber-500 text-slate-950 font-bold shadow-sm shadow-amber-500/30"
+                  : "bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white border border-white/5"
               }`}
             >
               {cat}
@@ -131,9 +128,7 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
               id="filter-date-select"
               aria-label="Filter events by date"
               value={filters.dateFilter}
-              onChange={(e) =>
-                onFilterChange({ dateFilter: e.target.value as DateFilterOption })
-              }
+              onChange={(e) => onFilterChange({ dateFilter: e.target.value as DateFilterOption })}
               className="rounded-xl border border-white/10 bg-slate-900 py-1.5 px-2.5 text-xs font-medium text-white focus:border-amber-400 focus:outline-none"
             >
               <option value="all">Any Date</option>
@@ -151,9 +146,7 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
               id="filter-price-select"
               aria-label="Filter events by price"
               value={filters.priceFilter}
-              onChange={(e) =>
-                onFilterChange({ priceFilter: e.target.value as PriceFilterOption })
-              }
+              onChange={(e) => onFilterChange({ priceFilter: e.target.value as PriceFilterOption })}
               className="rounded-xl border border-white/10 bg-slate-900 py-1.5 px-2.5 text-xs font-medium text-white focus:border-amber-400 focus:outline-none"
             >
               <option value="all">All Prices</option>
@@ -170,33 +163,33 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
             <div className="flex items-center rounded-xl bg-slate-900 border border-white/10 p-0.5">
               <button
                 type="button"
-                onClick={() => onFilterChange({ statusFilter: 'all' })}
+                onClick={() => onFilterChange({ statusFilter: "all" })}
                 className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
-                  (filters.statusFilter || 'all') === 'all'
-                    ? 'bg-amber-400 text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-white'
+                  (filters.statusFilter || "all") === "all"
+                    ? "bg-amber-400 text-slate-950 font-bold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 All
               </button>
               <button
                 type="button"
-                onClick={() => onFilterChange({ statusFilter: 'active' })}
+                onClick={() => onFilterChange({ statusFilter: "active" })}
                 className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
-                  filters.statusFilter === 'active'
-                    ? 'bg-amber-400 text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-white'
+                  filters.statusFilter === "active"
+                    ? "bg-amber-400 text-slate-950 font-bold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 Active
               </button>
               <button
                 type="button"
-                onClick={() => onFilterChange({ statusFilter: 'cancelled' })}
+                onClick={() => onFilterChange({ statusFilter: "cancelled" })}
                 className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1 ${
-                  filters.statusFilter === 'cancelled'
-                    ? 'bg-rose-500 text-white font-bold'
-                    : 'text-rose-400/80 hover:text-rose-300'
+                  filters.statusFilter === "cancelled"
+                    ? "bg-rose-500 text-white font-bold"
+                    : "text-rose-400/80 hover:text-rose-300"
                 }`}
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
@@ -209,7 +202,8 @@ export const EventFilterBar: React.FC<EventFilterBarProps> = ({
         {/* Results Counter & Reset Button */}
         <div className="flex items-center gap-3">
           <span className="text-slate-400 font-medium">
-            Showing <strong className="text-white font-bold">{totalResults}</strong> event{totalResults === 1 ? '' : 's'}
+            Showing <strong className="text-white font-bold">{totalResults}</strong> event
+            {totalResults === 1 ? "" : "s"}
           </span>
 
           {isFiltered && (

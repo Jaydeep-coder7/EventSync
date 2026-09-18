@@ -1,6 +1,6 @@
-import { Booking } from '../types';
+import { Booking } from "../types";
 
-export type NotificationPermissionStatus = 'granted' | 'denied' | 'default' | 'unsupported';
+export type NotificationPermissionStatus = "granted" | "denied" | "default" | "unsupported";
 
 export interface NotificationSettings {
   enabled: boolean;
@@ -10,8 +10,8 @@ export interface NotificationSettings {
   sound: boolean;
 }
 
-const SETTINGS_KEY = 'eventsync_notification_settings';
-const NOTIFIED_ALERTS_KEY = 'eventsync_notified_alerts';
+const SETTINGS_KEY = "eventsync_notification_settings";
+const NOTIFIED_ALERTS_KEY = "eventsync_notified_alerts";
 
 const DEFAULT_SETTINGS: NotificationSettings = {
   enabled: true,
@@ -23,13 +23,13 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 
 // Check if Web Notification API is supported in current environment
 export function isNotificationSupported(): boolean {
-  return typeof window !== 'undefined' && 'Notification' in window;
+  return typeof window !== "undefined" && "Notification" in window;
 }
 
 // Get current permission status safely
 export function getNotificationPermission(): NotificationPermissionStatus {
   if (!isNotificationSupported()) {
-    return 'unsupported';
+    return "unsupported";
   }
   return Notification.permission as NotificationPermissionStatus;
 }
@@ -37,21 +37,21 @@ export function getNotificationPermission(): NotificationPermissionStatus {
 // Request permission from the user
 export async function requestNotificationPermission(): Promise<NotificationPermissionStatus> {
   if (!isNotificationSupported()) {
-    return 'unsupported';
+    return "unsupported";
   }
 
   try {
     const permission = await Notification.requestPermission();
     return permission as NotificationPermissionStatus;
   } catch (error) {
-    console.warn('Error requesting Web Notification permission:', error);
+    console.warn("Error requesting Web Notification permission:", error);
     return getNotificationPermission();
   }
 }
 
 // Retrieve user preferences for notifications
 export function getNotificationSettings(): NotificationSettings {
-  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
     const stored = localStorage.getItem(SETTINGS_KEY);
     if (!stored) return DEFAULT_SETTINGS;
@@ -62,13 +62,15 @@ export function getNotificationSettings(): NotificationSettings {
 }
 
 // Save notification preferences
-export function saveNotificationSettings(newSettings: Partial<NotificationSettings>): NotificationSettings {
+export function saveNotificationSettings(
+  newSettings: Partial<NotificationSettings>,
+): NotificationSettings {
   const current = getNotificationSettings();
   const updated = { ...current, ...newSettings };
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
   } catch (err) {
-    console.error('Failed to save notification settings:', err);
+    console.error("Failed to save notification settings:", err);
   }
   return updated;
 }
@@ -76,10 +78,12 @@ export function saveNotificationSettings(newSettings: Partial<NotificationSettin
 // Play notification sound chime via Web Audio API
 export function playNotificationChime(): void {
   const settings = getNotificationSettings();
-  if (!settings.sound || typeof window === 'undefined') return;
+  if (!settings.sound || typeof window === "undefined") return;
 
   try {
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
@@ -87,7 +91,7 @@ export function playNotificationChime(): void {
     // Chime Note 1: D5 (587.33Hz)
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
-    osc1.type = 'sine';
+    osc1.type = "sine";
     osc1.frequency.setValueAtTime(587.33, now);
     gain1.gain.setValueAtTime(0.12, now);
     gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
@@ -99,7 +103,7 @@ export function playNotificationChime(): void {
     // Chime Note 2: A5 (880Hz)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
-    osc2.type = 'sine';
+    osc2.type = "sine";
     osc2.frequency.setValueAtTime(880, now + 0.1);
     gain2.gain.setValueAtTime(0.15, now + 0.1);
     gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
@@ -120,32 +124,33 @@ export async function sendWebNotification(
     icon?: string;
     tag?: string;
     onClick?: () => void;
-  }
+  },
 ): Promise<boolean> {
   const settings = getNotificationSettings();
   if (!settings.enabled) return false;
 
   if (!isNotificationSupported()) {
-    console.warn('Web Notification API is not supported in this browser.');
+    console.warn("Web Notification API is not supported in this browser.");
     return false;
   }
 
   // Check or prompt permission
   let permission = getNotificationPermission();
-  if (permission === 'default') {
+  if (permission === "default") {
     permission = await requestNotificationPermission();
   }
 
-  if (permission !== 'granted') {
+  if (permission !== "granted") {
     return false;
   }
 
   try {
     playNotificationChime();
 
-    const fallbackIcon = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=256&q=80';
+    const fallbackIcon =
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=256&q=80";
     const notification = new Notification(title, {
-      body: options?.body || 'Event alert from EventSync.',
+      body: options?.body || "Event alert from EventSync.",
       icon: options?.icon || fallbackIcon,
       badge: options?.icon || fallbackIcon,
       tag: options?.tag || `eventsync-${Date.now()}`,
@@ -162,13 +167,16 @@ export async function sendWebNotification(
 
     return true;
   } catch (error) {
-    console.warn('Failed to construct Web Notification:', error);
+    console.warn("Failed to construct Web Notification:", error);
     return false;
   }
 }
 
 // Alert user when a new ticket is booked
-export async function notifyBookingConfirmed(booking: Booking, onClick?: () => void): Promise<boolean> {
+export async function notifyBookingConfirmed(
+  booking: Booking,
+  onClick?: () => void,
+): Promise<boolean> {
   const settings = getNotificationSettings();
   if (!settings.bookingConfirmation) return false;
 
@@ -186,8 +194,8 @@ export async function notifyBookingConfirmed(booking: Booking, onClick?: () => v
 // Alert user about an upcoming booked event
 export async function notifyUpcomingEvent(
   booking: Booking,
-  timeContext: string = 'Starting Soon',
-  onClick?: () => void
+  timeContext: string = "Starting Soon",
+  onClick?: () => void,
 ): Promise<boolean> {
   const title = `🔔 Event Alert (${timeContext}): ${booking.eventTitle}`;
   const body = `Your booked event starts on ${booking.eventDate} at ${booking.eventTime}! Venue: ${booking.venue}, ${booking.city}. Don't forget your digital entry pass.`;
@@ -195,19 +203,20 @@ export async function notifyUpcomingEvent(
   return sendWebNotification(title, {
     body,
     icon: booking.eventImage,
-    tag: `booking-upcoming-${booking.id}-${timeContext.toLowerCase().replace(/\s+/g, '-')}`,
+    tag: `booking-upcoming-${booking.id}-${timeContext.toLowerCase().replace(/\s+/g, "-")}`,
     onClick,
   });
 }
 
 // Send test notification
 export async function sendTestNotification(onClick?: () => void): Promise<boolean> {
-  const title = '🔔 EventSync Browser Push Notifications Active!';
-  const body = 'Web Notification API is enabled. You will receive live alerts for all upcoming events you have booked!';
+  const title = "🔔 EventSync Browser Push Notifications Active!";
+  const body =
+    "Web Notification API is enabled. You will receive live alerts for all upcoming events you have booked!";
 
   return sendWebNotification(title, {
     body,
-    tag: 'eventsync-test-notification',
+    tag: "eventsync-test-notification",
     onClick,
   });
 }
@@ -228,11 +237,11 @@ export function calculateHoursUntilEvent(eventDateStr: string): number {
 // Check all confirmed bookings and alert if upcoming
 export async function checkUpcomingBookingsAndAlert(
   bookings: Booking[],
-  onAlertSent?: (booking: Booking, message: string) => void
+  onAlertSent?: (booking: Booking, message: string) => void,
 ): Promise<number> {
   const settings = getNotificationSettings();
   if (!settings.enabled) return 0;
-  if (getNotificationPermission() !== 'granted') return 0;
+  if (getNotificationPermission() !== "granted") return 0;
 
   // Track notified bookings in this session to prevent spamming
   let notifiedAlerts: string[] = [];
@@ -244,7 +253,7 @@ export async function checkUpcomingBookingsAndAlert(
   }
 
   let alertsSent = 0;
-  const activeBookings = bookings.filter((b) => b.status === 'confirmed');
+  const activeBookings = bookings.filter((b) => b.status === "confirmed");
 
   for (const booking of activeBookings) {
     const hoursUntil = calculateHoursUntilEvent(booking.eventDate);
@@ -253,11 +262,11 @@ export async function checkUpcomingBookingsAndAlert(
     if (settings.alert1h && hoursUntil > 0 && hoursUntil <= 2) {
       const alertKey = `${booking.id}-1h`;
       if (!notifiedAlerts.includes(alertKey)) {
-        const sent = await notifyUpcomingEvent(booking, 'Starting in 1 Hour');
+        const sent = await notifyUpcomingEvent(booking, "Starting in 1 Hour");
         if (sent) {
           notifiedAlerts.push(alertKey);
           alertsSent++;
-          onAlertSent?.(booking, 'Starting in 1 Hour alert sent!');
+          onAlertSent?.(booking, "Starting in 1 Hour alert sent!");
         }
       }
     }
@@ -265,11 +274,11 @@ export async function checkUpcomingBookingsAndAlert(
     else if (settings.alert24h && hoursUntil > 0 && hoursUntil <= 36) {
       const alertKey = `${booking.id}-24h`;
       if (!notifiedAlerts.includes(alertKey)) {
-        const sent = await notifyUpcomingEvent(booking, 'Tomorrow / 24h Ahead');
+        const sent = await notifyUpcomingEvent(booking, "Tomorrow / 24h Ahead");
         if (sent) {
           notifiedAlerts.push(alertKey);
           alertsSent++;
-          onAlertSent?.(booking, '24h upcoming event reminder sent!');
+          onAlertSent?.(booking, "24h upcoming event reminder sent!");
         }
       }
     }
@@ -287,29 +296,29 @@ export async function checkUpcomingBookingsAndAlert(
 export interface UpcomingScheduleItem {
   booking: Booking;
   hoursUntil: number;
-  status: 'imminent' | 'today' | 'upcoming' | 'past';
+  status: "imminent" | "today" | "upcoming" | "past";
   label: string;
 }
 
 // Get ordered schedule of booked events with humanized countdown
 export function getUpcomingAlertSchedule(bookings: Booking[]): UpcomingScheduleItem[] {
-  const confirmed = bookings.filter((b) => b.status === 'confirmed');
+  const confirmed = bookings.filter((b) => b.status === "confirmed");
 
   return confirmed
     .map((booking) => {
       const hoursUntil = calculateHoursUntilEvent(booking.eventDate);
-      let status: 'imminent' | 'today' | 'upcoming' | 'past' = 'upcoming';
+      let status: "imminent" | "today" | "upcoming" | "past" = "upcoming";
       let label = `${Math.round(hoursUntil / 24)} days away`;
 
       if (hoursUntil < 0) {
-        status = 'past';
-        label = 'Event concluded';
+        status = "past";
+        label = "Event concluded";
       } else if (hoursUntil <= 3) {
-        status = 'imminent';
+        status = "imminent";
         label = `Starting in ${Math.max(1, Math.round(hoursUntil))} hours!`;
       } else if (hoursUntil <= 24) {
-        status = 'today';
-        label = 'Happening within 24 hours';
+        status = "today";
+        label = "Happening within 24 hours";
       }
 
       return {

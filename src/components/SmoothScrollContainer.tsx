@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
-import Lenis from 'lenis';
+import React, { createContext, useContext, useEffect, useRef } from "react";
+import Lenis from "lenis";
+
+declare global {
+  interface Window {
+    __LENIS__: Lenis | undefined;
+  }
+}
 
 interface SmoothScrollContextType {
   lenis: Lenis | null;
@@ -20,7 +26,7 @@ interface SmoothScrollContainerProps {
 
 export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
   children,
-  className = '',
+  className = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lenisInstanceRef = useRef<Lenis | null>(null);
@@ -30,17 +36,17 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
     const lenis = new Lenis({
       duration: 1.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential ease-out
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
+      orientation: "vertical",
+      gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 0.95,
       touchMultiplier: 1.5,
       infinite: false,
       prevent: (node: HTMLElement) => {
         return (
-          node.hasAttribute?.('data-lenis-prevent') ||
-          Boolean(node.closest?.('[data-lenis-prevent]')) ||
-          Boolean(node.closest?.('.fixed')) ||
+          node.hasAttribute?.("data-lenis-prevent") ||
+          Boolean(node.closest?.("[data-lenis-prevent]")) ||
+          Boolean(node.closest?.(".fixed")) ||
           Boolean(node.closest?.('[role="dialog"]'))
         );
       },
@@ -49,7 +55,7 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
     lenisInstanceRef.current = lenis;
 
     // Connect to global window for accessibility
-    (window as any).__LENIS__ = lenis;
+    window.__LENIS__ = lenis;
 
     // Animation frame loop
     let rafId: number;
@@ -67,8 +73,8 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
       const link = target.closest('a[href^="#"], [data-lenis-scroll-to]') as HTMLElement | null;
       if (!link) return;
 
-      const href = link.getAttribute('href') || link.getAttribute('data-lenis-scroll-to');
-      if (href && href.startsWith('#') && href.length > 1) {
+      const href = link.getAttribute("href") || link.getAttribute("data-lenis-scroll-to");
+      if (href && href.startsWith("#") && href.length > 1) {
         const dest = document.querySelector(href);
         if (dest) {
           e.preventDefault();
@@ -81,24 +87,24 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
       }
     };
 
-    document.addEventListener('click', handleGlobalAnchorClick, { capture: true });
+    document.addEventListener("click", handleGlobalAnchorClick, { capture: true });
 
     return () => {
-      document.removeEventListener('click', handleGlobalAnchorClick, { capture: true });
+      document.removeEventListener("click", handleGlobalAnchorClick, { capture: true });
       cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisInstanceRef.current = null;
-      delete (window as any).__LENIS__;
+      window.__LENIS__ = undefined;
     };
   }, []);
 
   const scrollTo = (target: string | HTMLElement, offset: number = -85) => {
     if (!lenisInstanceRef.current) {
-      if (typeof target === 'string') {
+      if (typeof target === "string") {
         const el = document.querySelector(target);
-        el?.scrollIntoView({ behavior: 'smooth' });
+        el?.scrollIntoView({ behavior: "smooth" });
       } else {
-        target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({ behavior: "smooth" });
       }
       return;
     }

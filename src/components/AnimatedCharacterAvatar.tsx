@@ -1,33 +1,33 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React from "react";
+import { motion } from "motion/react";
 
-export type AvatarGender = 'boy' | 'girl' | 'male' | 'female';
+export type AvatarGender = "boy" | "girl" | "male" | "female";
 
 interface AnimatedCharacterAvatarProps {
   gender?: AvatarGender;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
   showOnlineBadge?: boolean;
   interactive?: boolean;
 }
 
 const SIZE_MAP = {
-  xs: 'h-7 w-7',
-  sm: 'h-9 w-9',
-  md: 'h-12 w-12',
-  lg: 'h-16 w-16',
-  xl: 'h-24 w-24',
-  '2xl': 'h-32 w-32',
+  xs: "h-7 w-7",
+  sm: "h-9 w-9",
+  md: "h-12 w-12",
+  lg: "h-16 w-16",
+  xl: "h-24 w-24",
+  "2xl": "h-32 w-32",
 };
 
 export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = ({
-  gender = 'boy',
-  size = 'md',
-  className = '',
+  gender = "boy",
+  size = "md",
+  className = "",
   showOnlineBadge = false,
   interactive = false,
 }) => {
-  const isGirl = gender === 'girl' || gender === 'female';
+  const isGirl = gender === "girl" || gender === "female";
   const sizeClasses = SIZE_MAP[size] || SIZE_MAP.md;
 
   return (
@@ -40,8 +40,8 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
       <div
         className={`absolute inset-0 bg-gradient-to-br transition-colors duration-500 ${
           isGirl
-            ? 'from-rose-500/25 via-purple-500/20 to-amber-500/20'
-            : 'from-amber-500/25 via-yellow-500/20 to-emerald-500/20'
+            ? "from-rose-500/25 via-purple-500/20 to-amber-500/20"
+            : "from-amber-500/25 via-yellow-500/20 to-emerald-500/20"
         }`}
       />
 
@@ -55,16 +55,37 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
         >
           <defs>
             {/* Gradients */}
-            <linearGradient id="girl-hair" x1="20" y1="10" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="girl-hair"
+              x1="20"
+              y1="10"
+              x2="100"
+              y2="100"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#7c2d12" />
               <stop offset="50%" stopColor="#b45309" />
               <stop offset="100%" stopColor="#f59e0b" />
             </linearGradient>
-            <linearGradient id="girl-skin" x1="40" y1="30" x2="80" y2="85" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="girl-skin"
+              x1="40"
+              y1="30"
+              x2="80"
+              y2="85"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#fed7aa" />
               <stop offset="100%" stopColor="#fdba74" />
             </linearGradient>
-            <linearGradient id="girl-jacket" x1="30" y1="80" x2="90" y2="120" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="girl-jacket"
+              x1="30"
+              y1="80"
+              x2="90"
+              y2="120"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#db2777" />
               <stop offset="100%" stopColor="#9333ea" />
             </linearGradient>
@@ -73,7 +94,7 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
           {/* Floating character wrapper */}
           <motion.g
             animate={{ y: [0, -2, 0] }}
-            transition={{ repeat: Infinity, duration: 3.2, ease: 'easeInOut' }}
+            transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
           >
             {/* Back Hair */}
             <path
@@ -98,13 +119,7 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
             <path d="M50 82 Q60 95 70 82" stroke="#ffffff" strokeWidth="2.5" fill="none" />
 
             {/* Face Shape */}
-            <motion.ellipse
-              cx="60"
-              cy="54"
-              rx="24"
-              ry="26"
-              fill="url(#girl-skin)"
-            />
+            <motion.ellipse cx="60" cy="54" rx="24" ry="26" fill="url(#girl-skin)" />
 
             {/* Rosy Cheeks */}
             <circle cx="45" cy="62" r="4.5" fill="#f43f5e" opacity="0.35" />
@@ -117,9 +132,9 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
                 repeat: Infinity,
                 duration: 4.5,
                 times: [0, 0.9, 0.94, 1],
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
-              style={{ originX: '60px', originY: '52px' }}
+              style={{ originX: "60px", originY: "52px" }}
             >
               {/* Left Eye */}
               <ellipse cx="48" cy="52" rx="4" ry="5.5" fill="#1e1b4b" />
@@ -133,8 +148,18 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
             </motion.g>
 
             {/* Eyebrows */}
-            <path d="M43 45 Q48 42 53 44" stroke="#78350f" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M67 44 Q72 42 77 45" stroke="#78350f" strokeWidth="1.8" strokeLinecap="round" />
+            <path
+              d="M43 45 Q48 42 53 44"
+              stroke="#78350f"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+            <path
+              d="M67 44 Q72 42 77 45"
+              stroke="#78350f"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
 
             {/* Cute Smile */}
             <path
@@ -151,20 +176,14 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
               fill="url(#girl-hair)"
             />
             {/* Side strands */}
-            <path
-              d="M34 44 C34 55 37 68 40 72 C37 64 36 52 38 44 Z"
-              fill="url(#girl-hair)"
-            />
-            <path
-              d="M86 44 C86 55 83 68 80 72 C83 64 84 52 82 44 Z"
-              fill="url(#girl-hair)"
-            />
+            <path d="M34 44 C34 55 37 68 40 72 C37 64 36 52 38 44 Z" fill="url(#girl-hair)" />
+            <path d="M86 44 C86 55 83 68 80 72 C83 64 84 52 82 44 Z" fill="url(#girl-hair)" />
 
             {/* Golden Hair Star/Clip Accessory */}
             <motion.g
               animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.12, 1] }}
-              transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-              style={{ originX: '78px', originY: '34px' }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              style={{ originX: "78px", originY: "34px" }}
             >
               <circle cx="78" cy="34" r="5" fill="#fbbf24" />
               <circle cx="78" cy="34" r="2" fill="#fffbeb" />
@@ -180,16 +199,37 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
           className="relative z-10 h-full w-full object-contain drop-shadow-md"
         >
           <defs>
-            <linearGradient id="boy-hair" x1="30" y1="12" x2="90" y2="50" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="boy-hair"
+              x1="30"
+              y1="12"
+              x2="90"
+              y2="50"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#1e293b" />
               <stop offset="50%" stopColor="#334155" />
               <stop offset="100%" stopColor="#0f172a" />
             </linearGradient>
-            <linearGradient id="boy-skin" x1="40" y1="30" x2="80" y2="85" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="boy-skin"
+              x1="40"
+              y1="30"
+              x2="80"
+              y2="85"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#fed7aa" />
               <stop offset="100%" stopColor="#fdba74" />
             </linearGradient>
-            <linearGradient id="boy-hoodie" x1="30" y1="80" x2="90" y2="120" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="boy-hoodie"
+              x1="30"
+              y1="80"
+              x2="90"
+              y2="120"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#f59e0b" />
               <stop offset="60%" stopColor="#d97706" />
               <stop offset="100%" stopColor="#b45309" />
@@ -199,7 +239,7 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
           {/* Floating Character motion */}
           <motion.g
             animate={{ y: [0, -2, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           >
             {/* Neck & Shoulders */}
             <path d="M53 68 L67 68 L70 85 L50 85 Z" fill="url(#boy-skin)" />
@@ -213,13 +253,7 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
             <path d="M66 84 L67 100" stroke="#fef3c7" strokeWidth="2" strokeLinecap="round" />
 
             {/* Face Shape */}
-            <motion.ellipse
-              cx="60"
-              cy="53"
-              rx="24"
-              ry="25"
-              fill="url(#boy-skin)"
-            />
+            <motion.ellipse cx="60" cy="53" rx="24" ry="25" fill="url(#boy-skin)" />
 
             {/* Subtle Blush */}
             <circle cx="44" cy="61" r="4" fill="#f97316" opacity="0.25" />
@@ -232,9 +266,9 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
                 repeat: Infinity,
                 duration: 4.2,
                 times: [0, 0.9, 0.94, 1],
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
-              style={{ originX: '60px', originY: '52px' }}
+              style={{ originX: "60px", originY: "52px" }}
             >
               {/* Left Eye */}
               <ellipse cx="48" cy="52" rx="4" ry="5" fill="#0f172a" />
@@ -246,8 +280,18 @@ export const AnimatedCharacterAvatar: React.FC<AnimatedCharacterAvatarProps> = (
             </motion.g>
 
             {/* Bold Eyebrows */}
-            <path d="M42 44 Q48 41 54 44" stroke="#0f172a" strokeWidth="2.4" strokeLinecap="round" />
-            <path d="M66 44 Q72 41 78 44" stroke="#0f172a" strokeWidth="2.4" strokeLinecap="round" />
+            <path
+              d="M42 44 Q48 41 54 44"
+              stroke="#0f172a"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M66 44 Q72 41 78 44"
+              stroke="#0f172a"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
 
             {/* Confident Smile */}
             <path

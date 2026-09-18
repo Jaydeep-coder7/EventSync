@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useState } from "react";
+import { motion } from "motion/react";
 import {
   X,
   User,
@@ -16,9 +16,9 @@ import {
   Heart,
   Save,
   ShieldCheck,
-} from 'lucide-react';
-import { UserProfile } from '../types';
-import { AnimatedCharacterAvatar } from './AnimatedCharacterAvatar';
+} from "lucide-react";
+import { UserProfile } from "../types";
+import { AnimatedCharacterAvatar } from "./AnimatedCharacterAvatar";
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -28,13 +28,17 @@ interface UserProfileModalProps {
   onExit: () => void;
   bookingCount: number;
   favoriteCount: number;
-  currentTheme: 'dark' | 'light';
-  onToggleTheme: (theme: 'dark' | 'light') => void;
+  currentTheme: "dark" | "light";
+  onToggleTheme: (theme: "dark" | "light") => void;
   onShareApp: () => void;
 }
 
-export const UserProfileModal: React.FC<UserProfileModalProps> = ({
-  isOpen,
+export const UserProfileModal: React.FC<UserProfileModalProps> = (props) => {
+  if (!props.isOpen || !props.user) return null;
+  return <UserProfileModalContent {...props} user={props.user} />;
+};
+
+const UserProfileModalContent: React.FC<UserProfileModalProps & { user: UserProfile }> = ({
   user,
   onClose,
   onUpdateProfile,
@@ -45,25 +49,23 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onToggleTheme,
   onShareApp,
 }) => {
-  if (!isOpen || !user) return null;
-
   const [name, setName] = useState(user.name);
   const [username, setUsername] = useState(
-    user.username || user.email.split('@')[0] || 'jaydeep137'
+    user.username || user.email.split("@")[0] || "jaydeep137",
   );
   const [email, setEmail] = useState(user.email);
-  const [phone, setPhone] = useState(user.phone || '+91 98765 43210');
+  const [phone, setPhone] = useState(user.phone || "+91 98765 43210");
 
   // Gender-aware avatar system: checks user.gender, or defaults to 'boy'
-  const [selectedGender, setSelectedGender] = useState<'boy' | 'girl'>(() => {
-    if (user.gender === 'girl' || user.gender === 'female') return 'girl';
-    return 'boy';
+  const [selectedGender, setSelectedGender] = useState<"boy" | "girl">(() => {
+    if (user.gender === "girl" || user.gender === "female") return "girl";
+    return "boy";
   });
 
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const handleGenderSwitch = (gender: 'boy' | 'girl') => {
+  const handleGenderSwitch = (gender: "boy" | "girl") => {
     setSelectedGender(gender);
   };
 
@@ -72,11 +74,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     const updated: UserProfile = {
       ...user,
       name: name.trim(),
-      username: username.trim().replace(/^@/, ''),
+      username: username.trim().replace(/^@/, ""),
       email: email.trim(),
       phone: phone.trim(),
       gender: selectedGender,
-      avatar: selectedGender === 'girl' ? 'girl-animated-svg' : 'boy-animated-svg',
+      avatar: selectedGender === "girl" ? "girl-animated-svg" : "boy-animated-svg",
       themePreference: currentTheme,
     };
     onUpdateProfile(updated);
@@ -102,7 +104,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         initial={{ opacity: 0, scale: 0.94, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 15 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+        transition={{ type: "spring", stiffness: 350, damping: 28 }}
         className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-slate-900 border border-white/10 shadow-2xl transition-all my-8 text-white"
         onClick={(e) => e.stopPropagation()}
       >
@@ -161,7 +163,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <p className="text-[11px] text-slate-300 mt-1 flex items-center justify-center sm:justify-start gap-1.5">
                   <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
                   <span>
-                    Active Avatar: <strong className="text-amber-300 capitalize">{selectedGender} Animated Character</strong>
+                    Active Avatar:{" "}
+                    <strong className="text-amber-300 capitalize">
+                      {selectedGender} Animated Character
+                    </strong>
                   </span>
                 </p>
               </div>
@@ -170,9 +175,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             {/* Gender Switcher (Auto-updates animated character illustration) */}
             <div className="pt-3 border-t border-white/10">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-slate-200">
-                  Profile Gender Identity:
-                </span>
+                <span className="text-xs font-bold text-slate-200">Profile Gender Identity:</span>
                 <span className="text-[10px] text-slate-400">
                   Select to update character animation
                 </span>
@@ -181,31 +184,35 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <button
                   type="button"
                   id="avatar-boy-btn"
-                  onClick={() => handleGenderSwitch('boy')}
+                  onClick={() => handleGenderSwitch("boy")}
                   className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-bold transition-all cursor-pointer ${
-                    selectedGender === 'boy'
-                      ? 'border-2 border-amber-400 bg-amber-500/20 text-amber-300 ring-2 ring-amber-400/30 shadow-md shadow-amber-500/15'
-                      : 'border border-white/10 bg-white/5 text-slate-400 hover:border-white/25 hover:text-slate-200'
+                    selectedGender === "boy"
+                      ? "border-2 border-amber-400 bg-amber-500/20 text-amber-300 ring-2 ring-amber-400/30 shadow-md shadow-amber-500/15"
+                      : "border border-white/10 bg-white/5 text-slate-400 hover:border-white/25 hover:text-slate-200"
                   }`}
                 >
                   <span className="text-lg">👦</span>
                   <span>Boy / Male</span>
-                  {selectedGender === 'boy' && <Check className="h-3.5 w-3.5 text-amber-400 ml-1" />}
+                  {selectedGender === "boy" && (
+                    <Check className="h-3.5 w-3.5 text-amber-400 ml-1" />
+                  )}
                 </button>
 
                 <button
                   type="button"
                   id="avatar-girl-btn"
-                  onClick={() => handleGenderSwitch('girl')}
+                  onClick={() => handleGenderSwitch("girl")}
                   className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-bold transition-all cursor-pointer ${
-                    selectedGender === 'girl'
-                      ? 'border-2 border-amber-400 bg-amber-500/20 text-amber-300 ring-2 ring-amber-400/30 shadow-md shadow-amber-500/15'
-                      : 'border border-white/10 bg-white/5 text-slate-400 hover:border-white/25 hover:text-slate-200'
+                    selectedGender === "girl"
+                      ? "border-2 border-amber-400 bg-amber-500/20 text-amber-300 ring-2 ring-amber-400/30 shadow-md shadow-amber-500/15"
+                      : "border border-white/10 bg-white/5 text-slate-400 hover:border-white/25 hover:text-slate-200"
                   }`}
                 >
                   <span className="text-lg">👧</span>
                   <span>Girl / Female</span>
-                  {selectedGender === 'girl' && <Check className="h-3.5 w-3.5 text-amber-400 ml-1" />}
+                  {selectedGender === "girl" && (
+                    <Check className="h-3.5 w-3.5 text-amber-400 ml-1" />
+                  )}
                 </button>
               </div>
             </div>
@@ -246,9 +253,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs font-bold text-white block">
-                  Website Theme
-                </label>
+                <label className="text-xs font-bold text-white block">Website Theme</label>
                 <span className="text-[11px] text-slate-400">
                   Switch between Dark Obsidian and Crisp Light aesthetic
                 </span>
@@ -259,11 +264,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               <button
                 type="button"
                 id="profile-theme-dark-btn"
-                onClick={() => onToggleTheme('dark')}
+                onClick={() => onToggleTheme("dark")}
                 className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-bold transition-all cursor-pointer ${
-                  currentTheme === 'dark'
-                    ? 'border border-amber-400 bg-amber-500/15 text-amber-300 ring-1 ring-amber-400/30'
-                    : 'border border-white/10 bg-white/5 text-slate-400 hover:border-white/20'
+                  currentTheme === "dark"
+                    ? "border border-amber-400 bg-amber-500/15 text-amber-300 ring-1 ring-amber-400/30"
+                    : "border border-white/10 bg-white/5 text-slate-400 hover:border-white/20"
                 }`}
               >
                 <Moon className="h-4 w-4 text-amber-400" />
@@ -273,11 +278,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               <button
                 type="button"
                 id="profile-theme-light-btn"
-                onClick={() => onToggleTheme('light')}
+                onClick={() => onToggleTheme("light")}
                 className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-bold transition-all cursor-pointer ${
-                  currentTheme === 'light'
-                    ? 'border border-amber-400 bg-amber-500/15 text-amber-300 ring-1 ring-amber-400/30'
-                    : 'border border-white/10 bg-white/5 text-slate-400 hover:border-white/20'
+                  currentTheme === "light"
+                    ? "border border-amber-400 bg-amber-500/15 text-amber-300 ring-1 ring-amber-400/30"
+                    : "border border-white/10 bg-white/5 text-slate-400 hover:border-white/20"
                 }`}
               >
                 <Sun className="h-4 w-4 text-amber-400" />
@@ -301,7 +306,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <input
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value.replace(/\s+/g, ''))}
+                  onChange={(e) => setUsername(e.target.value.replace(/\s+/g, ""))}
                   placeholder="username"
                   className="w-full rounded-xl border border-white/10 bg-white/5 pl-8 pr-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400 font-mono"
                   required

@@ -1,14 +1,7 @@
-import React, { useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import {
-  Check,
-  Sparkles,
-  Info,
-  RotateCcw,
-  Users,
-  ShieldCheck,
-} from 'lucide-react';
-import { TicketTier } from '../types';
+import React, { useMemo } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, Sparkles, Info, RotateCcw, Users, ShieldCheck } from "lucide-react";
+import { TicketTier } from "../types";
 
 export interface SeatInfo {
   id: string; // e.g. "A-3"
@@ -36,11 +29,11 @@ interface SeatMapVisualizerProps {
 }
 
 const ROWS = [
-  { row: 'A', name: 'Row A (VIP / Front Row)', isVip: true, seatsCount: 8 },
-  { row: 'B', name: 'Row B (Premium Central)', isVip: false, isPremium: true, seatsCount: 8 },
-  { row: 'C', name: 'Row C (Executive)', isVip: false, seatsCount: 8 },
-  { row: 'D', name: 'Row D (Standard)', isVip: false, seatsCount: 8 },
-  { row: 'E', name: 'Row E (Balcony / Terrace)', isVip: false, seatsCount: 8 },
+  { row: "A", name: "Row A (VIP / Front Row)", isVip: true, seatsCount: 8 },
+  { row: "B", name: "Row B (Premium Central)", isVip: false, isPremium: true, seatsCount: 8 },
+  { row: "C", name: "Row C (Executive)", isVip: false, seatsCount: 8 },
+  { row: "D", name: "Row D (Standard)", isVip: false, seatsCount: 8 },
+  { row: "E", name: "Row E (Balcony / Terrace)", isVip: false, seatsCount: 8 },
 ];
 
 export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
@@ -79,10 +72,15 @@ export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
         const label = `${r.row}${sNum}`;
 
         // Deterministic pseudo-random booking ratio based on bookedSeats/totalSeats
-        const bookingProbability = Math.min(0.65, Math.max(0.2, bookedSeats / Math.max(1, totalSeats)));
+        const bookingProbability = Math.min(
+          0.65,
+          Math.max(0.2, bookedSeats / Math.max(1, totalSeats)),
+        );
         const seatHash = Math.abs(Math.sin(hash + rIdx * 17 + sNum * 23));
         // Reserve some seats to look natural
-        const isBooked = seatHash < bookingProbability && !(r.row === 'A' && (sNum === 3 || sNum === 4 || sNum === 5));
+        const isBooked =
+          seatHash < bookingProbability &&
+          !(r.row === "A" && (sNum === 3 || sNum === 4 || sNum === 5));
 
         seats.push({
           id,
@@ -90,7 +88,7 @@ export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
           row: r.row,
           number: sNum,
           tierId: currentTier.id,
-          tierName: r.isVip ? 'VIP Front Row' : r.isPremium ? 'Premium Tier' : 'Standard Tier',
+          tierName: r.isVip ? "VIP Front Row" : r.isPremium ? "Premium Tier" : "Standard Tier",
           isVip: r.isVip,
           price: r.isVip ? Math.round(currentTier.price * 1.3) : currentTier.price,
           isBooked,
@@ -194,8 +192,8 @@ export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
                 <span
                   className={`inline-block rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${
                     rowItem.isVip
-                      ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
-                      : 'bg-white/5 text-slate-400'
+                      ? "bg-amber-400/20 text-amber-300 border border-amber-400/40"
+                      : "bg-white/5 text-slate-400"
                   }`}
                 >
                   {rowItem.row}
@@ -249,8 +247,8 @@ export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
                 <span
                   className={`inline-block rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${
                     rowItem.isVip
-                      ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
-                      : 'bg-white/5 text-slate-400'
+                      ? "bg-amber-400/20 text-amber-300 border border-amber-400/40"
+                      : "bg-white/5 text-slate-400"
                   }`}
                 >
                   {rowItem.row}
@@ -298,7 +296,7 @@ export const SeatMapVisualizer: React.FC<SeatMapVisualizerProps> = ({
               <div className="flex flex-wrap gap-1.5 mt-1">
                 <AnimatePresence>
                   {selectedSeats.map((sId) => {
-                    const cleanLabel = sId.replace('-', '');
+                    const cleanLabel = sId.replace("-", "");
                     return (
                       <motion.span
                         key={sId}
@@ -363,12 +361,7 @@ interface SeatButtonProps {
   disabled: boolean;
 }
 
-const SeatButton: React.FC<SeatButtonProps> = ({
-  seat,
-  isSelected,
-  onToggle,
-  disabled,
-}) => {
+const SeatButton: React.FC<SeatButtonProps> = ({ seat, isSelected, onToggle, disabled }) => {
   return (
     <motion.button
       whileHover={!disabled ? { scale: 1.15, y: -2 } : {}}
@@ -380,28 +373,28 @@ const SeatButton: React.FC<SeatButtonProps> = ({
       title={
         disabled
           ? `Seat ${seat.label} is already reserved`
-          : `Select Seat ${seat.label} (${seat.isVip ? 'VIP' : 'Standard'})`
+          : `Select Seat ${seat.label} (${seat.isVip ? "VIP" : "Standard"})`
       }
       className={`relative flex flex-col items-center justify-center rounded-lg transition-all duration-150 select-none cursor-pointer ${
         disabled
-          ? 'h-8 w-7 sm:h-9 sm:w-8 bg-slate-900/60 border border-white/5 text-slate-600 cursor-not-allowed opacity-50'
+          ? "h-8 w-7 sm:h-9 sm:w-8 bg-slate-900/60 border border-white/5 text-slate-600 cursor-not-allowed opacity-50"
           : isSelected
-          ? 'h-8 w-7 sm:h-9 sm:w-8 bg-gradient-to-b from-amber-400 to-yellow-500 border border-amber-300 text-slate-950 font-bold shadow-[0_0_12px_rgba(245,158,11,0.6)] z-10'
-          : seat.isVip
-          ? 'h-8 w-7 sm:h-9 sm:w-8 bg-amber-500/10 border border-amber-400/40 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400'
-          : 'h-8 w-7 sm:h-9 sm:w-8 bg-white/5 border border-white/15 text-slate-300 hover:bg-white/15 hover:border-white/30'
+            ? "h-8 w-7 sm:h-9 sm:w-8 bg-gradient-to-b from-amber-400 to-yellow-500 border border-amber-300 text-slate-950 font-bold shadow-[0_0_12px_rgba(245,158,11,0.6)] z-10"
+            : seat.isVip
+              ? "h-8 w-7 sm:h-9 sm:w-8 bg-amber-500/10 border border-amber-400/40 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400"
+              : "h-8 w-7 sm:h-9 sm:w-8 bg-white/5 border border-white/15 text-slate-300 hover:bg-white/15 hover:border-white/30"
       }`}
     >
       {/* Top Headrest cushion outline */}
       <span
         className={`absolute -top-1 h-1.5 w-4 sm:w-5 rounded-t-sm ${
           disabled
-            ? 'bg-slate-800'
+            ? "bg-slate-800"
             : isSelected
-            ? 'bg-amber-200'
-            : seat.isVip
-            ? 'bg-amber-400/60'
-            : 'bg-white/20'
+              ? "bg-amber-200"
+              : seat.isVip
+                ? "bg-amber-400/60"
+                : "bg-white/20"
         }`}
       />
 
@@ -411,9 +404,7 @@ const SeatButton: React.FC<SeatButtonProps> = ({
       ) : isSelected ? (
         <Check className="h-3.5 w-3.5 stroke-[3]" />
       ) : (
-        <span className="text-[10px] font-mono font-bold leading-none">
-          {seat.number}
-        </span>
+        <span className="text-[10px] font-mono font-bold leading-none">{seat.number}</span>
       )}
     </motion.button>
   );

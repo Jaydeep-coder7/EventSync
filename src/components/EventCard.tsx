@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, type Variants } from 'motion/react';
+import React from "react";
+import { motion, type Variants } from "motion/react";
 import {
   Calendar,
   MapPin,
@@ -10,8 +10,8 @@ import {
   Users,
   AlertTriangle,
   Ban,
-} from 'lucide-react';
-import { EventItem } from '../types';
+} from "lucide-react";
+import { EventItem } from "../types";
 
 interface EventCardProps {
   event: EventItem;
@@ -22,12 +22,27 @@ interface EventCardProps {
 }
 
 const CATEGORY_COLORS: Record<string, { badge: string; border: string }> = {
-  Music: { badge: 'bg-rose-500/20 text-rose-300 border-rose-500/30', border: 'border-rose-500/20' },
-  Technology: { badge: 'bg-blue-500/20 text-blue-300 border-blue-500/30', border: 'border-blue-500/20' },
-  'Food & Drink': { badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30', border: 'border-amber-500/20' },
-  'Arts & Theatre': { badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30', border: 'border-purple-500/20' },
-  'Sports & Fitness': { badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', border: 'border-emerald-500/20' },
-  'Business & Networking': { badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30', border: 'border-indigo-500/20' },
+  Music: { badge: "bg-rose-500/20 text-rose-300 border-rose-500/30", border: "border-rose-500/20" },
+  Technology: {
+    badge: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    border: "border-blue-500/20",
+  },
+  "Food & Drink": {
+    badge: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    border: "border-amber-500/20",
+  },
+  "Arts & Theatre": {
+    badge: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    border: "border-purple-500/20",
+  },
+  "Sports & Fitness": {
+    badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    border: "border-emerald-500/20",
+  },
+  "Business & Networking": {
+    badge: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+    border: "border-indigo-500/20",
+  },
 };
 
 // Movie-like Cinematic Staggered Entrance Variants
@@ -47,15 +62,15 @@ export const cardItemVariants: Variants = {
     opacity: 0,
     y: 40,
     scale: 0.94,
-    filter: 'blur(5px)',
+    filter: "blur(5px)",
   },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: 'blur(0px)',
+    filter: "blur(0px)",
     transition: {
-      type: 'spring',
+      type: "spring",
       stiffness: 240,
       damping: 22,
       mass: 0.75,
@@ -71,20 +86,20 @@ export const EventCard: React.FC<EventCardProps> = ({
   onToggleFavorite,
 }) => {
   const categoryStyle = CATEGORY_COLORS[event.category] || {
-    badge: 'bg-white/10 text-slate-300 border-white/20',
-    border: 'border-white/10',
+    badge: "bg-white/10 text-slate-300 border-white/20",
+    border: "border-white/10",
   };
 
   const percentageBooked = Math.round((event.bookedSeats / event.totalSeats) * 100);
   const seatsRemaining = Math.max(0, event.totalSeats - event.bookedSeats);
 
-  const dateParts = event.displayDate.split(',');
+  const dateParts = event.displayDate.split(",");
   const monthDay = dateParts.length > 1 ? dateParts[1].trim() : event.displayDate;
 
   return (
     <motion.div
       variants={cardItemVariants}
-      whileHover={{ y: -8, scale: 1.015, transition: { duration: 0.25, ease: 'easeOut' } }}
+      whileHover={{ y: -8, scale: 1.015, transition: { duration: 0.25, ease: "easeOut" } }}
       id={`event-card-${event.id}`}
       onClick={() => onViewDetails(event)}
       className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-lg shadow-black/40 transition-colors duration-300 hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer"
@@ -132,12 +147,12 @@ export const EventCard: React.FC<EventCardProps> = ({
               }}
               className={`flex h-8 w-8 items-center justify-center rounded-xl backdrop-blur-md transition-all cursor-pointer shrink-0 ${
                 isFavorite
-                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-sm'
-                  : 'bg-black/40 text-slate-300 border border-white/10 hover:bg-black/60 hover:text-white'
+                  ? "bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-sm"
+                  : "bg-black/40 text-slate-300 border border-white/10 hover:bg-black/60 hover:text-white"
               }`}
-              title={isFavorite ? 'Remove from favorites' : 'Save event'}
+              title={isFavorite ? "Remove from favorites" : "Save event"}
             >
-              <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current text-rose-500' : ''}`} />
+              <Heart className={`h-4 w-4 ${isFavorite ? "fill-current text-rose-500" : ""}`} />
             </motion.button>
           )}
         </div>
@@ -173,7 +188,8 @@ export const EventCard: React.FC<EventCardProps> = ({
               <div className="min-w-0 flex-1">
                 <span className="font-bold block text-rose-200">Event Officially Cancelled</span>
                 <span className="text-[11px] text-rose-300/80 leading-tight block mt-0.5 break-words">
-                  {event.cancellationReason || 'Event cancelled by festival organizers. 100% full refund guarantee.'}
+                  {event.cancellationReason ||
+                    "Event cancelled by festival organizers. 100% full refund guarantee."}
                 </span>
               </div>
             </div>
@@ -182,7 +198,9 @@ export const EventCard: React.FC<EventCardProps> = ({
           <div className="space-y-1.5 pt-1 text-xs text-slate-300">
             <div className="flex items-center gap-2 min-w-0">
               <MapPin className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-              <span className="truncate break-words">{event.venue}, {event.city}</span>
+              <span className="truncate break-words">
+                {event.venue}, {event.city}
+              </span>
             </div>
             <div className="flex items-center gap-2 text-slate-400 text-[11px] min-w-0">
               <Clock className="h-3.5 w-3.5 text-slate-500 shrink-0" />
@@ -198,13 +216,15 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Users className="h-3 w-3 text-amber-400 shrink-0" />
               <span className="truncate">{seatsRemaining} seats left</span>
             </span>
-            <span className="font-semibold text-amber-400 shrink-0">{percentageBooked}% booked</span>
+            <span className="font-semibold text-amber-400 shrink-0">
+              {percentageBooked}% booked
+            </span>
           </div>
 
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                percentageBooked > 85 ? 'bg-amber-500' : 'bg-emerald-400'
+                percentageBooked > 85 ? "bg-amber-500" : "bg-emerald-400"
               }`}
               style={{ width: `${Math.min(percentageBooked, 100)}%` }}
             />
@@ -214,14 +234,16 @@ export const EventCard: React.FC<EventCardProps> = ({
         {/* Price & Action Buttons */}
         <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/10">
           <div className="min-w-0">
-            <span className="text-[10px] text-slate-400 block uppercase font-medium">Starting from</span>
+            <span className="text-[10px] text-slate-400 block uppercase font-medium">
+              Starting from
+            </span>
             <div className="flex items-baseline gap-1 flex-wrap">
               <span className="font-display text-base sm:text-lg font-black text-white">
-                {event.price === 0 ? 'FREE' : `₹${event.price.toLocaleString('en-IN')}`}
+                {event.price === 0 ? "FREE" : `₹${event.price.toLocaleString("en-IN")}`}
               </span>
               {event.originalPrice && event.originalPrice > event.price && (
                 <span className="text-[11px] text-slate-500 line-through">
-                  ₹{event.originalPrice.toLocaleString('en-IN')}
+                  ₹{event.originalPrice.toLocaleString("en-IN")}
                 </span>
               )}
             </div>

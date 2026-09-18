@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   X,
   BookOpen,
@@ -11,17 +11,14 @@ import {
   Copy,
   Check,
   Award,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface DocumentationModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const DocumentationModal: React.FC<DocumentationModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const DocumentationModal: React.FC<DocumentationModalProps> = ({ isOpen, onClose }) => {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
@@ -82,10 +79,10 @@ Built for Infobharat Interns Web Development Task.
               <span>Project Summary & Objectives</span>
             </h3>
             <p className="text-slate-600">
-              <strong>EventSync</strong> is an interactive, responsive web application designed for users
-              to discover, search, inspect, and book tickets for live events. Built with clean semantic
-              HTML5, modern CSS3 (Tailwind utility system), ES6+ TypeScript, DOM manipulation, and dynamic
-              Fetch API integration with LocalStorage persistence.
+              <strong>EventSync</strong> is an interactive, responsive web application designed for
+              users to discover, search, inspect, and book tickets for live events. Built with clean
+              semantic HTML5, modern CSS3 (Tailwind utility system), ES6+ TypeScript, DOM
+              manipulation, and dynamic Fetch API integration with LocalStorage persistence.
             </p>
           </div>
 
@@ -101,7 +98,8 @@ Built for Infobharat Interns Web Development Task.
                   <span>🏠 Home Page</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Logo, search banner by keyword/category, dynamically loaded featured events, and explore/book CTAs.
+                  Logo, search banner by keyword/category, dynamically loaded featured events, and
+                  explore/book CTAs.
                 </p>
               </div>
 
@@ -111,7 +109,8 @@ Built for Infobharat Interns Web Development Task.
                   <span>🎫 Events Listing</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Card grid with image, date, venue, category, price, seat bars. Live search, category pills, date filter, price filter, and sorting.
+                  Card grid with image, date, venue, category, price, seat bars. Live search,
+                  category pills, date filter, price filter, and sorting.
                 </p>
               </div>
 
@@ -121,7 +120,8 @@ Built for Infobharat Interns Web Development Task.
                   <span>📄 Event Details</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Full descriptions, verified organizer, venue specs, interactive image gallery thumbnails, ticket tier options, and direct booking trigger.
+                  Full descriptions, verified organizer, venue specs, interactive image gallery
+                  thumbnails, ticket tier options, and direct booking trigger.
                 </p>
               </div>
 
@@ -131,7 +131,8 @@ Built for Infobharat Interns Web Development Task.
                   <span>📝 Booking Module</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Name, Email, Phone, and Ticket steppers. Strict JS validation (regex email & 10-digit phone), summary calculation, and digital QR ticket pass.
+                  Name, Email, Phone, and Ticket steppers. Strict JS validation (regex email &
+                  10-digit phone), summary calculation, and digital QR ticket pass.
                 </p>
               </div>
 
@@ -141,7 +142,8 @@ Built for Infobharat Interns Web Development Task.
                   <span>👤 My Bookings</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  LocalStorage persistence, cancel reservation with confirmation, digital pass view/print, and empty state CTA.
+                  LocalStorage persistence, cancel reservation with confirmation, digital pass
+                  view/print, and empty state CTA.
                 </p>
               </div>
 
@@ -151,7 +153,9 @@ Built for Infobharat Interns Web Development Task.
                   <span>🌐 API Integration</span>
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Dynamic loading from <code className="font-mono bg-white px-1">/data/events.json</code> via browser Fetch API with simulated latency, skeletons, and error retry state.
+                  Dynamic loading from{" "}
+                  <code className="font-mono bg-white px-1">/data/events.json</code> via browser
+                  Fetch API with simulated latency, skeletons, and error retry state.
                 </p>
               </div>
             </div>
@@ -161,9 +165,19 @@ Built for Infobharat Interns Web Development Task.
           <div className="rounded-2xl border border-slate-200 p-4 space-y-2">
             <h4 className="font-bold text-slate-900">Task Submission & Demonstration Checklist</h4>
             <ul className="list-disc pl-4 space-y-1 text-slate-600 text-[11px]">
-              <li><strong>GitHub Repository:</strong> Export files and commit complete project structure with README.md.</li>
-              <li><strong>Video Demonstration:</strong> Showcase Homepage, Events search & filters, Event Details, Booking flow with validation errors & confirmation, My Bookings cancel action, and mobile view.</li>
-              <li><strong>LinkedIn Post:</strong> Share learnings, screenshots, project highlights, tag <strong>Infobharat Interns</strong>.</li>
+              <li>
+                <strong>GitHub Repository:</strong> Export files and commit complete project
+                structure with README.md.
+              </li>
+              <li>
+                <strong>Video Demonstration:</strong> Showcase Homepage, Events search & filters,
+                Event Details, Booking flow with validation errors & confirmation, My Bookings
+                cancel action, and mobile view.
+              </li>
+              <li>
+                <strong>LinkedIn Post:</strong> Share learnings, screenshots, project highlights,
+                tag <strong>Infobharat Interns</strong>.
+              </li>
             </ul>
           </div>
         </div>
@@ -174,8 +188,12 @@ Built for Infobharat Interns Web Development Task.
             onClick={copyReadmeSnippet}
             className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
           >
-            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-            <span>{copied ? 'Copied Readme!' : 'Copy Summary'}</span>
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-emerald-600" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+            <span>{copied ? "Copied Readme!" : "Copy Summary"}</span>
           </button>
 
           <button

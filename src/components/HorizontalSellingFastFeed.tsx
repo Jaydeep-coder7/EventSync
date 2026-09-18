@@ -1,15 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
-import {
-  Flame,
-  Sparkles,
-  ArrowRight,
-  Filter,
-  Star,
-  CheckCircle2,
-} from 'lucide-react';
-import { EventItem, TicketTier } from '../types';
-import { HorizontalEventCard } from './HorizontalEventCard';
+import React, { useState, useMemo } from "react";
+import { motion } from "motion/react";
+import { Flame, Sparkles, ArrowRight, Filter, Star, CheckCircle2 } from "lucide-react";
+import { EventItem, TicketTier } from "../types";
+import { HorizontalEventCard } from "./HorizontalEventCard";
 
 interface HorizontalSellingFastFeedProps {
   events: EventItem[];
@@ -28,19 +21,21 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
   onToggleFavorite,
   onSeeAll,
 }) => {
-  const [quickFilter, setQuickFilter] = useState<'all' | 'music' | 'tech' | 'budget' | 'top'>('all');
+  const [quickFilter, setQuickFilter] = useState<"all" | "music" | "tech" | "budget" | "top">(
+    "all",
+  );
   const [displayLimit, setDisplayLimit] = useState(6);
 
   // Filter events based on quick pill
   const filteredEvents = useMemo(() => {
     let result = [...events];
-    if (quickFilter === 'music') {
-      result = result.filter((e) => e.category === 'Music');
-    } else if (quickFilter === 'tech') {
-      result = result.filter((e) => e.category === 'Technology');
-    } else if (quickFilter === 'budget') {
+    if (quickFilter === "music") {
+      result = result.filter((e) => e.category === "Music");
+    } else if (quickFilter === "tech") {
+      result = result.filter((e) => e.category === "Technology");
+    } else if (quickFilter === "budget") {
       result = result.filter((e) => e.price <= 1000);
-    } else if (quickFilter === 'top') {
+    } else if (quickFilter === "top") {
       result = result.filter((e) => e.rating >= 4.8);
     }
     return result;
@@ -70,7 +65,8 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed break-words">
-            Widescreen horizontal events stacked for smooth vertical scrolling. Instant seat confirmation with ₹0 convenience fees.
+            Widescreen horizontal events stacked for smooth vertical scrolling. Instant seat
+            confirmation with ₹0 convenience fees.
           </p>
         </div>
 
@@ -79,11 +75,11 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           <button
             type="button"
             id="feed-filter-all"
-            onClick={() => setQuickFilter('all')}
+            onClick={() => setQuickFilter("all")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-              quickFilter === 'all'
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
+              quickFilter === "all"
+                ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm"
+                : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
             All Hot Events
@@ -91,11 +87,11 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           <button
             type="button"
             id="feed-filter-music"
-            onClick={() => setQuickFilter('music')}
+            onClick={() => setQuickFilter("music")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-              quickFilter === 'music'
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
+              quickFilter === "music"
+                ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm"
+                : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
             Music
@@ -103,11 +99,11 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           <button
             type="button"
             id="feed-filter-tech"
-            onClick={() => setQuickFilter('tech')}
+            onClick={() => setQuickFilter("tech")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-              quickFilter === 'tech'
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
+              quickFilter === "tech"
+                ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm"
+                : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
             Tech & AI
@@ -115,11 +111,11 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           <button
             type="button"
             id="feed-filter-budget"
-            onClick={() => setQuickFilter('budget')}
+            onClick={() => setQuickFilter("budget")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-              quickFilter === 'budget'
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
+              quickFilter === "budget"
+                ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm"
+                : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
             ≤ ₹1,000
@@ -127,11 +123,11 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
           <button
             type="button"
             id="feed-filter-top"
-            onClick={() => setQuickFilter('top')}
+            onClick={() => setQuickFilter("top")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-              quickFilter === 'top'
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
-                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white'
+              quickFilter === "top"
+                ? "bg-amber-500 text-slate-950 border-amber-400 shadow-sm"
+                : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
             ⭐ 4.8+ Rated

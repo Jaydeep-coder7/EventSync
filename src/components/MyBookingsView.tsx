@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Ticket,
   Calendar,
@@ -16,8 +16,8 @@ import {
   Search,
   Sparkles,
   ShieldCheck,
-} from 'lucide-react';
-import { Booking } from '../types';
+} from "lucide-react";
+import { Booking } from "../types";
 
 interface MyBookingsViewProps {
   bookings: Booking[];
@@ -34,20 +34,20 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
 }) => {
   const [selectedPass, setSelectedPass] = useState<Booking | null>(null);
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'cancelled'>('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<"all" | "confirmed" | "cancelled">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const confirmedCount = bookings.filter((b) => b.status === 'confirmed').length;
-  const cancelledCount = bookings.filter((b) => b.status === 'cancelled').length;
+  const confirmedCount = bookings.filter((b) => b.status === "confirmed").length;
+  const cancelledCount = bookings.filter((b) => b.status === "cancelled").length;
   const totalTickets = bookings
-    .filter((b) => b.status === 'confirmed')
+    .filter((b) => b.status === "confirmed")
     .reduce((acc, b) => acc + b.ticketQuantity, 0);
   const totalSpent = bookings
-    .filter((b) => b.status === 'confirmed')
+    .filter((b) => b.status === "confirmed")
     .reduce((acc, b) => acc + b.totalAmount, 0);
 
   const filteredBookings = bookings.filter((b) => {
-    const matchesStatus = filterStatus === 'all' || b.status === filterStatus;
+    const matchesStatus = filterStatus === "all" || b.status === filterStatus;
     const matchesSearch =
       b.eventTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       b.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -134,7 +134,7 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
             <span className="text-xs font-semibold text-slate-400">Active Investment</span>
             <div className="mt-1 flex items-baseline gap-2">
               <span className="font-display text-2xl font-extrabold text-amber-400">
-                ₹{totalSpent.toLocaleString('en-IN')}
+                ₹{totalSpent.toLocaleString("en-IN")}
               </span>
               <span className="text-xs text-slate-400 font-medium">INR</span>
             </div>
@@ -162,33 +162,33 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
             <div className="flex gap-1.5">
               <button
                 type="button"
-                onClick={() => setFilterStatus('all')}
+                onClick={() => setFilterStatus("all")}
                 className={`rounded-xl px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
-                  filterStatus === 'all'
-                    ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  filterStatus === "all"
+                    ? "bg-amber-500 text-slate-950 font-bold"
+                    : "bg-white/5 text-slate-300 hover:bg-white/10"
                 }`}
               >
                 All ({bookings.length})
               </button>
               <button
                 type="button"
-                onClick={() => setFilterStatus('confirmed')}
+                onClick={() => setFilterStatus("confirmed")}
                 className={`rounded-xl px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
-                  filterStatus === 'confirmed'
-                    ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  filterStatus === "confirmed"
+                    ? "bg-amber-500 text-slate-950 font-bold"
+                    : "bg-white/5 text-slate-300 hover:bg-white/10"
                 }`}
               >
                 Confirmed ({confirmedCount})
               </button>
               <button
                 type="button"
-                onClick={() => setFilterStatus('cancelled')}
+                onClick={() => setFilterStatus("cancelled")}
                 className={`rounded-xl px-3 py-1 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  filterStatus === 'cancelled'
-                    ? 'bg-rose-500 text-white font-bold'
-                    : 'bg-white/5 text-rose-400/90 hover:bg-white/10'
+                  filterStatus === "cancelled"
+                    ? "bg-rose-500 text-white font-bold"
+                    : "bg-white/5 text-rose-400/90 hover:bg-white/10"
                 }`}
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
@@ -210,12 +210,10 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400 mb-4 border border-amber-500/30">
             <Ticket className="h-8 w-8" />
           </div>
-          <h2 className="font-display text-xl font-bold text-white">
-            No Bookings Found Yet
-          </h2>
+          <h2 className="font-display text-xl font-bold text-white">No Bookings Found Yet</h2>
           <p className="mt-2 max-w-md text-xs sm:text-sm text-slate-400 leading-relaxed">
-            You haven't reserved any tickets yet. Explore our curated events catalog,
-            pick an event you love, and your booking passes will appear right here!
+            You haven't reserved any tickets yet. Explore our curated events catalog, pick an event
+            you love, and your booking passes will appear right here!
           </p>
           <motion.button
             whileHover={{ scale: 1.04 }}
@@ -236,8 +234,8 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
           </p>
           <button
             onClick={() => {
-              setSearchTerm('');
-              setFilterStatus('all');
+              setSearchTerm("");
+              setFilterStatus("all");
             }}
             className="mt-3 text-xs font-bold text-amber-400 hover:underline cursor-pointer"
           >
@@ -248,7 +246,7 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
         /* Bookings Cards Grid */
         <div className="mt-6 space-y-4">
           {filteredBookings.map((booking) => {
-            const isCancelled = booking.status === 'cancelled';
+            const isCancelled = booking.status === "cancelled";
             return (
               <motion.div
                 key={booking.id}
@@ -257,8 +255,8 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
                 id={`booking-card-${booking.id}`}
                 className={`overflow-hidden rounded-2xl border bg-slate-900/80 backdrop-blur-xl transition-all ${
                   isCancelled
-                    ? 'border-white/5 opacity-60'
-                    : 'border-white/10 hover:border-amber-400/40 hover:shadow-xl hover:shadow-black/40'
+                    ? "border-white/5 opacity-60"
+                    : "border-white/10 hover:border-amber-400/40 hover:shadow-xl hover:shadow-black/40"
                 }`}
               >
                 <div className="p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -283,8 +281,8 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
                         <span
                           className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold ${
                             isCancelled
-                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                              : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                           }`}
                         >
                           {isCancelled ? (
@@ -325,7 +323,9 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
                       </div>
 
                       <div className="mt-2 text-xs text-slate-400">
-                        Booked by <strong className="text-white">{booking.attendeeName}</strong> ({booking.attendeeEmail}) • {booking.ticketQuantity} × {booking.ticketTierName}
+                        Booked by <strong className="text-white">{booking.attendeeName}</strong> (
+                        {booking.attendeeEmail}) • {booking.ticketQuantity} ×{" "}
+                        {booking.ticketTierName}
                       </div>
 
                       {/* Selected Seats */}
@@ -348,13 +348,16 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
                         <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-2.5 text-xs text-rose-300 space-y-1">
                           <div className="flex items-center gap-1.5 font-bold text-rose-200">
                             <XCircle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
-                            <span>Cancelled on {booking.cancelledAt || 'Recently'}</span>
+                            <span>Cancelled on {booking.cancelledAt || "Recently"}</span>
                           </div>
                           <p className="text-[11px] text-rose-300/80 leading-relaxed">
-                            <strong>Reason:</strong> {booking.cancellationReason || 'Cancelled by attendee request.'}
+                            <strong>Reason:</strong>{" "}
+                            {booking.cancellationReason || "Cancelled by attendee request."}
                           </p>
                           <p className="text-[11px] text-rose-300/80">
-                            <strong>Refund:</strong> {booking.refundStatus || '100% Refund credited to original payment method.'}
+                            <strong>Refund:</strong>{" "}
+                            {booking.refundStatus ||
+                              "100% Refund credited to original payment method."}
                           </p>
                         </div>
                       )}
@@ -368,7 +371,9 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
                         Total Amount
                       </span>
                       <span className="font-display text-lg sm:text-xl font-extrabold text-white">
-                        {booking.totalAmount === 0 ? 'FREE' : `₹${booking.totalAmount.toLocaleString('en-IN')}`}
+                        {booking.totalAmount === 0
+                          ? "FREE"
+                          : `₹${booking.totalAmount.toLocaleString("en-IN")}`}
                       </span>
                       <span className="text-[10px] text-slate-400 block">
                         Booked: {booking.bookingDate}
@@ -401,9 +406,7 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
 
                       {isCancelled && (
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-rose-400 italic">
-                            Cancelled
-                          </span>
+                          <span className="text-xs text-rose-400 italic">Cancelled</span>
                           {onViewEventDetails && (
                             <button
                               id={`view-cancelled-event-${booking.id}`}
@@ -479,11 +482,15 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
 
                   <div className="grid grid-cols-2 gap-2 text-xs border-t border-white/10 pt-3 text-left">
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase block font-medium">Attendee</span>
+                      <span className="text-[10px] text-slate-400 uppercase block font-medium">
+                        Attendee
+                      </span>
                       <span className="font-bold text-white">{selectedPass.attendeeName}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase block font-medium">Seats</span>
+                      <span className="text-[10px] text-slate-400 uppercase block font-medium">
+                        Seats
+                      </span>
                       <span className="font-bold text-white">
                         {selectedPass.ticketQuantity}x {selectedPass.ticketTierName}
                       </span>
@@ -531,13 +538,12 @@ export const MyBookingsView: React.FC<MyBookingsViewProps> = ({
               </div>
 
               <div className="space-y-1">
-                <h3 className="font-display text-lg font-bold text-white">
-                  Cancel This Booking?
-                </h3>
+                <h3 className="font-display text-lg font-bold text-white">Cancel This Booking?</h3>
                 <p className="text-xs text-slate-400">
-                  Are you sure you want to cancel your reservation for{' '}
+                  Are you sure you want to cancel your reservation for{" "}
                   <strong className="text-white">{bookingToCancel.eventTitle}</strong> (
-                  {bookingToCancel.id})? This will release your {bookingToCancel.ticketQuantity} seat(s).
+                  {bookingToCancel.id})? This will release your {bookingToCancel.ticketQuantity}{" "}
+                  seat(s).
                 </p>
               </div>
 

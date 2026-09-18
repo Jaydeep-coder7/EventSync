@@ -1,4 +1,4 @@
-import { Booking, EventItem } from '../types';
+import { Booking, EventItem } from "../types";
 
 export interface BackendStats {
   totalEvents: number;
@@ -38,11 +38,11 @@ export async function fetchEvents(options?: {
   }
 
   if (options?.simulateError) {
-    throw new Error('Simulated network error: Failed to connect to server.');
+    throw new Error("Simulated network error: Failed to connect to server.");
   }
 
-  const response = await fetch('/data/events.json');
-  if (!response.ok) throw new Error('Failed to load events.');
+  const response = await fetch("/data/events.json");
+  if (!response.ok) throw new Error("Failed to load events.");
   return (await response.json()) as EventItem[];
 }
 
@@ -72,20 +72,21 @@ export async function createBookingApi(payload: {
   specialRequests?: string;
 }): Promise<{ booking: Booking; updatedEvent: EventItem }> {
   try {
-    const res = await fetch('/api/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.error || 'Booking service unavailable');
+    if (!res.ok || !data.success) throw new Error(data.error || "Booking service unavailable");
     return { booking: data.booking, updatedEvent: data.updatedEvent };
   } catch {
     const events = await fetchEvents();
     const event = events.find((item) => item.id === payload.eventId);
-    if (!event) throw new Error('This event could not be found.');
-    const tier = event.ticketTiers.find((item) => item.id === payload.ticketTierId) ?? event.ticketTiers[0];
-    if (!tier) throw new Error('No ticket tier is available for this event.');
+    if (!event) throw new Error("This event could not be found.");
+    const tier =
+      event.ticketTiers.find((item) => item.id === payload.ticketTierId) ?? event.ticketTiers[0];
+    if (!tier) throw new Error("No ticket tier is available for this event.");
     const totalAmount = tier.price * payload.ticketQuantity;
     const booking: Booking = {
       id: `ES-${Date.now().toString().slice(-8)}`,
@@ -108,13 +109,16 @@ export async function createBookingApi(payload: {
       subtotal: totalAmount,
       serviceFee: 0,
       totalAmount,
-      bookingDate: new Date().toLocaleString('en-IN'),
-      status: 'confirmed',
+      bookingDate: new Date().toLocaleString("en-IN"),
+      status: "confirmed",
       specialRequests: payload.specialRequests,
     };
     return {
       booking,
-      updatedEvent: { ...event, bookedSeats: Math.min(event.totalSeats, event.bookedSeats + payload.ticketQuantity) },
+      updatedEvent: {
+        ...event,
+        bookedSeats: Math.min(event.totalSeats, event.bookedSeats + payload.ticketQuantity),
+      },
     };
   }
 }
@@ -122,14 +126,16 @@ export async function createBookingApi(payload: {
 /**
  * Cancel a booking on the backend
  */
-export async function cancelBookingApi(bookingId: string): Promise<{ booking: Booking; updatedEvent?: EventItem }> {
+export async function cancelBookingApi(
+  bookingId: string,
+): Promise<{ booking: Booking; updatedEvent?: EventItem }> {
   const res = await fetch(`/api/bookings/${bookingId}/cancel`, {
-    method: 'POST',
+    method: "POST",
   });
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.error || 'Failed to cancel booking on backend');
+    throw new Error(data.error || "Failed to cancel booking on backend");
   }
 
   return {
@@ -167,7 +173,7 @@ export async function fetchBackendStats(): Promise<BackendStats | null> {
 export async function pingBackend(): Promise<{ ok: boolean; latencyMs: number }> {
   const start = performance.now();
   try {
-    const res = await fetch('/data/events.json', { method: 'HEAD' });
+    const res = await fetch("/data/events.json", { method: "HEAD" });
     const latencyMs = Math.round(performance.now() - start);
     return { ok: res.ok, latencyMs };
   } catch {

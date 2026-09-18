@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Ticket,
   Search,
@@ -11,13 +11,14 @@ import {
   User,
   Settings,
   ShieldCheck,
-} from 'lucide-react';
-import { UserProfile } from '../types';
-import { AnimatedCharacterAvatar } from './AnimatedCharacterAvatar';
+  type LucideIcon,
+} from "lucide-react";
+import { UserProfile } from "../types";
+import { AnimatedCharacterAvatar } from "./AnimatedCharacterAvatar";
 
 interface NavbarProps {
-  activeTab: 'home' | 'events' | 'bookings';
-  onNavigate: (tab: 'home' | 'events' | 'bookings') => void;
+  activeTab: "home" | "events" | "bookings";
+  onNavigate: (tab: "home" | "events" | "bookings") => void;
   bookingCount: number;
   user: UserProfile | null;
   onExit: () => void;
@@ -36,13 +37,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems: { id: 'home' | 'events' | 'bookings'; label: string; icon: any }[] = [
-    { id: 'home', label: 'Home', icon: Sparkles },
-    { id: 'events', label: 'Explore Events', icon: Compass },
-    { id: 'bookings', label: 'My Bookings', icon: Ticket },
+  const navItems: { id: "home" | "events" | "bookings"; label: string; icon: LucideIcon }[] = [
+    { id: "home", label: "Home", icon: Sparkles },
+    { id: "events", label: "Explore Events", icon: Compass },
+    { id: "bookings", label: "My Bookings", icon: Ticket },
   ];
 
-  const handleNavClick = (tab: 'home' | 'events' | 'bookings') => {
+  const handleNavClick = (tab: "home" | "events" | "bookings") => {
     onNavigate(tab);
     setMobileMenuOpen(false);
   };
@@ -53,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand / Logo */}
         <button
           id="nav-brand-logo-btn"
-          onClick={() => handleNavClick('home')}
+          onClick={() => handleNavClick("home")}
           className="group flex items-center gap-3 text-left focus:outline-none cursor-pointer"
         >
           <motion.div
@@ -86,22 +87,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id={`nav-link-${item.id}`}
                 onClick={() => handleNavClick(item.id)}
                 className={`relative flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                  isActive
-                    ? 'text-amber-300'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  isActive ? "text-amber-300" : "text-slate-300 hover:text-white hover:bg-white/5"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeNavPill"
                     className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/30 shadow-xs"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-2">
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <Icon className={`h-4 w-4 ${isActive ? "text-amber-400" : "text-slate-400"}`} />
                   <span>{item.label}</span>
-                  {item.id === 'bookings' && bookingCount > 0 && (
+                  {item.id === "bookings" && bookingCount > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -130,7 +129,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="relative">
                 <AnimatedCharacterAvatar
-                  gender={user.gender || 'boy'}
+                  gender={user.gender || "boy"}
                   size="xs"
                   className="border border-amber-400/40 shadow-xs"
                 />
@@ -144,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <ShieldCheck className="h-3 w-3 text-emerald-400 shrink-0" />
                 </div>
                 <span className="text-[10px] text-amber-300/80 block truncate font-mono">
-                  @{user.username || user.email.split('@')[0]}
+                  @{user.username || user.email.split("@")[0]}
                 </span>
               </div>
               <Settings className="h-3.5 w-3.5 text-slate-400 group-hover:text-amber-400 transition-colors ml-0.5 hidden sm:block" />
@@ -170,7 +169,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-white/10 text-slate-300 hover:bg-white/10 md:hidden focus:outline-none cursor-pointer shrink-0"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Menu className="h-4 w-4 sm:h-5 sm:w-5" />}
+            {mobileMenuOpen ? (
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
+            ) : (
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+            )}
           </button>
 
           {/* Find Events / Search Area Button */}
@@ -178,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             id="nav-cta-explore-btn"
-            onClick={() => handleNavClick('events')}
+            onClick={() => handleNavClick("events")}
             className="inline-flex items-center gap-1 sm:gap-1.5 rounded-xl bg-white/10 border border-white/10 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:bg-white/15 transition-all cursor-pointer shrink-0"
           >
             <Search className="h-3.5 w-3.5 text-amber-400" />
@@ -208,7 +211,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {mobileMenuOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
+            animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="overflow-hidden border-b border-white/10 bg-slate-950/95 px-4 pt-3 pb-5 shadow-2xl md:hidden"
@@ -225,19 +228,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="flex items-center gap-3 text-left flex-1"
                   >
                     <AnimatedCharacterAvatar
-                      gender={user.gender || 'boy'}
+                      gender={user.gender || "boy"}
                       size="sm"
                       className="border border-amber-400/40"
                     />
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-white block">
-                          {user.name}
-                        </span>
+                        <span className="text-xs font-bold text-white block">{user.name}</span>
                         <Settings className="h-3 w-3 text-amber-400" />
                       </div>
                       <span className="text-[11px] text-amber-300/80 block font-mono">
-                        @{user.username || user.email.split('@')[0]}
+                        @{user.username || user.email.split("@")[0]}
                       </span>
                     </div>
                   </button>
@@ -265,15 +266,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={() => handleNavClick(item.id)}
                     className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-left transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                        : 'text-slate-300 hover:bg-white/5'
+                        ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                        : "text-slate-300 hover:bg-white/5"
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icon className="h-5 w-5 text-amber-400" />
                       <span>{item.label}</span>
                     </div>
-                    {item.id === 'bookings' && bookingCount > 0 && (
+                    {item.id === "bookings" && bookingCount > 0 && (
                       <span className="rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-bold text-slate-950">
                         {bookingCount}
                       </span>
@@ -298,7 +299,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 <button
                   id="mobile-nav-quick-explore"
-                  onClick={() => handleNavClick('events')}
+                  onClick={() => handleNavClick("events")}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 px-4 py-3 text-xs font-bold text-slate-950 shadow-md shadow-amber-500/20 cursor-pointer"
                 >
                   <Search className="h-4 w-4" />

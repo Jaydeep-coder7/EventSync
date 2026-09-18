@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring, type Variants } from 'motion/react';
+import React, { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence, useScroll, useSpring, type Variants } from "motion/react";
 import {
   Compass,
   Sparkles,
@@ -13,7 +13,7 @@ import {
   Zap,
   Layers,
   LayoutGrid,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Booking,
   EventCategory,
@@ -22,44 +22,44 @@ import {
   TicketTier,
   ToastNotification,
   UserProfile,
-} from './types';
+} from "./types";
 import {
   fetchEvents,
   cancelBookingApi,
   fetchBackendStats,
   pingBackend,
   BackendStats,
-} from './services/api';
+} from "./services/api";
 import {
   getStoredBookings,
   saveBooking,
   cancelBooking,
   getStoredFavorites,
   toggleStoredFavorite,
-} from './utils/storage';
-import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { EventCard, cardGridVariants } from './components/EventCard';
-import { EventCardSkeleton, EventGridSkeleton } from './components/EventCardSkeleton';
-import { EventFilterBar } from './components/EventFilterBar';
-import { HorizontalStackedEventDeck } from './components/HorizontalStackedEventDeck';
-import { HorizontalSellingFastFeed } from './components/HorizontalSellingFastFeed';
-import { EventDetailsModal } from './components/EventDetailsModal';
-import { BookingModal } from './components/BookingModal';
-import { MyBookingsView } from './components/MyBookingsView';
-import { AuthModal } from './components/AuthModal';
-import { UserProfileModal } from './components/UserProfileModal';
-import { Footer } from './components/Footer';
-import { ToastContainer } from './components/ToastContainer';
-import { SmoothScrollContainer } from './components/SmoothScrollContainer';
+} from "./utils/storage";
+import { Navbar } from "./components/Navbar";
+import { Hero } from "./components/Hero";
+import { EventCard, cardGridVariants } from "./components/EventCard";
+import { EventCardSkeleton, EventGridSkeleton } from "./components/EventCardSkeleton";
+import { EventFilterBar } from "./components/EventFilterBar";
+import { HorizontalStackedEventDeck } from "./components/HorizontalStackedEventDeck";
+import { HorizontalSellingFastFeed } from "./components/HorizontalSellingFastFeed";
+import { EventDetailsModal } from "./components/EventDetailsModal";
+import { BookingModal } from "./components/BookingModal";
+import { MyBookingsView } from "./components/MyBookingsView";
+import { AuthModal } from "./components/AuthModal";
+import { UserProfileModal } from "./components/UserProfileModal";
+import { Footer } from "./components/Footer";
+import { ToastContainer } from "./components/ToastContainer";
+import { SmoothScrollContainer } from "./components/SmoothScrollContainer";
 
 const INITIAL_FILTERS: FilterState = {
-  searchQuery: '',
-  category: 'All',
-  dateFilter: 'all',
-  priceFilter: 'all',
-  sortBy: 'featured',
-  statusFilter: 'all',
+  searchQuery: "",
+  category: "All",
+  dateFilter: "all",
+  priceFilter: "all",
+  sortBy: "featured",
+  statusFilter: "all",
 };
 
 // Satisfying Scroll Animation Variants
@@ -92,33 +92,34 @@ export default function App() {
   });
 
   // Theme Management (Light or Dark Mode)
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
     try {
-      return (localStorage.getItem('eventsync_theme') as 'dark' | 'light') || 'dark';
+      return (localStorage.getItem("eventsync_theme") as "dark" | "light") || "dark";
     } catch {
-      return 'dark';
+      return "dark";
     }
   });
 
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
+    if (theme === "light") {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
     } else {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
     }
-    localStorage.setItem('eventsync_theme', theme);
+    localStorage.setItem("eventsync_theme", theme);
   }, [theme]);
 
   // Authentication State
   const [user, setUser] = useState<UserProfile | null>(() => {
     try {
-      const saved = localStorage.getItem('eventsync_user') || localStorage.getItem('eventhive_user');
+      const saved =
+        localStorage.getItem("eventsync_user") || localStorage.getItem("eventhive_user");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (!parsed.gender) {
-          parsed.gender = 'boy';
+          parsed.gender = "boy";
         }
         return parsed;
       }
@@ -130,20 +131,21 @@ export default function App() {
 
   // Movie-like Lenis smooth scroll to top helper
   const smoothScrollToTop = () => {
-    if (typeof window !== 'undefined' && (window as any).__LENIS__) {
-      (window as any).__LENIS__.scrollTo(0, {
+    const lenis = typeof window !== "undefined" ? window.__LENIS__ : undefined;
+    if (lenis) {
+      lenis.scrollTo(0, {
         duration: 1.2,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
-    } else if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(() => {
     // If user is not logged in when opening the app, prompt Gmail login immediately
     try {
-      return !(localStorage.getItem('eventsync_user') || localStorage.getItem('eventhive_user'));
+      return !(localStorage.getItem("eventsync_user") || localStorage.getItem("eventhive_user"));
     } catch {
       return true;
     }
@@ -157,7 +159,7 @@ export default function App() {
   } | null>(null);
 
   // Navigation
-  const [activeTab, setActiveTab] = useState<'home' | 'events' | 'bookings'>('home');
+  const [activeTab, setActiveTab] = useState<"home" | "events" | "bookings">("home");
 
   // Events & API State
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -173,7 +175,7 @@ export default function App() {
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
 
   // View mode for events: 'stacked' (the animated horizontal cascading deck) vs 'grid' (classic multi-column)
-  const [eventViewMode, setEventViewMode] = useState<'stacked' | 'grid'>('stacked');
+  const [eventViewMode, setEventViewMode] = useState<"stacked" | "grid">("stacked");
 
   // Modals
   const [selectedEventForDetails, setSelectedEventForDetails] = useState<EventItem | null>(null);
@@ -190,7 +192,7 @@ export default function App() {
   // Notifications
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
 
-  const addToast = (type: 'success' | 'error' | 'info', title: string, message?: string) => {
+  const addToast = (type: "success" | "error" | "info", title: string, message?: string) => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, type, title, message }]);
     setTimeout(() => {
@@ -205,9 +207,9 @@ export default function App() {
   // Auth & Profile Handlers
   const handleLoginSuccess = (newUser: UserProfile) => {
     setUser(newUser);
-    localStorage.setItem('eventsync_user', JSON.stringify(newUser));
+    localStorage.setItem("eventsync_user", JSON.stringify(newUser));
     setIsAuthModalOpen(false);
-    addToast('success', `Welcome, ${newUser.name}!`, `Signed in with ${newUser.email}`);
+    addToast("success", `Welcome, ${newUser.name}!`, `Signed in with ${newUser.email}`);
 
     // If there was a pending booking, trigger it now
     if (pendingBookingEvent) {
@@ -218,41 +220,45 @@ export default function App() {
 
   const handleUpdateProfile = (updatedUser: UserProfile) => {
     setUser(updatedUser);
-    localStorage.setItem('eventsync_user', JSON.stringify(updatedUser));
-    addToast('success', 'Profile Updated', 'Your user information and preferences have been saved.');
+    localStorage.setItem("eventsync_user", JSON.stringify(updatedUser));
+    addToast(
+      "success",
+      "Profile Updated",
+      "Your user information and preferences have been saved.",
+    );
   };
 
   const handleExit = () => {
     setUser(null);
-    localStorage.removeItem('eventsync_user');
-    localStorage.removeItem('eventhive_user');
+    localStorage.removeItem("eventsync_user");
+    localStorage.removeItem("eventhive_user");
     setIsProfileModalOpen(false);
     setIsBookingOpen(false);
     setIsDetailsOpen(false);
     setIsAuthModalOpen(true);
-    addToast('info', 'Logged Out', 'You have exited EventSync. Sign in with Gmail to book again.');
+    addToast("info", "Logged Out", "You have exited EventSync. Sign in with Gmail to book again.");
   };
 
   const handleShareApp = async () => {
     const shareData = {
-      title: 'EventSync — Curated Live Experiences & Digital Passes',
-      text: 'Discover and book concerts, tech summits, and festivals across India with zero convenience fees on EventSync!',
+      title: "EventSync — Curated Live Experiences & Digital Passes",
+      text: "Discover and book concerts, tech summits, and festivals across India with zero convenience fees on EventSync!",
       url: window.location.href,
     };
 
     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
       try {
         await navigator.share(shareData);
-        addToast('success', 'Shared Successfully', 'Thanks for sharing EventSync!');
+        addToast("success", "Shared Successfully", "Thanks for sharing EventSync!");
         return;
-      } catch (err: any) {
-        if (err.name === 'AbortError') return;
+      } catch (err: unknown) {
+        if ((err as { name?: string })?.name === "AbortError") return;
       }
     }
 
     // Fallback: clipboard copy
     navigator.clipboard.writeText(window.location.href);
-    addToast('success', 'Link Copied', 'EventSync website link copied to clipboard!');
+    addToast("success", "Link Copied", "EventSync website link copied to clipboard!");
   };
 
   // Load Platform Stats & Ping
@@ -273,8 +279,8 @@ export default function App() {
       const data = await fetchEvents({ simulateError: simulateFailure, delayMs: 400 });
       setEvents(data);
       checkBackendStatus();
-    } catch (err: any) {
-      setApiError(err.message || 'Failed to load events, please try again.');
+    } catch (err: unknown) {
+      setApiError((err as Error)?.message || "Failed to load events, please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -304,41 +310,41 @@ export default function App() {
           event.shortDescription.toLowerCase().includes(query) ||
           event.venue.toLowerCase().includes(query) ||
           event.city.toLowerCase().includes(query) ||
-          event.category.toLowerCase().includes(query)
+          event.category.toLowerCase().includes(query),
       );
     }
 
     // 2. Category Filter
-    if (filters.category !== 'All') {
+    if (filters.category !== "All") {
       result = result.filter((event) => event.category === filters.category);
     }
 
     // 3. Price Filter (INR ₹)
-    if (filters.priceFilter !== 'all') {
-      if (filters.priceFilter === 'free') {
+    if (filters.priceFilter !== "all") {
+      if (filters.priceFilter === "free") {
         result = result.filter((event) => event.price === 0);
-      } else if (filters.priceFilter === 'under1000') {
+      } else if (filters.priceFilter === "under1000") {
         result = result.filter((event) => event.price > 0 && event.price < 1000);
-      } else if (filters.priceFilter === '1000to3000') {
+      } else if (filters.priceFilter === "1000to3000") {
         result = result.filter((event) => event.price >= 1000 && event.price <= 3000);
-      } else if (filters.priceFilter === 'above3000') {
+      } else if (filters.priceFilter === "above3000") {
         result = result.filter((event) => event.price > 3000);
       }
     }
 
     // 4. Date Filter
-    if (filters.dateFilter !== 'all') {
+    if (filters.dateFilter !== "all") {
       const now = new Date();
-      if (filters.dateFilter === 'today') {
-        const todayStr = now.toISOString().split('T')[0];
+      if (filters.dateFilter === "today") {
+        const todayStr = now.toISOString().split("T")[0];
         result = result.filter((e) => e.date === todayStr);
-      } else if (filters.dateFilter === 'weekend') {
+      } else if (filters.dateFilter === "weekend") {
         result = result.filter((e) => {
           const d = new Date(e.date);
           const day = d.getDay();
           return day === 0 || day === 6; // Sunday or Saturday
         });
-      } else if (filters.dateFilter === 'month') {
+      } else if (filters.dateFilter === "month") {
         const nextMonth = new Date();
         nextMonth.setDate(now.getDate() + 30);
         result = result.filter((e) => {
@@ -349,20 +355,20 @@ export default function App() {
     }
 
     // 4.5 Status Filter (All vs Active vs Cancelled Events)
-    if (filters.statusFilter === 'cancelled') {
+    if (filters.statusFilter === "cancelled") {
       result = result.filter((event) => event.isCancelled === true);
-    } else if (filters.statusFilter === 'active') {
+    } else if (filters.statusFilter === "active") {
       result = result.filter((event) => !event.isCancelled);
     }
 
     // 5. Sorting
-    if (filters.sortBy === 'price-asc') {
+    if (filters.sortBy === "price-asc") {
       result.sort((a, b) => a.price - b.price);
-    } else if (filters.sortBy === 'price-desc') {
+    } else if (filters.sortBy === "price-desc") {
       result.sort((a, b) => b.price - a.price);
-    } else if (filters.sortBy === 'date-asc') {
+    } else if (filters.sortBy === "date-asc") {
       result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    } else if (filters.sortBy === 'name-asc') {
+    } else if (filters.sortBy === "name-asc") {
       result.sort((a, b) => a.title.localeCompare(b.title));
     }
 
@@ -387,7 +393,7 @@ export default function App() {
       searchQuery: query,
       category,
     }));
-    setActiveTab('events');
+    setActiveTab("events");
     smoothScrollToTop();
   };
 
@@ -397,7 +403,7 @@ export default function App() {
 
   const handleResetFilters = () => {
     setFilters(INITIAL_FILTERS);
-    addToast('info', 'Filters Reset', 'Showing all available events.');
+    addToast("info", "Filters Reset", "Showing all available events.");
   };
 
   const handleViewDetails = (event: EventItem) => {
@@ -410,7 +416,7 @@ export default function App() {
     if (!user) {
       setPendingBookingEvent({ event, tier: preTier });
       setIsAuthModalOpen(true);
-      addToast('info', 'Login Required', 'Please sign in with Gmail to book tickets.');
+      addToast("info", "Login Required", "Please sign in with Gmail to book tickets.");
       return;
     }
 
@@ -426,25 +432,26 @@ export default function App() {
 
     // Update booked seats count in event list state
     if (updatedEvent) {
-      setEvents((prev) =>
-        prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
-      );
+      setEvents((prev) => prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e)));
     } else {
       setEvents((prev) =>
         prev.map((e) =>
           e.id === newBooking.eventId
-            ? { ...e, bookedSeats: Math.min(e.totalSeats, e.bookedSeats + newBooking.ticketQuantity) }
-            : e
-        )
+            ? {
+                ...e,
+                bookedSeats: Math.min(e.totalSeats, e.bookedSeats + newBooking.ticketQuantity),
+              }
+            : e,
+        ),
       );
     }
 
     checkBackendStatus();
 
     addToast(
-      'success',
-      'Booking Confirmed!',
-      `Reference: ${newBooking.id}. Digital pass generated.`
+      "success",
+      "Booking Confirmed!",
+      `Reference: ${newBooking.id}. Digital pass generated.`,
     );
   };
 
@@ -453,17 +460,17 @@ export default function App() {
       const res = await cancelBookingApi(bookingId);
       if (res.updatedEvent) {
         setEvents((prev) =>
-          prev.map((e) => (e.id === res.updatedEvent!.id ? res.updatedEvent! : e))
+          prev.map((e) => (e.id === res.updatedEvent!.id ? res.updatedEvent! : e)),
         );
       }
     } catch (err) {
-      console.warn('Backend cancel call skipped/failed, updating client state:', err);
+      console.warn("Backend cancel call skipped/failed, updating client state:", err);
     }
 
     const updated = cancelBooking(bookingId);
     setBookings(updated);
     checkBackendStatus();
-    addToast('info', 'Booking Cancelled', 'Your ticket reservation has been cancelled.');
+    addToast("info", "Booking Cancelled", "Your ticket reservation has been cancelled.");
   };
 
   const handleToggleFavorite = (eventId: string) => {
@@ -471,9 +478,9 @@ export default function App() {
     setFavorites(updated);
     const isFav = updated.includes(eventId);
     addToast(
-      'info',
-      isFav ? 'Added to Saved Events' : 'Removed from Saved Events',
-      isFav ? 'Find this easily later.' : undefined
+      "info",
+      isFav ? "Added to Saved Events" : "Removed from Saved Events",
+      isFav ? "Find this easily later." : undefined,
     );
   };
 
@@ -481,9 +488,9 @@ export default function App() {
     <SmoothScrollContainer>
       <div
         className={`eventsync-shell flex min-h-screen flex-col transition-colors duration-300 ${
-          theme === 'light'
-            ? 'bg-slate-50 text-slate-900 selection:bg-amber-400 selection:text-slate-950'
-            : 'bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950'
+          theme === "light"
+            ? "bg-slate-50 text-slate-900 selection:bg-amber-400 selection:text-slate-950"
+            : "bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950"
         } font-sans relative`}
       >
         {/* Satisfying Smooth Scroll Progress Bar */}
@@ -499,7 +506,7 @@ export default function App() {
             setActiveTab(tab);
             smoothScrollToTop();
           }}
-          bookingCount={bookings.filter((b) => b.status === 'confirmed').length}
+          bookingCount={bookings.filter((b) => b.status === "confirmed").length}
           user={user}
           onExit={handleExit}
           onOpenLogin={() => setIsAuthModalOpen(true)}
@@ -512,7 +519,7 @@ export default function App() {
             {/* ==================================================== */}
             {/* TAB 1: HOME PAGE */}
             {/* ==================================================== */}
-            {activeTab === 'home' && (
+            {activeTab === "home" && (
               <motion.div
                 key="home"
                 initial={{ opacity: 0, y: 10 }}
@@ -525,11 +532,11 @@ export default function App() {
                 <Hero
                   onSearchSubmit={handleHeroSearch}
                   onExploreClick={() => {
-                    setActiveTab('events');
+                    setActiveTab("events");
                     smoothScrollToTop();
                   }}
                   onBookFeaturedClick={() => {
-                    const featured = events.find((e) => e.tag === 'Featured') || events[0];
+                    const featured = events.find((e) => e.tag === "Featured") || events[0];
                     if (featured) handleBookNow(featured);
                   }}
                   stats={
@@ -549,7 +556,7 @@ export default function App() {
                   variants={slideInVariant}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: "-60px" }}
                   className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8"
                 >
                   {isLoading ? (
@@ -565,406 +572,430 @@ export default function App() {
                       favorites={favorites}
                       onToggleFavorite={handleToggleFavorite}
                       onSeeAll={() => {
-                        setActiveTab('events');
+                        setActiveTab("events");
                         smoothScrollToTop();
                       }}
                     />
                   )}
                 </motion.section>
 
-              {/* Categories Bento Grid Section with Scale-Up Scroll Reveal */}
-              <motion.section
-                variants={scaleUpVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-60px' }}
-                className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4"
-              >
-                <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/[0.02] to-amber-500/[0.04] p-6 sm:p-10 backdrop-blur-xl">
-                  <div className="text-center max-w-2xl mx-auto mb-8">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
-                      Explore by Category
-                    </span>
-                    <h3 className="font-display text-2xl sm:text-3xl font-extrabold mt-1">
-                      Find What Excites You
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-2">
-                      Filter events across 6 distinct categories with instantaneous client-side filtering.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                    {(
-                      [
-                        { name: 'Music', count: '4 Events', color: 'from-rose-500/20 to-pink-500/10' },
-                        { name: 'Technology', count: '3 Events', color: 'from-blue-500/20 to-cyan-500/10' },
-                        { name: 'Food & Drink', count: '2 Events', color: 'from-amber-500/20 to-yellow-500/10' },
-                        { name: 'Arts & Theatre', count: '2 Events', color: 'from-purple-500/20 to-indigo-500/10' },
-                        { name: 'Sports & Fitness', count: '2 Events', color: 'from-emerald-500/20 to-teal-500/10' },
-                        { name: 'Business & Networking', count: '3 Events', color: 'from-slate-500/20 to-zinc-500/10' },
-                      ] as const
-                    ).map((cat) => (
-                      <motion.button
-                        key={cat.name}
-                        whileHover={{ y: -4, scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => {
-                          setFilters((prev) => ({ ...prev, category: cat.name as EventCategory }));
-                          setActiveTab('events');
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-gradient-to-b ${cat.color} hover:border-amber-400/50 transition-all cursor-pointer text-center group shadow-md shadow-black/20`}
-                      >
-                        <span className="font-display text-xs sm:text-sm font-bold group-hover:text-amber-300 transition-colors">
-                          {cat.name}
-                        </span>
-                        <span className="text-[11px] text-slate-400 mt-1">
-                          {cat.count}
-                        </span>
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </motion.section>
-
-              {/* Instant Trust & Features Section with Slide-in Scroll Reveal */}
-              <motion.section
-                variants={slideInVariant}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-60px' }}
-                className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
-                      <Zap className="h-6 w-6" />
-                    </div>
-                    <h4 className="font-display text-lg font-bold">
-                      Instant Seat Synchronization
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                      Every ticket reserved is broadcast in real time across attendees. Never worry about double bookings or outdated availability.
-                    </p>
-                  </div>
-
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
-                      <Ticket className="h-6 w-6" />
-                    </div>
-                    <h4 className="font-display text-lg font-bold">
-                      Cryptographic Digital Passes
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                      Receive an instant printable QR gate pass. Scan seamlessly at venue entry points directly from your mobile screen.
-                    </p>
-                  </div>
-
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
-                      <ShieldCheck className="h-6 w-6" />
-                    </div>
-                    <h4 className="font-display text-lg font-bold">
-                      Zero Hidden Convenience Surcharges
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                      All prices are denominated transparently in Indian Rupees (₹) with ₹0 convenience fee and ₹0 verification surcharge.
-                    </p>
-                  </div>
-                </div>
-              </motion.section>
-            </motion.div>
-          )}
-
-          {/* ==================================================== */}
-          {/* TAB 2: EVENTS LISTING & LIVE FILTERING PAGE */}
-          {/* ==================================================== */}
-          {activeTab === 'events' && (
-            <motion.section
-              key="events"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6"
-            >
-              {/* Header Title with Slide-in */}
-              <motion.div
-                variants={slideInVariant}
-                initial="hidden"
-                animate="visible"
-              >
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-bold text-amber-300 mb-2">
-                  <Compass className="h-3.5 w-3.5 text-amber-400" />
-                  <span>Discover & Filter</span>
-                </div>
-                <h1 className="font-display text-3xl font-extrabold tracking-tight">
-                  All Live Events
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                  Instant live filtering by title, category, date, and price range in Indian Rupees (₹) with zero surcharges.
-                </p>
-              </motion.div>
-
-              {/* Interactive Live Filter Bar */}
-              <EventFilterBar
-                filters={filters}
-                onFilterChange={handleFilterUpdate}
-                onResetFilters={handleResetFilters}
-                totalResults={filteredEvents.length}
-              />
-
-              {/* Shimmering Gradient Skeleton Screens */}
-              {isLoading && <EventGridSkeleton count={8} />}
-
-              {/* API Error State */}
-              {apiError && !isLoading && (
-                <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 p-8 text-center space-y-3">
-                  <AlertCircle className="mx-auto h-10 w-10 text-rose-400" />
-                  <h3 className="font-display text-lg font-bold text-rose-200">
-                    Failed to load events, please try again
-                  </h3>
-                  <p className="text-xs text-rose-300 max-w-md mx-auto">
-                    {apiError}
-                  </p>
-                  <button
-                    onClick={() => loadEventsData(false)}
-                    className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-rose-700 shadow-md transition-all cursor-pointer"
-                  >
-                    <RefreshCw className="h-3.5 w-3.5" />
-                    <span>Retry Fetching Events</span>
-                  </button>
-                </div>
-              )}
-
-              {/* Empty Search Results State */}
-              {!isLoading && !apiError && filteredEvents.length === 0 && (
-                <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/20 bg-white/5 p-12 text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-slate-400 mb-3">
-                    <Search className="h-7 w-7" />
-                  </div>
-                  <h3 className="font-display text-lg font-bold">
-                    No Matching Events Found
-                  </h3>
-                  <p className="mt-1 max-w-md text-xs text-slate-400">
-                    We couldn't find any events matching your search or filter combination. Try adjusting
-                    the keyword, clearing price filters, or switching categories.
-                  </p>
-                  <button
-                    id="empty-results-reset-btn"
-                    onClick={handleResetFilters}
-                    className="mt-5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 px-5 py-2.5 text-xs font-bold text-slate-950 hover:brightness-110 transition-all cursor-pointer shadow-md shadow-amber-500/20"
-                  >
-                    Clear All Filters
-                  </button>
-                </div>
-              )}
-
-              {/* View Layout Switcher & Fast Actions */}
-              {!isLoading && !apiError && filteredEvents.length > 0 && (
-                <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-2.5 px-4 rounded-2xl border border-white/10 backdrop-blur-xl">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-400 font-medium">Layout View:</span>
-                    <div className="flex items-center rounded-xl bg-slate-950 p-1 border border-white/10">
-                      <button
-                        id="view-mode-deck-btn"
-                        onClick={() => setEventViewMode('stacked')}
-                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                          eventViewMode === 'stacked'
-                            ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm'
-                            : 'text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        <Layers className="h-3.5 w-3.5" />
-                        <span>Horizon Deck (Cascading Scroll)</span>
-                      </button>
-
-                      <button
-                        id="view-mode-grid-btn"
-                        onClick={() => setEventViewMode('grid')}
-                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                          eventViewMode === 'grid'
-                            ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm'
-                            : 'text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        <LayoutGrid className="h-3.5 w-3.5" />
-                        <span>Standard Grid</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Cancelled events quick toggle reminder */}
-                  {events.some((e) => e.isCancelled) && (
-                    <button
-                      id="cancelled-events-pill-toggle"
-                      onClick={() =>
-                        handleFilterUpdate({
-                          statusFilter: filters.statusFilter === 'cancelled' ? 'all' : 'cancelled',
-                        })
-                      }
-                      className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
-                        filters.statusFilter === 'cancelled'
-                          ? 'border-rose-500 bg-rose-500 text-white font-bold'
-                          : 'border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
-                      }`}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
-                      <span>
-                        {filters.statusFilter === 'cancelled'
-                          ? 'Showing Cancelled Only (Click to show all)'
-                          : `View Cancelled Events (${events.filter((e) => e.isCancelled).length})`}
+                {/* Categories Bento Grid Section with Scale-Up Scroll Reveal */}
+                <motion.section
+                  variants={scaleUpVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-60px" }}
+                  className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4"
+                >
+                  <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/[0.02] to-amber-500/[0.04] p-6 sm:p-10 backdrop-blur-xl">
+                    <div className="text-center max-w-2xl mx-auto mb-8">
+                      <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                        Explore by Category
                       </span>
+                      <h3 className="font-display text-2xl sm:text-3xl font-extrabold mt-1">
+                        Find What Excites You
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-400 mt-2">
+                        Filter events across 6 distinct categories with instantaneous client-side
+                        filtering.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                      {(
+                        [
+                          {
+                            name: "Music",
+                            count: "4 Events",
+                            color: "from-rose-500/20 to-pink-500/10",
+                          },
+                          {
+                            name: "Technology",
+                            count: "3 Events",
+                            color: "from-blue-500/20 to-cyan-500/10",
+                          },
+                          {
+                            name: "Food & Drink",
+                            count: "2 Events",
+                            color: "from-amber-500/20 to-yellow-500/10",
+                          },
+                          {
+                            name: "Arts & Theatre",
+                            count: "2 Events",
+                            color: "from-purple-500/20 to-indigo-500/10",
+                          },
+                          {
+                            name: "Sports & Fitness",
+                            count: "2 Events",
+                            color: "from-emerald-500/20 to-teal-500/10",
+                          },
+                          {
+                            name: "Business & Networking",
+                            count: "3 Events",
+                            color: "from-slate-500/20 to-zinc-500/10",
+                          },
+                        ] as const
+                      ).map((cat) => (
+                        <motion.button
+                          key={cat.name}
+                          whileHover={{ y: -4, scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => {
+                            setFilters((prev) => ({
+                              ...prev,
+                              category: cat.name as EventCategory,
+                            }));
+                            setActiveTab("events");
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className={`flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-gradient-to-b ${cat.color} hover:border-amber-400/50 transition-all cursor-pointer text-center group shadow-md shadow-black/20`}
+                        >
+                          <span className="font-display text-xs sm:text-sm font-bold group-hover:text-amber-300 transition-colors">
+                            {cat.name}
+                          </span>
+                          <span className="text-[11px] text-slate-400 mt-1">{cat.count}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.section>
+
+                {/* Instant Trust & Features Section with Slide-in Scroll Reveal */}
+                <motion.section
+                  variants={slideInVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-60px" }}
+                  className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
+                        <Zap className="h-6 w-6" />
+                      </div>
+                      <h4 className="font-display text-lg font-bold">
+                        Instant Seat Synchronization
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Every ticket reserved is broadcast in real time across attendees. Never
+                        worry about double bookings or outdated availability.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
+                        <Ticket className="h-6 w-6" />
+                      </div>
+                      <h4 className="font-display text-lg font-bold">
+                        Cryptographic Digital Passes
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Receive an instant printable QR gate pass. Scan seamlessly at venue entry
+                        points directly from your mobile screen.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-400 mb-4 border border-amber-500/20">
+                        <ShieldCheck className="h-6 w-6" />
+                      </div>
+                      <h4 className="font-display text-lg font-bold">
+                        Zero Hidden Convenience Surcharges
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                        All prices are denominated transparently in Indian Rupees (₹) with ₹0
+                        convenience fee and ₹0 verification surcharge.
+                      </p>
+                    </div>
+                  </div>
+                </motion.section>
+              </motion.div>
+            )}
+
+            {/* ==================================================== */}
+            {/* TAB 2: EVENTS LISTING & LIVE FILTERING PAGE */}
+            {/* ==================================================== */}
+            {activeTab === "events" && (
+              <motion.section
+                key="events"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6"
+              >
+                {/* Header Title with Slide-in */}
+                <motion.div variants={slideInVariant} initial="hidden" animate="visible">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-bold text-amber-300 mb-2">
+                    <Compass className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Discover & Filter</span>
+                  </div>
+                  <h1 className="font-display text-3xl font-extrabold tracking-tight">
+                    All Live Events
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                    Instant live filtering by title, category, date, and price range in Indian
+                    Rupees (₹) with zero surcharges.
+                  </p>
+                </motion.div>
+
+                {/* Interactive Live Filter Bar */}
+                <EventFilterBar
+                  filters={filters}
+                  onFilterChange={handleFilterUpdate}
+                  onResetFilters={handleResetFilters}
+                  totalResults={filteredEvents.length}
+                />
+
+                {/* Shimmering Gradient Skeleton Screens */}
+                {isLoading && <EventGridSkeleton count={8} />}
+
+                {/* API Error State */}
+                {apiError && !isLoading && (
+                  <div className="rounded-3xl border border-rose-500/30 bg-rose-500/10 p-8 text-center space-y-3">
+                    <AlertCircle className="mx-auto h-10 w-10 text-rose-400" />
+                    <h3 className="font-display text-lg font-bold text-rose-200">
+                      Failed to load events, please try again
+                    </h3>
+                    <p className="text-xs text-rose-300 max-w-md mx-auto">{apiError}</p>
+                    <button
+                      onClick={() => loadEventsData(false)}
+                      className="inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-rose-700 shadow-md transition-all cursor-pointer"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      <span>Retry Fetching Events</span>
                     </button>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
 
-              {/* Events Showcase: Cascading Horizon Deck vs Multi-column Grid */}
-              {!isLoading && !apiError && filteredEvents.length > 0 && (
-                eventViewMode === 'stacked' ? (
-                  <HorizontalStackedEventDeck
-                    events={filteredEvents}
-                    onViewDetails={handleViewDetails}
-                    onBookNow={handleBookNow}
-                    favorites={favorites}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                ) : (
-                  <motion.div
-                    key={`${filters.category}-${filters.sortBy}-${filters.priceFilter}-${filters.dateFilter}-${filters.searchQuery}-${filters.statusFilter}`}
-                    variants={cardGridVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                  >
-                    {filteredEvents.map((event) => (
-                      <EventCard
-                        key={event.id}
-                        event={event}
-                        onViewDetails={handleViewDetails}
-                        onBookNow={handleBookNow}
-                        isFavorite={favorites.includes(event.id)}
-                        onToggleFavorite={handleToggleFavorite}
-                      />
-                    ))}
-                  </motion.div>
-                )
-              )}
-            </motion.section>
-          )}
+                {/* Empty Search Results State */}
+                {!isLoading && !apiError && filteredEvents.length === 0 && (
+                  <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/20 bg-white/5 p-12 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-slate-400 mb-3">
+                      <Search className="h-7 w-7" />
+                    </div>
+                    <h3 className="font-display text-lg font-bold">No Matching Events Found</h3>
+                    <p className="mt-1 max-w-md text-xs text-slate-400">
+                      We couldn't find any events matching your search or filter combination. Try
+                      adjusting the keyword, clearing price filters, or switching categories.
+                    </p>
+                    <button
+                      id="empty-results-reset-btn"
+                      onClick={handleResetFilters}
+                      className="mt-5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-400 px-5 py-2.5 text-xs font-bold text-slate-950 hover:brightness-110 transition-all cursor-pointer shadow-md shadow-amber-500/20"
+                    >
+                      Clear All Filters
+                    </button>
+                  </div>
+                )}
 
-          {/* ==================================================== */}
-          {/* TAB 3: MY BOOKINGS PAGE */}
-          {/* ==================================================== */}
-          {activeTab === 'bookings' && (
-            <motion.div
-              key="bookings"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <MyBookingsView
-                bookings={bookings}
-                onCancelBooking={handleCancelBooking}
-                onViewEventDetails={(eventId) => {
-                  const ev = events.find((e) => e.id === eventId);
-                  if (ev) {
-                    handleViewDetails(ev);
-                  }
-                }}
-                onExploreEvents={() => {
-                  setActiveTab('events');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
-            </motion.div>
+                {/* View Layout Switcher & Fast Actions */}
+                {!isLoading && !apiError && filteredEvents.length > 0 && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-2.5 px-4 rounded-2xl border border-white/10 backdrop-blur-xl">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-slate-400 font-medium">Layout View:</span>
+                      <div className="flex items-center rounded-xl bg-slate-950 p-1 border border-white/10">
+                        <button
+                          id="view-mode-deck-btn"
+                          onClick={() => setEventViewMode("stacked")}
+                          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                            eventViewMode === "stacked"
+                              ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm"
+                              : "text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          <Layers className="h-3.5 w-3.5" />
+                          <span>Horizon Deck (Cascading Scroll)</span>
+                        </button>
+
+                        <button
+                          id="view-mode-grid-btn"
+                          onClick={() => setEventViewMode("grid")}
+                          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                            eventViewMode === "grid"
+                              ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm"
+                              : "text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          <LayoutGrid className="h-3.5 w-3.5" />
+                          <span>Standard Grid</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Cancelled events quick toggle reminder */}
+                    {events.some((e) => e.isCancelled) && (
+                      <button
+                        id="cancelled-events-pill-toggle"
+                        onClick={() =>
+                          handleFilterUpdate({
+                            statusFilter:
+                              filters.statusFilter === "cancelled" ? "all" : "cancelled",
+                          })
+                        }
+                        className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                          filters.statusFilter === "cancelled"
+                            ? "border-rose-500 bg-rose-500 text-white font-bold"
+                            : "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20"
+                        }`}
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                        <span>
+                          {filters.statusFilter === "cancelled"
+                            ? "Showing Cancelled Only (Click to show all)"
+                            : `View Cancelled Events (${events.filter((e) => e.isCancelled).length})`}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Events Showcase: Cascading Horizon Deck vs Multi-column Grid */}
+                {!isLoading &&
+                  !apiError &&
+                  filteredEvents.length > 0 &&
+                  (eventViewMode === "stacked" ? (
+                    <HorizontalStackedEventDeck
+                      events={filteredEvents}
+                      onViewDetails={handleViewDetails}
+                      onBookNow={handleBookNow}
+                      favorites={favorites}
+                      onToggleFavorite={handleToggleFavorite}
+                    />
+                  ) : (
+                    <motion.div
+                      key={`${filters.category}-${filters.sortBy}-${filters.priceFilter}-${filters.dateFilter}-${filters.searchQuery}-${filters.statusFilter}`}
+                      variants={cardGridVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                    >
+                      {filteredEvents.map((event) => (
+                        <EventCard
+                          key={event.id}
+                          event={event}
+                          onViewDetails={handleViewDetails}
+                          onBookNow={handleBookNow}
+                          isFavorite={favorites.includes(event.id)}
+                          onToggleFavorite={handleToggleFavorite}
+                        />
+                      ))}
+                    </motion.div>
+                  ))}
+              </motion.section>
+            )}
+
+            {/* ==================================================== */}
+            {/* TAB 3: MY BOOKINGS PAGE */}
+            {/* ==================================================== */}
+            {activeTab === "bookings" && (
+              <motion.div
+                key="bookings"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <MyBookingsView
+                  bookings={bookings}
+                  onCancelBooking={handleCancelBooking}
+                  onViewEventDetails={(eventId) => {
+                    const ev = events.find((e) => e.id === eventId);
+                    if (ev) {
+                      handleViewDetails(ev);
+                    }
+                  }}
+                  onExploreEvents={() => {
+                    setActiveTab("events");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
+
+        {/* Global Modals with AnimatePresence */}
+        <AnimatePresence>
+          {isDetailsOpen && selectedEventForDetails && (
+            <EventDetailsModal
+              event={selectedEventForDetails}
+              isOpen={isDetailsOpen}
+              onClose={() => setIsDetailsOpen(false)}
+              onProceedToBook={handleBookNow}
+              isFavorite={favorites.includes(selectedEventForDetails.id)}
+              onToggleFavorite={handleToggleFavorite}
+            />
           )}
         </AnimatePresence>
-      </main>
 
-      {/* Global Modals with AnimatePresence */}
-      <AnimatePresence>
-        {isDetailsOpen && selectedEventForDetails && (
-          <EventDetailsModal
-            event={selectedEventForDetails}
-            isOpen={isDetailsOpen}
-            onClose={() => setIsDetailsOpen(false)}
-            onProceedToBook={handleBookNow}
-            isFavorite={favorites.includes(selectedEventForDetails.id)}
-            onToggleFavorite={handleToggleFavorite}
-          />
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {isBookingOpen && selectedEventForBooking && (
+            <BookingModal
+              isOpen={isBookingOpen}
+              event={selectedEventForBooking}
+              initialTier={preselectedTier}
+              currentUser={user}
+              onClose={() => setIsBookingOpen(false)}
+              onBookingConfirmed={handleBookingConfirmed}
+              onViewBookings={() => {
+                setActiveTab("bookings");
+                smoothScrollToTop();
+              }}
+            />
+          )}
+        </AnimatePresence>
 
-      <AnimatePresence>
-        {isBookingOpen && selectedEventForBooking && (
-          <BookingModal
-            isOpen={isBookingOpen}
-            event={selectedEventForBooking}
-            initialTier={preselectedTier}
-            currentUser={user}
-            onClose={() => setIsBookingOpen(false)}
-            onBookingConfirmed={handleBookingConfirmed}
-            onViewBookings={() => {
-              setActiveTab('bookings');
-              smoothScrollToTop();
-            }}
-          />
-        )}
-      </AnimatePresence>
+        {/* User Profile & Theme Settings Modal */}
+        <AnimatePresence>
+          {isProfileModalOpen && user && (
+            <UserProfileModal
+              isOpen={isProfileModalOpen}
+              user={user}
+              onClose={() => setIsProfileModalOpen(false)}
+              onUpdateProfile={handleUpdateProfile}
+              onExit={handleExit}
+              bookingCount={bookings.filter((b) => b.status === "confirmed").length}
+              favoriteCount={favorites.length}
+              currentTheme={theme}
+              onToggleTheme={(newTheme) => setTheme(newTheme)}
+              onShareApp={handleShareApp}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* User Profile & Theme Settings Modal */}
-      <AnimatePresence>
-        {isProfileModalOpen && user && (
-          <UserProfileModal
-            isOpen={isProfileModalOpen}
-            user={user}
-            onClose={() => setIsProfileModalOpen(false)}
-            onUpdateProfile={handleUpdateProfile}
-            onExit={handleExit}
-            bookingCount={bookings.filter((b) => b.status === 'confirmed').length}
-            favoriteCount={favorites.length}
-            currentTheme={theme}
-            onToggleTheme={(newTheme) => setTheme(newTheme)}
-            onShareApp={handleShareApp}
-          />
-        )}
-      </AnimatePresence>
+        {/* Gmail Login Modal */}
+        <AnimatePresence>
+          {isAuthModalOpen && (
+            <AuthModal
+              isOpen={isAuthModalOpen}
+              onClose={() => {
+                // Only allow closing if already logged in
+                if (user) setIsAuthModalOpen(false);
+              }}
+              onLoginSuccess={handleLoginSuccess}
+              defaultEmail="jaydeepch137@gmail.com"
+              forceLogin={!user}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Gmail Login Modal */}
-      <AnimatePresence>
-        {isAuthModalOpen && (
-          <AuthModal
-            isOpen={isAuthModalOpen}
-            onClose={() => {
-              // Only allow closing if already logged in
-              if (user) setIsAuthModalOpen(false);
-            }}
-            onLoginSuccess={handleLoginSuccess}
-            defaultEmail="jaydeepch137@gmail.com"
-            forceLogin={!user}
-          />
-        )}
-      </AnimatePresence>
+        {/* Toast Notifications */}
+        <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
-      {/* Toast Notifications */}
-      <ToastContainer toasts={toasts} onDismiss={removeToast} />
-
-      {/* Footer */}
-      <Footer
-        onNavigateCategory={(cat) => {
-          setFilters((prev) => ({ ...prev, category: cat, searchQuery: '' }));
-          setActiveTab('events');
-          smoothScrollToTop();
-        }}
-        onNavigateTab={(tab) => {
-          setActiveTab(tab);
-          smoothScrollToTop();
-        }}
-      />
-    </div>
+        {/* Footer */}
+        <Footer
+          onNavigateCategory={(cat) => {
+            setFilters((prev) => ({ ...prev, category: cat, searchQuery: "" }));
+            setActiveTab("events");
+            smoothScrollToTop();
+          }}
+          onNavigateTab={(tab) => {
+            setActiveTab(tab);
+            smoothScrollToTop();
+          }}
+        />
+      </div>
     </SmoothScrollContainer>
   );
 }

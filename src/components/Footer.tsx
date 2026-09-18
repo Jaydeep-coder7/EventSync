@@ -1,16 +1,13 @@
-import React from 'react';
-import { Ticket, ShieldCheck, Sparkles, MapPin, QrCode } from 'lucide-react';
-import { EventCategory } from '../types';
+import React from "react";
+import { Ticket, ShieldCheck, Sparkles, MapPin, QrCode } from "lucide-react";
+import { EventCategory } from "../types";
 
 interface FooterProps {
   onNavigateCategory: (category: EventCategory) => void;
-  onNavigateTab: (tab: 'home' | 'events' | 'bookings') => void;
+  onNavigateTab: (tab: "home" | "events" | "bookings") => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({
-  onNavigateCategory,
-  onNavigateTab,
-}) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigateCategory, onNavigateTab }) => {
   return (
     <footer className="border-t border-white/10 bg-slate-950 text-slate-400 pt-12 pb-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -26,7 +23,8 @@ export const Footer: React.FC<FooterProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Curating premier live concerts, technology conferences, comedy showcases, cultural galas, and stadium sports across India with instant digital QR passes.
+              Curating premier live concerts, technology conferences, comedy showcases, cultural
+              galas, and stadium sports across India with instant digital QR passes.
             </p>
             <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
               <span className="flex items-center gap-1.5 text-amber-400/90 font-medium">
@@ -48,7 +46,7 @@ export const Footer: React.FC<FooterProps> = ({
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
                 <button
-                  onClick={() => onNavigateTab('home')}
+                  onClick={() => onNavigateTab("home")}
                   className="hover:text-amber-400 transition-colors cursor-pointer text-left"
                 >
                   Home Overview
@@ -56,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <button
-                  onClick={() => onNavigateTab('events')}
+                  onClick={() => onNavigateTab("events")}
                   className="hover:text-amber-400 transition-colors cursor-pointer text-left"
                 >
                   Browse All Events
@@ -64,7 +62,7 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <button
-                  onClick={() => onNavigateTab('bookings')}
+                  onClick={() => onNavigateTab("bookings")}
                   className="hover:text-amber-400 transition-colors cursor-pointer text-left"
                 >
                   My Booked Passes
@@ -81,19 +79,19 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
               {(
                 [
-                  'Music',
-                  'Technology',
-                  'Food & Drink',
-                  'Arts & Theatre',
-                  'Sports & Fitness',
-                  'Business & Networking',
+                  "Music",
+                  "Technology",
+                  "Food & Drink",
+                  "Arts & Theatre",
+                  "Sports & Fitness",
+                  "Business & Networking",
                 ] as EventCategory[]
               ).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => {
                     onNavigateCategory(cat);
-                    onNavigateTab('events');
+                    onNavigateTab("events");
                   }}
                   className="text-left hover:text-amber-400 transition-colors cursor-pointer truncate"
                 >
