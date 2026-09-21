@@ -12,6 +12,7 @@ import {
   Ban,
 } from "lucide-react";
 import { EventItem } from "../types";
+import { isEventConcluded } from "../utils/storage";
 
 interface EventCardProps {
   event: EventItem;
@@ -90,6 +91,7 @@ export const EventCard: React.FC<EventCardProps> = ({
     border: "border-white/10",
   };
 
+  const eventConcluded = isEventConcluded(event.date);
   const percentageBooked = Math.round((event.bookedSeats / event.totalSeats) * 100);
   const seatsRemaining = Math.max(0, event.totalSeats - event.bookedSeats);
 
@@ -273,6 +275,19 @@ export const EventCard: React.FC<EventCardProps> = ({
               >
                 <Ban className="h-3.5 w-3.5 text-rose-400 shrink-0" />
                 <span>Cancelled</span>
+              </button>
+            ) : eventConcluded ? (
+              <button
+                type="button"
+                id={`concluded-reviews-btn-${event.id}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewDetails(event);
+                }}
+                className="flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/20 px-3 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/30 transition-colors cursor-pointer"
+              >
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 shrink-0" />
+                <span>Reviews</span>
               </button>
             ) : (
               <motion.button

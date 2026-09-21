@@ -157,8 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-bold text-slate-950 hover:brightness-110 transition-all cursor-pointer shadow-md shadow-amber-500/20 shrink-0"
             >
               <User className="h-3.5 w-3.5" />
-              <span className="hidden xs:inline">Login with Gmail</span>
-              <span className="xs:hidden">Login</span>
+              <span>Login</span>
             </motion.button>
           )}
 
@@ -176,20 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* Find Events / Search Area Button */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            id="nav-cta-explore-btn"
-            onClick={() => handleNavClick("events")}
-            className="inline-flex items-center gap-1 sm:gap-1.5 rounded-xl bg-white/10 border border-white/10 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:bg-white/15 transition-all cursor-pointer shrink-0"
-          >
-            <Search className="h-3.5 w-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Find Events</span>
-            <span className="sm:hidden text-[11px]">Events</span>
-          </motion.button>
-
-          {/* Exit (Logout) Button: EXTREME TOP RIGHT CORNER adjacent to search/find event area */}
+          {/* Exit (Logout) Button: EXTREME TOP RIGHT CORNER */}
           {user && (
             <motion.button
               whileHover={{ scale: 1.04 }}

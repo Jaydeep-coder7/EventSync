@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   X,
@@ -21,8 +22,20 @@ import {
   MessageCircle,
   AlertTriangle,
   Ban,
+  Bell,
+  BellRing,
+  Navigation,
 } from "lucide-react";
-import { EventItem, TicketTier } from "../types";
+import { EventItem, TicketTier, UserProfile, Booking, EventReview } from "../types";
+import { isEventConcluded } from "../utils/storage";
+import {
+  isEventReminderSet,
+  toggleEventReminder,
+  isEventApproaching,
+} from "../utils/reminderStorage";
+import { playNotificationChime } from "../services/notificationService";
+import { EventFeedbackRating } from "./EventFeedbackRating";
+import { VenueStaticMap } from "./VenueStaticMap";
 
 interface EventDetailsModalProps {
   event: EventItem | null;
@@ -31,6 +44,10 @@ interface EventDetailsModalProps {
   onProceedToBook: (event: EventItem, preselectedTier?: TicketTier) => void;
   isFavorite?: boolean;
   onToggleFavorite?: (eventId: string) => void;
+  currentUser?: UserProfile | null;
+  userBookings?: Booking[];
+  onReviewSubmitted?: (review: EventReview) => void;
+  onAddToast?: (type: "success" | "error" | "info", title: string, message?: string) => void;
 }
 
 export const EventDetailsModal: React.FC<EventDetailsModalProps> = (props) => {
@@ -45,12 +62,82 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
   onProceedToBook,
   isFavorite = false,
   onToggleFavorite,
+  currentUser,
+  userBookings = [],
+  onReviewSubmitted,
+  onAddToast,
 }) => {
+  const eventConcluded = isEventConcluded(event.date);
   const allImages = [event.image, ...(event.gallery || [])];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedTierId, setSelectedTierId] = useState<string>(event.ticketTiers?.[0]?.id || "");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isReminded, setIsReminded] = useState<boolean>(() => isEventReminderSet(event.id));
+  const [localToast, setLocalToast] = useState<{
+    type: "success" | "error" | "info";
+    title: string;
+    message?: string;
+  } | null>(null);
+
+  const approachInfo = isEventApproaching(event.date);
+
+  const showToastAlert = (type: "success" | "error" | "info", title: string, message?: string) => {
+    if (onAddToast) {
+      onAddToast(type, title, message);
+    }
+    // Also display in-modal floating alert for instant visual feedback
+    setLocalToast({ type, title, message });
+    setTimeout(() => {
+      setLocalToast(null);
+    }, 4500);
+  };
+
+  const handleToggleReminder = () => {
+    if (eventConcluded) {
+      showToastAlert(
+        "info",
+        "Event Concluded",
+        `This event took place on ${event.displayDate}. Reminders are only available for upcoming events.`,
+      );
+      return;
+    }
+
+    const result = toggleEventReminder(event);
+    setIsReminded(result.isSet);
+
+    if (result.isSet) {
+      playNotificationChime();
+      if (result.isApproaching) {
+        showToastAlert(
+          "info",
+          "Event Approaching Soon! ⏰",
+          `Reminder active: "${event.title}" is ${result.label} (${event.displayDate}) at ${event.venue}, ${event.city}. Have your passes ready!`,
+        );
+      } else {
+        showToastAlert(
+          "success",
+          "Reminder Set! 🔔",
+          `We'll send you a toast alert as "${event.title}" approaches on ${event.displayDate}!`,
+        );
+      }
+    } else {
+      showToastAlert(
+        "info",
+        "Reminder Removed",
+        `Notification alert has been turned off for "${event.title}".`,
+      );
+    }
+  };
+
+  const handleTestApproachingAlert = () => {
+    playNotificationChime();
+    showToastAlert(
+      "info",
+      "Approaching Event Alert ⏰",
+      `Upcoming reminder: "${event.title}" is approaching soon (${event.displayDate}) at ${event.venue}, ${event.city}!`,
+    );
+  };
 
   const selectedTier =
     event.ticketTiers.find((t) => t.id === selectedTierId) || event.ticketTiers[0];
@@ -96,7 +183,7 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
   const telegramUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
 
-  return (
+  const modalContent = (
     <div
       data-lenis-prevent="true"
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 backdrop-blur-md bg-slate-950/80 transition-opacity min-h-screen"
@@ -207,6 +294,33 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
               </AnimatePresence>
             </div>
 
+            {/* Remind Me Header Toggle */}
+            {!eventConcluded && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                id="details-remind-btn"
+                onClick={handleToggleReminder}
+                className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  isReminded
+                    ? "border-amber-400/50 bg-amber-500/20 text-amber-300 shadow-sm shadow-amber-500/20"
+                    : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+                }`}
+                title={
+                  isReminded
+                    ? "Reminder active - Click to disable"
+                    : "Remind me when event date approaches"
+                }
+              >
+                {isReminded ? (
+                  <BellRing className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+                ) : (
+                  <Bell className="h-3.5 w-3.5 text-slate-400" />
+                )}
+                <span className="hidden sm:inline">{isReminded ? "Reminded" : "Remind Me"}</span>
+              </motion.button>
+            )}
+
             {onToggleFavorite && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -233,6 +347,36 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
             </button>
           </div>
         </div>
+
+        {/* Floating In-Modal Toast Alert */}
+        <AnimatePresence>
+          {localToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -15, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.96 }}
+              className="mx-5 my-2.5 rounded-2xl border border-amber-400/40 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-xl flex items-start gap-3 z-30"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400">
+                <BellRing className="h-4 w-4 animate-bounce text-amber-400" />
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <h4 className="text-xs font-bold text-white">{localToast.title}</h4>
+                {localToast.message && (
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">
+                    {localToast.message}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setLocalToast(null)}
+                className="text-slate-400 hover:text-white text-xs p-1 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {copySuccess && (
           <div className="bg-gradient-to-r from-amber-500 to-yellow-400 py-1 text-center text-xs font-bold text-slate-950 transition-all">
@@ -337,18 +481,113 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-2xl bg-white/5 p-4 border border-white/10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <a
+              href="#venue-map-section"
+              onClick={(e) => {
+                e.preventDefault();
+                document
+                  .getElementById("venue-map-section")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="flex items-center gap-3 rounded-2xl bg-white/5 p-4 border border-white/10 hover:border-amber-400/40 hover:bg-white/10 transition-colors group cursor-pointer"
+              title="Click to view venue on map"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30 group-hover:scale-105 transition-transform">
                 <MapPin className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <span className="text-[11px] font-semibold text-slate-400 block">Venue</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-slate-400 block">Venue</span>
+                  <span className="text-[10px] font-semibold text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Map ↓
+                  </span>
+                </div>
                 <span className="text-xs font-bold text-white truncate block">
                   {event.venue}, {event.city}
                 </span>
               </div>
-            </div>
+            </a>
           </div>
+
+          {/* Interactive Remind Me / Notification Banner */}
+          {!eventConcluded && (
+            <motion.div
+              layout
+              className={`rounded-2xl border p-4 transition-all ${
+                isReminded
+                  ? "border-amber-400/40 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-transparent shadow-lg shadow-amber-500/5"
+                  : "border-white/10 bg-white/5 hover:border-white/20"
+              }`}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
+                      isReminded
+                        ? "border-amber-400/50 bg-amber-500/25 text-amber-400 shadow-sm"
+                        : "border-white/15 bg-white/5 text-slate-400"
+                    }`}
+                  >
+                    {isReminded ? (
+                      <BellRing className="h-5 w-5 animate-pulse text-amber-400" />
+                    ) : (
+                      <Bell className="h-5 w-5 text-slate-400" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white">
+                        {isReminded ? "Event Reminder Active" : "Event Notification Reminder"}
+                      </span>
+                      {isReminded && (
+                        <span className="rounded-full bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                          {approachInfo.label}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      {isReminded
+                        ? `You'll be alerted with a toast notification as ${event.displayDate} approaches.`
+                        : "Get an automatic toast alert when this event date approaches so you never miss out."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+                  {isReminded && (
+                    <button
+                      onClick={handleTestApproachingAlert}
+                      className="rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                      title="Preview the approaching event toast alert"
+                    >
+                      Test Alert
+                    </button>
+                  )}
+                  <button
+                    id="modal-remind-me-cta"
+                    onClick={handleToggleReminder}
+                    className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                      isReminded
+                        ? "border border-amber-400/40 bg-amber-500/20 text-amber-300 hover:bg-rose-500/20 hover:border-rose-500/40 hover:text-rose-300"
+                        : "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-md shadow-amber-500/20"
+                    }`}
+                  >
+                    {isReminded ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-amber-400" />
+                        <span>Reminder Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bell className="h-3.5 w-3.5" />
+                        <span>Remind Me</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Seat Capacity Progress */}
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -421,6 +660,29 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
             </div>
           </div>
 
+          {/* Venue & Approximate Location Static Map */}
+          <div id="venue-map-section" className="space-y-3 pt-2 border-t border-white/10">
+            <div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-amber-400" />
+                <h2 className="font-display text-lg font-bold text-white">
+                  Venue & Approximate Location
+                </h2>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Approximate venue location in {event.city} with transit access points and
+                directions.
+              </p>
+            </div>
+
+            <VenueStaticMap
+              venue={event.venue}
+              city={event.city}
+              address={event.address}
+              category={event.category}
+            />
+          </div>
+
           {/* Ticket Tier Selection Section */}
           <div className="space-y-4 pt-2 border-t border-white/10">
             <div className="flex items-center justify-between">
@@ -439,11 +701,15 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
                   <div
                     key={tier.id}
                     id={`ticket-tier-option-${tier.id}`}
-                    onClick={() => setSelectedTierId(tier.id)}
-                    className={`relative flex flex-col justify-between rounded-2xl border p-4 transition-all cursor-pointer ${
-                      isSelected
-                        ? "border-amber-400 bg-amber-500/15 shadow-md ring-1 ring-amber-400/30"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
+                    onClick={() => {
+                      if (!eventConcluded) setSelectedTierId(tier.id);
+                    }}
+                    className={`relative flex flex-col justify-between rounded-2xl border p-4 transition-all ${
+                      eventConcluded
+                        ? "opacity-60 cursor-not-allowed border-white/5 bg-white/[0.02]"
+                        : isSelected
+                          ? "border-amber-400 bg-amber-500/15 shadow-md ring-1 ring-amber-400/30 cursor-pointer"
+                          : "border-white/10 bg-white/5 hover:border-white/20 cursor-pointer"
                     }`}
                   >
                     <div>
@@ -462,14 +728,20 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
 
                     <div className="mt-4 flex items-center justify-between pt-2 border-t border-white/10 text-xs">
                       <span className="text-slate-400 text-[11px]">
-                        {tier.remaining} tickets available
+                        {eventConcluded
+                          ? "Passes Concluded"
+                          : `${tier.remaining} tickets available`}
                       </span>
                       <span
                         className={`font-semibold text-xs ${
-                          isSelected ? "text-amber-300" : "text-slate-500"
+                          eventConcluded
+                            ? "text-slate-500"
+                            : isSelected
+                              ? "text-amber-300"
+                              : "text-slate-500"
                         }`}
                       >
-                        {isSelected ? "✓ Selected" : "Select"}
+                        {eventConcluded ? "Closed" : isSelected ? "✓ Selected" : "Select"}
                       </span>
                     </div>
                   </div>
@@ -477,22 +749,40 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
               })}
             </div>
           </div>
+
+          {/* Interactive Star-Rating & Attendee Feedback Component */}
+          <div id="event-feedback-section" className="pt-2">
+            <EventFeedbackRating
+              event={event}
+              currentUser={currentUser}
+              userBookings={userBookings}
+              onReviewSubmitted={onReviewSubmitted}
+            />
+          </div>
         </div>
 
         {/* Bottom Booking Action Bar */}
         <div className="border-t border-white/10 bg-slate-950/90 px-5 py-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <span className="text-xs text-slate-400">Selected: </span>
+            <span className="text-xs text-slate-400">
+              {eventConcluded ? "Event Status: " : "Selected: "}
+            </span>
             <span className="text-xs font-bold text-white">
-              {selectedTier?.name || "General Admission"}
+              {eventConcluded
+                ? `Concluded on ${event.displayDate}`
+                : selectedTier?.name || "General Admission"}
             </span>
             <div className="flex items-baseline gap-1.5">
               <span className="font-display text-2xl font-extrabold text-white">
-                {selectedTier?.price === 0
-                  ? "FREE"
-                  : `₹${(selectedTier?.price || event.price).toLocaleString("en-IN")}`}
+                {eventConcluded
+                  ? "Concluded"
+                  : selectedTier?.price === 0
+                    ? "FREE"
+                    : `₹${(selectedTier?.price || event.price).toLocaleString("en-IN")}`}
               </span>
-              <span className="text-xs text-slate-400">/ person (₹0 surcharge)</span>
+              <span className="text-xs text-slate-400">
+                {eventConcluded ? "• Rating & feedback open" : "/ person (₹0 surcharge)"}
+              </span>
             </div>
           </div>
 
@@ -510,6 +800,20 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
                 <Ban className="h-4 w-4 text-rose-400" />
                 <span>Event Cancelled</span>
               </div>
+            ) : eventConcluded ? (
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                id="details-feedback-cta"
+                onClick={() => {
+                  const el = document.getElementById("event-feedback-section");
+                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 px-6 py-3 text-sm font-bold text-slate-950 shadow-md shadow-amber-500/25 hover:brightness-110 transition-all cursor-pointer"
+              >
+                <Star className="h-4 w-4 fill-slate-950 text-slate-950" />
+                <span>Rate & Review Event</span>
+              </motion.button>
             ) : (
               <motion.button
                 whileHover={{ scale: 1.03 }}
@@ -527,4 +831,6 @@ const EventDetailsModalContent: React.FC<EventDetailsModalProps & { event: Event
       </motion.div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalContent, document.body) : modalContent;
 };

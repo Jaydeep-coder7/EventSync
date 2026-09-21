@@ -1,6 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Flame, Sparkles, ArrowRight, Filter, Star, CheckCircle2 } from "lucide-react";
+import {
+  Flame,
+  Sparkles,
+  ArrowRight,
+  Filter,
+  Star,
+  CheckCircle2,
+  SlidersHorizontal,
+} from "lucide-react";
 import { EventItem, TicketTier } from "../types";
 import { HorizontalEventCard } from "./HorizontalEventCard";
 
@@ -57,11 +65,8 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
             </span>
           </div>
 
-          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2.5 flex-wrap">
-            <span>Featured & Selling Fast</span>
-            <span className="text-xs sm:text-sm font-semibold text-amber-400/90 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
-              {filteredEvents.length} Hot Events
-            </span>
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
+            Featured & Selling Fast
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed break-words">
@@ -82,7 +87,7 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
                 : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
-            All Hot Events
+            All
           </button>
           <button
             type="button"
@@ -130,12 +135,12 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
                 : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
             }`}
           >
-            ⭐ 4.8+ Rated
+            ⭐ 4.8+
           </button>
         </div>
       </div>
 
-      {/* VERTICAL STACK OF HORIZONTAL EVENTS (Natural vertical scrolling!) */}
+      {/* Event Cards Vertical Stream */}
       <div className="flex flex-col gap-4 sm:gap-6 w-full">
         {visibleEvents.map((event, index) => (
           <HorizontalEventCard
@@ -162,24 +167,22 @@ export const HorizontalSellingFastFeed: React.FC<HorizontalSellingFastFeedProps>
               type="button"
               id="feed-load-more-btn"
               onClick={() => setDisplayLimit((prev) => prev + 4)}
-              className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer"
             >
-              Load More Events
+              Load More ({filteredEvents.length - visibleEvents.length} left)
             </button>
           )}
 
           {onSeeAll && (
-            <motion.button
-              whileHover={{ scale: 1.03, x: 2 }}
-              whileTap={{ scale: 0.97 }}
+            <button
               type="button"
               id="feed-see-all-btn"
               onClick={onSeeAll}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2 text-xs font-bold text-slate-950 transition-all cursor-pointer shadow-md"
             >
-              <span>Explore Full Catalog ({events.length})</span>
-              <ArrowRight className="h-4 w-4" />
-            </motion.button>
+              <span>Explore All Events</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
           )}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Ticket, ShieldCheck, Sparkles, MapPin, QrCode } from "lucide-react";
+import { Ticket, ShieldCheck, Sparkles, MapPin, QrCode, Headphones } from "lucide-react";
 import { EventCategory } from "../types";
 
 interface FooterProps {
@@ -26,10 +26,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateCategory, onNavigateTa
               Curating premier live concerts, technology conferences, comedy showcases, cultural
               galas, and stadium sports across India with instant digital QR passes.
             </p>
-            <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
               <span className="flex items-center gap-1.5 text-amber-400/90 font-medium">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Verified Digital Passes
+              </span>
+              <span className="flex items-center gap-1.5 text-slate-300 font-medium">
+                <Headphones className="h-3.5 w-3.5 text-amber-400" />
+                Customer Care: 1800-202-SYNC
               </span>
               <span className="flex items-center gap-1.5 text-slate-400 font-medium">
                 <QrCode className="h-3.5 w-3.5" />
@@ -103,10 +107,36 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateCategory, onNavigateTa
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="mt-8 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} EventSync. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
-            <span>Verified Digital Gate Passes</span>
+          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3 sm:gap-4 text-xs text-slate-500">
+            <span className="flex items-center gap-1.5 font-medium text-slate-300">
+              <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+              Verified Digital Gate Passes
+            </span>
+            <span>•</span>
+            <span
+              id="footer-customer-care"
+              className="flex items-center gap-1.5 font-semibold text-amber-400"
+            >
+              <Headphones className="h-3.5 w-3.5" />
+              <span>Customer Care:</span>
+              <a
+                href="tel:18002027962"
+                className="text-amber-300 hover:text-amber-200 hover:underline transition-colors"
+                title="Toll-free 24/7 Helpline"
+              >
+                1800-202-SYNC
+              </a>
+              <span className="text-slate-600">/</span>
+              <a
+                href="mailto:support@eventsync.in"
+                className="text-amber-300 hover:text-amber-200 hover:underline transition-colors"
+                title="Customer Care Email"
+              >
+                care@eventsync.in
+              </a>
+            </span>
             <span>•</span>
             <span>Indian Rupee (₹) Pricing</span>
             <span>•</span>

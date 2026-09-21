@@ -18,9 +18,15 @@ interface ScanAtEntryPassProps {
   booking: Booking;
   onPrint?: () => void;
   onShare?: () => void;
+  showPrint?: boolean;
 }
 
-export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({ booking, onPrint, onShare }) => {
+export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({
+  booking,
+  onPrint,
+  onShare,
+  showPrint = false,
+}) => {
   return (
     <div className="w-full space-y-4">
       {/* Physical Ticket Pass Container with Perforations */}
@@ -172,26 +178,30 @@ export const ScanAtEntryPass: React.FC<ScanAtEntryPassProps> = ({ booking, onPri
       </motion.div>
 
       {/* Ticket Action Buttons */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={onPrint || (() => window.print())}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors cursor-pointer"
-        >
-          <Printer className="h-3.5 w-3.5 text-amber-400" />
-          <span>Print Gate Pass</span>
-        </button>
+      {(showPrint || onShare) && (
+        <div className="flex items-center gap-2">
+          {showPrint && (
+            <button
+              onClick={onPrint || (() => window.print())}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors cursor-pointer"
+            >
+              <Printer className="h-3.5 w-3.5 text-amber-400" />
+              <span>Print Gate Pass</span>
+            </button>
+          )}
 
-        {onShare && (
-          <button
-            onClick={onShare}
-            className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors cursor-pointer"
-            title="Share Pass"
-          >
-            <Share2 className="h-3.5 w-3.5 text-amber-400" />
-            <span>Share</span>
-          </button>
-        )}
-      </div>
+          {onShare && (
+            <button
+              onClick={onShare}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors cursor-pointer"
+              title="Share Pass"
+            >
+              <Share2 className="h-3.5 w-3.5 text-amber-400" />
+              <span>Share Pass</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

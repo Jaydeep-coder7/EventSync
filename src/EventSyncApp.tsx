@@ -11,8 +11,7 @@ import {
   ShieldCheck,
   Calendar,
   Zap,
-  Layers,
-  LayoutGrid,
+  Loader2,
 } from "lucide-react";
 import {
   Booking,
@@ -32,26 +31,31 @@ import {
 } from "./services/api";
 import {
   getStoredBookings,
+  setStoredBookings,
   saveBooking,
   cancelBooking,
   getStoredFavorites,
+  setStoredFavorites,
   toggleStoredFavorite,
 } from "./utils/storage";
+import { getApproachingReminders } from "./utils/reminderStorage";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { EventCard, cardGridVariants } from "./components/EventCard";
 import { EventCardSkeleton, EventGridSkeleton } from "./components/EventCardSkeleton";
 import { EventFilterBar } from "./components/EventFilterBar";
-import { HorizontalStackedEventDeck } from "./components/HorizontalStackedEventDeck";
 import { HorizontalSellingFastFeed } from "./components/HorizontalSellingFastFeed";
 import { EventDetailsModal } from "./components/EventDetailsModal";
 import { BookingModal } from "./components/BookingModal";
 import { MyBookingsView } from "./components/MyBookingsView";
 import { AuthModal } from "./components/AuthModal";
+import { ResetPasswordModal } from "./components/ResetPasswordModal";
 import { UserProfileModal } from "./components/UserProfileModal";
 import { Footer } from "./components/Footer";
 import { ToastContainer } from "./components/ToastContainer";
 import { SmoothScrollContainer } from "./components/SmoothScrollContainer";
+import { FluidParticlesBackground } from "./components/ui/fluid-particles";
+import { supabase, supabaseUserToUserProfile } from "./lib/supabase";
 
 const INITIAL_FILTERS: FilterState = {
   searchQuery: "",
@@ -111,23 +115,9 @@ export default function App() {
     localStorage.setItem("eventsync_theme", theme);
   }, [theme]);
 
-  // Authentication State
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    try {
-      const saved =
-        localStorage.getItem("eventsync_user") || localStorage.getItem("eventhive_user");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (!parsed.gender) {
-          parsed.gender = "boy";
-        }
-        return parsed;
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  });
+  // Authentication & Session Loading State (Supabase session is the ONLY source of truth)
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   // Movie-like Lenis smooth scroll to top helper
   const smoothScrollToTop = () => {
@@ -142,14 +132,8 @@ export default function App() {
     }
   };
 
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(() => {
-    // If user is not logged in when opening the app, prompt Gmail login immediately
-    try {
-      return !(localStorage.getItem("eventsync_user") || localStorage.getItem("eventhive_user"));
-    } catch {
-      return true;
-    }
-  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState<boolean>(false);
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
@@ -173,9 +157,6 @@ export default function App() {
 
   // Filters State
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
-
-  // View mode for events: 'stacked' (the animated horizontal cascading deck) vs 'grid' (classic multi-column)
-  const [eventViewMode, setEventViewMode] = useState<"stacked" | "grid">("stacked");
 
   // Modals
   const [selectedEventForDetails, setSelectedEventForDetails] = useState<EventItem | null>(null);
@@ -205,11 +186,19 @@ export default function App() {
   };
 
   // Auth & Profile Handlers
-  const handleLoginSuccess = (newUser: UserProfile) => {
+  const handleLoginSuccess = (newUser: UserProfile, isNewAccount = false) => {
     setUser(newUser);
-    localStorage.setItem("eventsync_user", JSON.stringify(newUser));
+    try {
+      localStorage.setItem("eventsync_user_profile", JSON.stringify(newUser));
+    } catch {
+      // Ignore localStorage write errors
+    }
     setIsAuthModalOpen(false);
-    addToast("success", `Welcome, ${newUser.name}!`, `Signed in with ${newUser.email}`);
+    if (isNewAccount) {
+      addToast("success", "Welcome to EventSync!", `Welcome to EventSync, ${newUser.name}!`);
+    } else {
+      addToast("success", "Welcome Back!", `Welcome back, ${newUser.name}!`);
+    }
 
     // If there was a pending booking, trigger it now
     if (pendingBookingEvent) {
@@ -218,9 +207,26 @@ export default function App() {
     }
   };
 
-  const handleUpdateProfile = (updatedUser: UserProfile) => {
+  const handleUpdateProfile = async (updatedUser: UserProfile) => {
     setUser(updatedUser);
-    localStorage.setItem("eventsync_user", JSON.stringify(updatedUser));
+    try {
+      localStorage.setItem("eventsync_user_profile", JSON.stringify(updatedUser));
+    } catch {
+      // Ignore localStorage errors
+    }
+    try {
+      await supabase.auth.updateUser({
+        data: {
+          name: updatedUser.name,
+          full_name: updatedUser.name,
+          phone: updatedUser.phone,
+          gender: updatedUser.gender,
+          avatar: updatedUser.avatar,
+        },
+      });
+    } catch (err) {
+      console.warn("Supabase updateUser warning:", err);
+    }
     addToast(
       "success",
       "Profile Updated",
@@ -228,15 +234,40 @@ export default function App() {
     );
   };
 
-  const handleExit = () => {
+  const handleExit = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Supabase signOut notice:", err);
+    }
+    try {
+      localStorage.removeItem("eventsync_user_profile");
+    } catch {
+      // Ignore localStorage errors
+    }
     setUser(null);
-    localStorage.removeItem("eventsync_user");
-    localStorage.removeItem("eventhive_user");
+    setBookings([]);
+    setFavorites([]);
     setIsProfileModalOpen(false);
     setIsBookingOpen(false);
     setIsDetailsOpen(false);
-    setIsAuthModalOpen(true);
-    addToast("info", "Logged Out", "You have exited EventSync. Sign in with Gmail to book again.");
+    setIsAuthModalOpen(false);
+    setActiveTab("home");
+
+    // Clear history state to prevent back navigation into protected views
+    if (typeof window !== "undefined" && window.history?.replaceState) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+
+    try {
+      localStorage.removeItem("eventsync_user");
+      localStorage.removeItem("eventhive_user");
+      localStorage.removeItem("eventsync_registered_accounts");
+    } catch {
+      // ignore
+    }
+
+    addToast("info", "Logged Out", "You have signed out from EventSync.");
   };
 
   const handleShareApp = async () => {
@@ -287,15 +318,207 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (!user) {
+      setBookings([]);
+      setFavorites([]);
+      return;
+    }
     loadEventsData();
-    setBookings(getStoredBookings());
-    setFavorites(getStoredFavorites());
+
+    // 1. Instantly load local bookings and favorites scoped to this specific user's email
+    const localBookings = getStoredBookings(user.email);
+    const localFavorites = getStoredFavorites(user.email);
+    setBookings(localBookings);
+    setFavorites(localFavorites);
+
+    // 2. Sync with Supabase Auth cloud metadata to retrieve previous bookings
+    // even after days, months, or years from any browser/device
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        const cloudUser = data?.user;
+        if (!cloudUser) return;
+
+        const cloudBookings = cloudUser.user_metadata?.bookings;
+        const cloudFavorites = cloudUser.user_metadata?.favorites;
+
+        if (Array.isArray(cloudBookings) && cloudBookings.length > 0) {
+          setStoredBookings(cloudBookings, user.email);
+          setBookings(cloudBookings);
+        } else if (localBookings.length > 0) {
+          // Sync existing local bookings up to Supabase cloud metadata
+          supabase.auth
+            .updateUser({
+              data: { bookings: localBookings },
+            })
+            .catch(() => {});
+        }
+
+        if (Array.isArray(cloudFavorites) && cloudFavorites.length > 0) {
+          setStoredFavorites(cloudFavorites, user.email);
+          setFavorites(cloudFavorites);
+        } else if (localFavorites.length > 0) {
+          supabase.auth
+            .updateUser({
+              data: { favorites: localFavorites },
+            })
+            .catch(() => {});
+        }
+      })
+      .catch((err) => {
+        console.warn("Notice syncing cloud user_metadata:", err);
+      });
 
     const interval = setInterval(() => {
       checkBackendStatus();
     }, 25000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Listen for Supabase Authentication state changes & persist session
+  useEffect(() => {
+    let isMounted = true;
+
+    // Check for authentication callback notices or errors in URL params
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const errorDesc =
+        searchParams.get("error_description") ||
+        hashParams.get("error_description") ||
+        searchParams.get("error") ||
+        hashParams.get("error");
+
+      if (errorDesc) {
+        addToast(
+          "error",
+          "Authentication Notice",
+          decodeURIComponent(errorDesc).replace(/\+/g, " "),
+        );
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    }
+
+    // 1. Check existing active session from Supabase on mount
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (!isMounted) return;
+        if (error) {
+          console.warn("Supabase getSession notice:", error);
+          try {
+            const saved = localStorage.getItem("eventsync_user_profile");
+            setUser(saved ? JSON.parse(saved) : null);
+          } catch {
+            setUser(null);
+          }
+        } else if (session?.user) {
+          const profile = supabaseUserToUserProfile(session.user);
+          setUser(profile);
+          try {
+            localStorage.setItem("eventsync_user_profile", JSON.stringify(profile));
+          } catch {
+            // Ignore
+          }
+        } else {
+          try {
+            const saved = localStorage.getItem("eventsync_user_profile");
+            setUser(saved ? JSON.parse(saved) : null);
+          } catch {
+            setUser(null);
+          }
+        }
+        setIsCheckingAuth(false);
+      })
+      .catch((err) => {
+        console.warn("Notice retrieving Supabase session:", err);
+        if (isMounted) {
+          try {
+            const saved = localStorage.getItem("eventsync_user_profile");
+            setUser(saved ? JSON.parse(saved) : null);
+          } catch {
+            setUser(null);
+          }
+          setIsCheckingAuth(false);
+        }
+      });
+
+    // Check if URL hash contains password recovery tokens
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      if (hash.includes("type=recovery") || hash.includes("access_token=")) {
+        setIsResetPasswordOpen(true);
+      }
+    }
+
+    // 2. Subscribe to real-time auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
+      if (event === "PASSWORD_RECOVERY") {
+        setIsResetPasswordOpen(true);
+      }
+      if (session?.user) {
+        const profile = supabaseUserToUserProfile(session.user);
+        setUser(profile);
+      } else {
+        setUser(null);
+      }
+      setIsCheckingAuth(false);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Prevent browser back navigation from returning to protected content when logged out
+  useEffect(() => {
+    if (!user && !isCheckingAuth) {
+      if (typeof window !== "undefined" && window.history?.pushState) {
+        window.history.pushState(null, "", window.location.href);
+        const handlePopState = () => {
+          window.history.pushState(null, "", window.location.href);
+        };
+        window.addEventListener("popstate", handlePopState);
+        return () => {
+          window.removeEventListener("popstate", handlePopState);
+        };
+      }
+    }
+  }, [user, isCheckingAuth]);
+
+  // Check approaching event reminders and trigger toast notification alerts
+  useEffect(() => {
+    if (events.length === 0) return;
+    try {
+      const alreadyChecked = sessionStorage.getItem("eventsync_reminders_toast_shown");
+      if (alreadyChecked) return;
+
+      const approachingList = getApproachingReminders(events);
+      if (approachingList.length > 0) {
+        sessionStorage.setItem("eventsync_reminders_toast_shown", "true");
+        // Alert for upcoming approaching events
+        approachingList.slice(0, 2).forEach((item, index) => {
+          setTimeout(
+            () => {
+              addToast(
+                "info",
+                "Upcoming Event Alert ⏰",
+                `Reminder: "${item.reminder.eventTitle}" is ${item.label} (${item.reminder.displayDate}) at ${item.reminder.venue}, ${item.reminder.city}!`,
+              );
+            },
+            1800 + index * 1200,
+          );
+        });
+      }
+    } catch {
+      // Ignore sessionStorage errors
+    }
+  }, [events]);
 
   // Filter and Sort Engine (Live filtering without page reload)
   const filteredEvents = useMemo(() => {
@@ -427,8 +650,19 @@ export default function App() {
   };
 
   const handleBookingConfirmed = (newBooking: Booking, updatedEvent?: EventItem) => {
-    const updated = saveBooking(newBooking);
+    const updated = saveBooking(newBooking, user?.email);
     setBookings(updated);
+
+    // Sync to Supabase user_metadata for cloud persistence across devices & sessions
+    if (user?.email) {
+      supabase.auth
+        .updateUser({
+          data: { bookings: updated },
+        })
+        .catch((err) => {
+          console.warn("Supabase user_metadata bookings sync notice:", err);
+        });
+    }
 
     // Update booked seats count in event list state
     if (updatedEvent) {
@@ -467,15 +701,39 @@ export default function App() {
       console.warn("Backend cancel call skipped/failed, updating client state:", err);
     }
 
-    const updated = cancelBooking(bookingId);
+    const updated = cancelBooking(bookingId, user?.email);
     setBookings(updated);
+
+    // Sync cancelled status to Supabase user_metadata
+    if (user?.email) {
+      supabase.auth
+        .updateUser({
+          data: { bookings: updated },
+        })
+        .catch((err) => {
+          console.warn("Supabase user_metadata cancel sync notice:", err);
+        });
+    }
+
     checkBackendStatus();
     addToast("info", "Booking Cancelled", "Your ticket reservation has been cancelled.");
   };
 
   const handleToggleFavorite = (eventId: string) => {
-    const updated = toggleStoredFavorite(eventId);
+    const updated = toggleStoredFavorite(eventId, user?.email);
     setFavorites(updated);
+
+    // Sync favorites to Supabase user_metadata
+    if (user?.email) {
+      supabase.auth
+        .updateUser({
+          data: { favorites: updated },
+        })
+        .catch((err) => {
+          console.warn("Supabase user_metadata favorites sync notice:", err);
+        });
+    }
+
     const isFav = updated.includes(eventId);
     addToast(
       "info",
@@ -483,6 +741,49 @@ export default function App() {
       isFav ? "Find this easily later." : undefined,
     );
   };
+
+  // 1. Initial Authentication Check Screen - Prevents any flash of protected content
+  if (isCheckingAuth) {
+    return (
+      <div className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-slate-950 text-white select-none">
+        <div className="relative flex flex-col items-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 shadow-xl shadow-amber-500/25 mb-4 animate-bounce">
+            <Ticket className="h-8 w-8 rotate-[-12deg]" />
+          </div>
+          <div className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-slate-200">
+            <Loader2 className="h-4 w-4 animate-spin text-amber-400" />
+            <span>Loading EventSync...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Strict Authentication Gate - Hides entire application when unauthenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen w-full bg-slate-950 relative flex items-center justify-center overflow-hidden">
+        {/* Bundui Fluid Particles Background */}
+        <FluidParticlesBackground
+          className="fixed inset-0 pointer-events-none z-[2]"
+          particleCount={450}
+          particleOpacity={0.75}
+          interactive={true}
+          connectParticles={true}
+          showTrails={true}
+        />
+
+        {/* Ambient atmospheric lighting */}
+        <div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-yellow-500/10 blur-3xl" />
+
+        <AuthModal isOpen={true} forceLogin={true} onLoginSuccess={handleLoginSuccess} />
+
+        {/* Global Toast Notifications */}
+        <ToastContainer toasts={toasts} onDismiss={removeToast} />
+      </div>
+    );
+  }
 
   return (
     <SmoothScrollContainer>
@@ -493,6 +794,16 @@ export default function App() {
             : "bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950"
         } font-sans relative`}
       >
+        {/* Bundui Fluid Particles Interactive Background */}
+        <FluidParticlesBackground
+          className="fixed inset-0 pointer-events-none z-[2]"
+          particleCount={450}
+          particleOpacity={0.75}
+          interactive={true}
+          connectParticles={true}
+          showTrails={true}
+        />
+
         {/* Satisfying Smooth Scroll Progress Bar */}
         <motion.div
           className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-300 origin-left z-50 pointer-events-none shadow-[0_0_12px_rgba(245,158,11,0.6)]"
@@ -514,7 +825,7 @@ export default function App() {
         />
 
         {/* Main View Router with Animated Tab Transitions */}
-        <main className="flex-1">
+        <main className="flex-1 relative z-10">
           <AnimatePresence mode="wait">
             {/* ==================================================== */}
             {/* TAB 1: HOME PAGE */}
@@ -789,42 +1100,12 @@ export default function App() {
                   </div>
                 )}
 
-                {/* View Layout Switcher & Fast Actions */}
-                {!isLoading && !apiError && filteredEvents.length > 0 && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-2.5 px-4 rounded-2xl border border-white/10 backdrop-blur-xl">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-slate-400 font-medium">Layout View:</span>
-                      <div className="flex items-center rounded-xl bg-slate-950 p-1 border border-white/10">
-                        <button
-                          id="view-mode-deck-btn"
-                          onClick={() => setEventViewMode("stacked")}
-                          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                            eventViewMode === "stacked"
-                              ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm"
-                              : "text-slate-400 hover:text-white"
-                          }`}
-                        >
-                          <Layers className="h-3.5 w-3.5" />
-                          <span>Horizon Deck (Cascading Scroll)</span>
-                        </button>
-
-                        <button
-                          id="view-mode-grid-btn"
-                          onClick={() => setEventViewMode("grid")}
-                          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                            eventViewMode === "grid"
-                              ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-sm"
-                              : "text-slate-400 hover:text-white"
-                          }`}
-                        >
-                          <LayoutGrid className="h-3.5 w-3.5" />
-                          <span>Standard Grid</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Cancelled events quick toggle reminder */}
-                    {events.some((e) => e.isCancelled) && (
+                {/* Cancelled events quick toggle reminder */}
+                {!isLoading &&
+                  !apiError &&
+                  filteredEvents.length > 0 &&
+                  events.some((e) => e.isCancelled) && (
+                    <div className="flex justify-end">
                       <button
                         id="cancelled-events-pill-toggle"
                         onClick={() =>
@@ -846,42 +1127,30 @@ export default function App() {
                             : `View Cancelled Events (${events.filter((e) => e.isCancelled).length})`}
                         </span>
                       </button>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
 
-                {/* Events Showcase: Cascading Horizon Deck vs Multi-column Grid */}
-                {!isLoading &&
-                  !apiError &&
-                  filteredEvents.length > 0 &&
-                  (eventViewMode === "stacked" ? (
-                    <HorizontalStackedEventDeck
-                      events={filteredEvents}
-                      onViewDetails={handleViewDetails}
-                      onBookNow={handleBookNow}
-                      favorites={favorites}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
-                  ) : (
-                    <motion.div
-                      key={`${filters.category}-${filters.sortBy}-${filters.priceFilter}-${filters.dateFilter}-${filters.searchQuery}-${filters.statusFilter}`}
-                      variants={cardGridVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    >
-                      {filteredEvents.map((event) => (
-                        <EventCard
-                          key={event.id}
-                          event={event}
-                          onViewDetails={handleViewDetails}
-                          onBookNow={handleBookNow}
-                          isFavorite={favorites.includes(event.id)}
-                          onToggleFavorite={handleToggleFavorite}
-                        />
-                      ))}
-                    </motion.div>
-                  ))}
+                {/* Events Showcase: Multi-column Grid */}
+                {!isLoading && !apiError && filteredEvents.length > 0 && (
+                  <motion.div
+                    key={`${filters.category}-${filters.sortBy}-${filters.priceFilter}-${filters.dateFilter}-${filters.searchQuery}-${filters.statusFilter}`}
+                    variants={cardGridVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  >
+                    {filteredEvents.map((event) => (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onViewDetails={handleViewDetails}
+                        onBookNow={handleBookNow}
+                        isFavorite={favorites.includes(event.id)}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    ))}
+                  </motion.div>
+                )}
               </motion.section>
             )}
 
@@ -925,6 +1194,38 @@ export default function App() {
               onProceedToBook={handleBookNow}
               isFavorite={favorites.includes(selectedEventForDetails.id)}
               onToggleFavorite={handleToggleFavorite}
+              currentUser={user}
+              userBookings={bookings}
+              onAddToast={addToast}
+              onReviewSubmitted={(newReview) => {
+                setEvents((prev) =>
+                  prev.map((e) => {
+                    if (e.id === newReview.eventId) {
+                      const prevCount = e.reviewCount || 0;
+                      const prevRating = e.rating || 4.8;
+                      const updatedCount = prevCount + 1;
+                      const updatedRating = Number(
+                        ((prevRating * prevCount + newReview.rating) / updatedCount).toFixed(2),
+                      );
+                      const updatedEvent = {
+                        ...e,
+                        rating: updatedRating,
+                        reviewCount: updatedCount,
+                      };
+                      if (selectedEventForDetails?.id === e.id) {
+                        setSelectedEventForDetails(updatedEvent);
+                      }
+                      return updatedEvent;
+                    }
+                    return e;
+                  }),
+                );
+                addToast(
+                  "success",
+                  "Review Published!",
+                  `Your ${newReview.rating}★ rating has been recorded for this event.`,
+                );
+              }}
             />
           )}
         </AnimatePresence>
@@ -964,18 +1265,32 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Gmail Login Modal */}
+        {/* Auth Modal */}
         <AnimatePresence>
           {isAuthModalOpen && (
             <AuthModal
               isOpen={isAuthModalOpen}
-              onClose={() => {
-                // Only allow closing if already logged in
-                if (user) setIsAuthModalOpen(false);
-              }}
+              onClose={() => setIsAuthModalOpen(false)}
               onLoginSuccess={handleLoginSuccess}
-              defaultEmail="jaydeepch137@gmail.com"
-              forceLogin={!user}
+              defaultEmail=""
+              forceLogin={false}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Reset Password Modal (triggers on password recovery links/tokens) */}
+        <AnimatePresence>
+          {isResetPasswordOpen && (
+            <ResetPasswordModal
+              isOpen={isResetPasswordOpen}
+              onClose={() => setIsResetPasswordOpen(false)}
+              onPasswordUpdated={() => {
+                addToast(
+                  "success",
+                  "Password Updated Successfully",
+                  "You can now securely sign in with your new password.",
+                );
+              }}
             />
           )}
         </AnimatePresence>

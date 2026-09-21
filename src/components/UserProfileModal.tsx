@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import {
   X,
@@ -51,10 +52,10 @@ const UserProfileModalContent: React.FC<UserProfileModalProps & { user: UserProf
 }) => {
   const [name, setName] = useState(user.name);
   const [username, setUsername] = useState(
-    user.username || user.email.split("@")[0] || "jaydeep137",
+    user.username || (user.email ? user.email.split("@")[0] : "member"),
   );
   const [email, setEmail] = useState(user.email);
-  const [phone, setPhone] = useState(user.phone || "+91 98765 43210");
+  const [phone, setPhone] = useState(user.phone || "");
 
   // Gender-aware avatar system: checks user.gender, or defaults to 'boy'
   const [selectedGender, setSelectedGender] = useState<"boy" | "girl">(() => {
@@ -95,10 +96,24 @@ const UserProfileModalContent: React.FC<UserProfileModalProps & { user: UserProf
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  return (
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const lenis = (window as unknown as { __LENIS__?: { stop: () => void; start: () => void } })
+      .__LENIS__;
+    if (lenis?.stop) lenis.stop();
+
+    return () => {
+      document.body.style.overflow = prev;
+      if (lenis?.start) lenis.start();
+    };
+  }, []);
+
+  const modalContent = (
     <div
-      data-lenis-prevent
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-3 sm:p-4 md:p-6 backdrop-blur-md bg-slate-950/80 transition-opacity"
+      data-lenis-prevent="true"
+      onClick={onClose}
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-3 sm:p-4 md:p-6 backdrop-blur-xl bg-slate-950/80 cursor-pointer"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 15 }}
@@ -334,13 +349,13 @@ const UserProfileModalContent: React.FC<UserProfileModalProps & { user: UserProf
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                 <Mail className="h-3.5 w-3.5 text-amber-400" />
-                <span>Gmail Account</span>
+                <span>Email Account</span>
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="jaydeepch137@gmail.com"
+                placeholder="you@example.com"
                 className="w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
                 required
               />
@@ -422,4 +437,6 @@ const UserProfileModalContent: React.FC<UserProfileModalProps & { user: UserProf
       </motion.div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalContent, document.body) : modalContent;
 };

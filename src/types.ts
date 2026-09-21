@@ -52,6 +52,20 @@ export interface EventItem {
   cancellationReason?: string;
 }
 
+export interface EventReview {
+  id: string;
+  eventId: string;
+  userName: string;
+  userEmail: string;
+  userAvatar?: string;
+  rating: number; // 1 to 5
+  feedback: string;
+  createdAt: string;
+  tags?: string[];
+  verifiedAttendee?: boolean;
+  bookingReference?: string;
+}
+
 export interface Booking {
   id: string;
   eventId: string;

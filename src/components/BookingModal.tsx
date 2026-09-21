@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import QRCode from "qrcode";
 import {
@@ -87,14 +88,14 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
     { id: "1", name: currentUser?.name || "" },
   ]);
 
-  // Primary attendee form state
+  // Attendee form state
   const [formData, setFormData] = useState<BookingFormData>({
     attendeeName: currentUser?.name || "",
     attendeeEmail: currentUser?.email || "",
     attendeePhone: currentUser?.phone || "+91 98765 43210",
     ticketTierId: initialTier?.id || event.ticketTiers?.[0]?.id || "",
     ticketQuantity: 1,
-    selectedSeats: ["Member 1 (Primary)"],
+    selectedSeats: ["Member 1"],
     specialRequests: "",
   });
 
@@ -189,7 +190,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       ticketQuantity: updated.length,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          ? `Member 1${prev.attendeeName ? ` (${prev.attendeeName})` : ""}`
           : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
@@ -206,7 +207,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       ticketQuantity: updated.length,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          ? `Member 1${prev.attendeeName ? ` (${prev.attendeeName})` : ""}`
           : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
@@ -225,7 +226,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       ...prev,
       selectedSeats: updated.map((m, i) =>
         i === 0
-          ? `Member 1 (${name || prev.attendeeName || "Primary"})`
+          ? `Member 1${name || prev.attendeeName ? ` (${name || prev.attendeeName})` : ""}`
           : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
@@ -253,7 +254,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       ticketQuantity: nextMembers.length,
       selectedSeats: nextMembers.map((m, i) =>
         i === 0
-          ? `Member 1 (${prev.attendeeName || "Primary"})`
+          ? `Member 1${prev.attendeeName ? ` (${prev.attendeeName})` : ""}`
           : `Member ${i + 1}${m.name ? ` (${m.name})` : ""}`,
       ),
     }));
@@ -311,7 +312,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       // Build human readable member passes
       const formattedMemberPasses = members.map((m, i) => {
         if (i === 0) {
-          return `Member 1 (Primary: ${formData.attendeeName.trim()})`;
+          return `Member 1${formData.attendeeName.trim() ? `: ${formData.attendeeName.trim()}` : ""}`;
         }
         return `Member ${i + 1}${m.name.trim() ? `: ${m.name.trim()}` : ""}`;
       });
@@ -341,11 +342,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
     }
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  return (
+  const modalContent = (
     <div
       data-lenis-prevent="true"
       className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-slate-950/85 backdrop-blur-md p-3 sm:p-5 md:p-6 flex justify-center items-start min-h-screen text-white"
@@ -451,7 +448,6 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
             {/* Passes directly delivered */}
             <ScanAtEntryPass
               booking={confirmedBooking}
-              onPrint={handlePrint}
               onShare={() => {
                 if (navigator.share) {
                   navigator
@@ -954,18 +950,14 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
                           onChange={(e) => handleMemberNameChange(idx, e.target.value)}
                           placeholder={
                             idx === 0
-                              ? "Primary Member Name (Required)"
+                              ? "Member 1 Name (Required)"
                               : `Member ${idx + 1} Name (Optional)`
                           }
                           className="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none font-medium truncate"
                         />
                       </div>
 
-                      {idx === 0 ? (
-                        <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-md border border-amber-500/30 shrink-0">
-                          Primary
-                        </span>
-                      ) : (
+                      {idx > 0 && (
                         <button
                           type="button"
                           onClick={() => handleRemoveMember(idx)}
@@ -1026,10 +1018,10 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
               </div>
             </div>
 
-            {/* Primary Contact Details (Email & Phone for pass delivery) */}
+            {/* Contact Details (Email & Phone for pass delivery) */}
             <div className="space-y-3 pt-1">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                Primary Contact Details (For Pass Delivery)
+                Contact Details (For Pass Delivery)
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1063,7 +1055,7 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
                     type="email"
                     value={formData.attendeeEmail}
                     onChange={(e) => handleInputChange("attendeeEmail", e.target.value)}
-                    placeholder="jaydeep@example.com"
+                    placeholder="name@example.com"
                     className={`w-full rounded-xl border bg-white/5 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400 ${
                       errors.attendeeEmail ? "border-rose-500" : "border-white/10"
                     }`}
@@ -1115,4 +1107,6 @@ const BookingModalContent: React.FC<BookingModalProps & { event: EventItem }> = 
       </motion.div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalContent, document.body) : modalContent;
 };

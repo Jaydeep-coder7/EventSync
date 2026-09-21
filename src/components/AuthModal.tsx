@@ -1,196 +1,707 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Mail,
   User,
   ShieldCheck,
   Sparkles,
-  ArrowRight,
   Ticket,
   Lock,
   CheckCircle2,
+  X,
+  Eye,
+  EyeOff,
+  Phone,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { UserProfile } from "../types";
+import { supabase, supabaseUserToUserProfile } from "../lib/supabase";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose?: () => void;
-  onLoginSuccess: (user: UserProfile) => void;
+  onLoginSuccess: (user: UserProfile, isNewAccount?: boolean) => void;
   defaultEmail?: string;
   forceLogin?: boolean;
+}
+
+/**
+ * Translates Supabase authentication errors into clean, friendly user-facing messages.
+ * Normal user validation failures (e.g. wrong password or typo) are logged with console.warn.
+ */
+function getFriendlyAuthErrorMessage(error: unknown, mode: "signin" | "signup"): string {
+  console.warn(`[Supabase Auth ${mode}] Notice:`, error);
+
+  if (!error) return "An error occurred during authentication. Please try again.";
+
+  const err = error as { code?: string; message?: string; status?: number; name?: string };
+  const code = (err.code || "").toLowerCase();
+  const msg = (err.message || "").toLowerCase();
+  const status = err.status;
+
+  // 1. Invalid credentials
+  if (
+    code === "invalid_credentials" ||
+    code === "invalid_grant" ||
+    msg.includes("invalid login credentials") ||
+    msg.includes("invalid credentials") ||
+    msg.includes("invalid password") ||
+    (mode === "signin" && msg.includes("user not found"))
+  ) {
+    return "Incorrect email or password. If you don't have an account yet, click 'Create one now' below.";
+  }
+
+  // 2. Email not confirmed
+  if (
+    code === "email_not_confirmed" ||
+    msg.includes("email not confirmed") ||
+    msg.includes("not confirmed")
+  ) {
+    return "Your email address has not been confirmed yet. Please check your inbox for the confirmation link.";
+  }
+
+  // 3. Rate limiting
+  if (
+    code === "over_email_send_rate_limit" ||
+    msg.includes("email rate limit") ||
+    msg.includes("email send rate limit")
+  ) {
+    return "Supabase email rate limit reached (free tier allows ~3 confirmation emails per hour). You can enter immediately below without waiting.";
+  }
+
+  if (
+    code === "over_request_rate_limit" ||
+    status === 429 ||
+    msg.includes("rate limit") ||
+    msg.includes("too many requests")
+  ) {
+    return "Too many requests. Please wait a few moments and try again.";
+  }
+
+  // 4. Network failure
+  if (
+    err.name === "TypeError" ||
+    msg.includes("failed to fetch") ||
+    msg.includes("network") ||
+    msg.includes("connection") ||
+    msg.includes("offline")
+  ) {
+    return "Unable to connect to the authentication service. Please check your internet connection.";
+  }
+
+  // 5. User already exists (sign up)
+  if (
+    code === "user_already_exists" ||
+    msg.includes("already registered") ||
+    msg.includes("already exists") ||
+    msg.includes("user already exists")
+  ) {
+    return "An account with this email already exists. Please sign in.";
+  }
+
+  // 6. Password requirement
+  if (msg.includes("password should be at least") || msg.includes("weak_password")) {
+    return "Password must be at least 6 characters.";
+  }
+
+  return "An error occurred during authentication. Please try again.";
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   onLoginSuccess,
-  defaultEmail = "jaydeepch137@gmail.com",
-  forceLogin = true,
+  defaultEmail = "",
+  forceLogin = false,
 }) => {
-  const [email, setEmail] = useState(defaultEmail);
-  const [name, setName] = useState("Jaydeep");
-  const [phone, setPhone] = useState("+91 98765 43210");
-  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState(defaultEmail || "");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [hasCredentialError, setHasCredentialError] = useState(false);
+  const [isEmailRateLimited, setIsEmailRateLimited] = useState(false);
+  const [rateLimitCandidate, setRateLimitCandidate] = useState<{
+    name: string;
+    email: string;
+    phone?: string;
+  } | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const canClose = !forceLogin && Boolean(onClose);
+
+  // Lock background body scroll and stop Lenis while modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Pause Lenis smooth scrolling so backdrop stays firmly anchored to current view
+    const lenis = (window as unknown as { __LENIS__?: { stop: () => void; start: () => void } })
+      .__LENIS__;
+    if (lenis?.stop) {
+      lenis.stop();
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      if (lenis?.start) {
+        lenis.start();
+      }
+    };
+  }, [isOpen]);
+
+  // Handle Escape key (only allowed if canClose is true)
+  useEffect(() => {
+    if (!isOpen || !canClose) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, canClose, onClose]);
+
+  // Update email if defaultEmail prop changes
+  useEffect(() => {
+    if (defaultEmail) {
+      setEmail(defaultEmail);
+    }
+  }, [defaultEmail]);
 
   if (!isOpen) return null;
 
-  const handleOneClickGoogleLogin = () => {
-    setIsSubmitting(true);
+  // Resend verification email
+  const handleResendConfirmation = async () => {
+    if (!unconfirmedEmail || isResendingEmail) return;
+    setIsResendingEmail(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: unconfirmedEmail,
+      });
+      if (error) {
+        setErrorMessage(getFriendlyAuthErrorMessage(error, "signup"));
+      } else {
+        setSuccessMessage(
+          `Verification email resent to ${unconfirmedEmail}! Please check your inbox.`,
+        );
+      }
+    } catch {
+      setErrorMessage("Failed to resend confirmation email. Please try again.");
+    } finally {
+      setIsResendingEmail(false);
+    }
+  };
+
+  // Send password reset email
+  const handleForgotPassword = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setErrorMessage(
+        "Please enter your email address in the field above to receive password reset instructions.",
+      );
+      return;
+    }
+    setIsResettingPassword(true);
     setErrorMessage("");
-
-    setTimeout(() => {
-      const user: UserProfile = {
-        name: name.trim() || "Jaydeep",
-        email: email.trim() || defaultEmail,
-        gender: "boy",
-        avatar: "boy-animated-svg",
-        phone: phone.trim(),
-        loginTime: new Date().toISOString(),
-      };
-      setIsSubmitting(false);
-      onLoginSuccess(user);
-    }, 400);
+    setSuccessMessage("");
+    try {
+      const redirectUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}${window.location.pathname}`
+          : undefined;
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: redirectUrl,
+      });
+      if (error) {
+        if (
+          error.status === 429 ||
+          error.code === "over_email_send_rate_limit" ||
+          error.message?.toLowerCase().includes("rate limit")
+        ) {
+          setErrorMessage(
+            "Password reset email limit reached. Please check your inbox or wait a few minutes before trying again.",
+          );
+        } else {
+          setErrorMessage(getFriendlyAuthErrorMessage(error, "signin"));
+        }
+      } else {
+        setSuccessMessage(
+          `Password reset link sent to ${normalizedEmail}! Please check your email inbox to choose a new password.`,
+        );
+      }
+    } catch {
+      setErrorMessage("Unable to send reset email. Please try again.");
+    } finally {
+      setIsResettingPassword(false);
+    }
   };
 
-  const handleCustomSubmit = (e: React.FormEvent) => {
+  // Sign In with Password via Supabase Auth
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setErrorMessage("Please enter your full name");
+    if (isSubmitting) return;
+
+    setErrorMessage("");
+    setSuccessMessage("");
+    setUnconfirmedEmail(null);
+    setHasCredentialError(false);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setErrorMessage("Please enter your email address.");
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      setErrorMessage("Please enter a valid Gmail / email address");
+    if (!password) {
+      setErrorMessage("Please enter your password.");
       return;
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const user: UserProfile = {
-        name: name.trim(),
-        email: email.trim(),
-        gender: "boy",
-        avatar: "boy-animated-svg",
-        phone: phone.trim() || undefined,
-        loginTime: new Date().toISOString(),
-      };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: password,
+      });
+
+      if (error) {
+        const errCode = (error.code || "").toLowerCase();
+        const errMsg = (error.message || "").toLowerCase();
+
+        if (
+          errCode === "email_not_confirmed" ||
+          errMsg.includes("email not confirmed") ||
+          errMsg.includes("not confirmed")
+        ) {
+          setUnconfirmedEmail(normalizedEmail);
+          setErrorMessage(
+            "Your email address has not been confirmed yet. Please check your inbox for the confirmation link.",
+          );
+          return;
+        }
+
+        if (
+          errCode === "invalid_credentials" ||
+          errCode === "invalid_grant" ||
+          errMsg.includes("invalid login credentials") ||
+          errMsg.includes("invalid credentials")
+        ) {
+          setHasCredentialError(true);
+        }
+
+        setErrorMessage(getFriendlyAuthErrorMessage(error, "signin"));
+        return;
+      }
+
+      if (data?.user) {
+        const userProfile = supabaseUserToUserProfile(data.user);
+        onLoginSuccess(userProfile, false);
+        if (onClose && !forceLogin) onClose();
+      } else {
+        setHasCredentialError(true);
+        setErrorMessage("Incorrect email or password.");
+      }
+    } catch (err: unknown) {
+      setErrorMessage(getFriendlyAuthErrorMessage(err, "signin"));
+    } finally {
       setIsSubmitting(false);
-      onLoginSuccess(user);
-    }, 400);
+    }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xl bg-slate-950/80">
+  // Sign Up with Email and Password via Supabase Auth
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setErrorMessage("");
+    setSuccessMessage("");
+    setUnconfirmedEmail(null);
+    setIsEmailRateLimited(false);
+    setRateLimitCandidate(null);
+
+    const trimmedName = name.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+    const trimmedPhone = phone.trim();
+
+    if (!trimmedName) {
+      setErrorMessage("Please enter your full name.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      setErrorMessage("Please enter a valid email address (e.g. yourname@gmail.com).");
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 1. Attempt Supabase Auth account creation
+      const { data, error } = await supabase.auth.signUp({
+        email: normalizedEmail,
+        password: password,
+        options: {
+          data: {
+            name: trimmedName,
+            full_name: trimmedName,
+            phone: trimmedPhone || undefined,
+            avatar: "boy-animated-svg",
+            gender: "boy",
+          },
+        },
+      });
+
+      // 2. Handle user already registered seamlessly
+      const isAlreadyRegistered =
+        (error &&
+          (error.code === "user_already_exists" ||
+            error.message?.toLowerCase().includes("already registered") ||
+            error.message?.toLowerCase().includes("already exists"))) ||
+        Boolean(data?.user?.identities && data.user.identities.length === 0);
+
+      if (isAlreadyRegistered) {
+        // Automatically sign them in with the provided password
+        const signInRes = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password: password,
+        });
+
+        if (signInRes.data?.user) {
+          const userProfile = supabaseUserToUserProfile(signInRes.data.user);
+          onLoginSuccess(userProfile, false);
+          if (onClose && !forceLogin) onClose();
+          return;
+        }
+
+        if (
+          signInRes.error?.code === "email_not_confirmed" ||
+          signInRes.error?.message?.toLowerCase().includes("email not confirmed")
+        ) {
+          setUnconfirmedEmail(normalizedEmail);
+          setErrorMessage(
+            "An account with this email already exists, but its email is not confirmed yet. Please check your inbox.",
+          );
+          setAuthMode("signin");
+          return;
+        }
+
+        // If credentials mismatch, direct them to sign in
+        setErrorMessage(
+          "An account with this email already exists. Please sign in with your password.",
+        );
+        setAuthMode("signin");
+        return;
+      }
+
+      if (error) {
+        const isRateLimit =
+          error.code === "over_email_send_rate_limit" ||
+          error.status === 429 ||
+          error.message?.toLowerCase().includes("rate limit") ||
+          error.message?.toLowerCase().includes("email rate limit");
+
+        if (isRateLimit) {
+          setIsEmailRateLimited(true);
+          setRateLimitCandidate({
+            name: trimmedName,
+            email: normalizedEmail,
+            phone: trimmedPhone || undefined,
+          });
+          setErrorMessage(
+            "Supabase free tier rate limit: Only ~3 confirmation emails can be sent per hour. You can click 'Instant Entry' below to enter right now with this account.",
+          );
+          return;
+        }
+
+        setErrorMessage(getFriendlyAuthErrorMessage(error, "signup"));
+        return;
+      }
+
+      // 3. If session is directly returned (email confirmation disabled in Supabase)
+      if (data?.session?.user) {
+        const userProfile = supabaseUserToUserProfile(data.session.user);
+        onLoginSuccess(userProfile, true);
+        if (onClose && !forceLogin) onClose();
+        return;
+      }
+
+      // 4. If user was created, try immediate sign in
+      if (data?.user) {
+        const signInRes = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password: password,
+        });
+
+        if (signInRes.data?.user) {
+          const userProfile = supabaseUserToUserProfile(signInRes.data.user);
+          onLoginSuccess(userProfile, true);
+          if (onClose && !forceLogin) onClose();
+          return;
+        }
+
+        // If email confirmation is required by project settings
+        if (
+          signInRes.error?.code === "email_not_confirmed" ||
+          signInRes.error?.message?.toLowerCase().includes("email not confirmed")
+        ) {
+          setUnconfirmedEmail(normalizedEmail);
+          setSuccessMessage(
+            `Account created! A confirmation link has been sent to ${normalizedEmail}. Please check your inbox to sign in.`,
+          );
+          setAuthMode("signin");
+          return;
+        }
+
+        const userProfile = supabaseUserToUserProfile(data.user);
+        onLoginSuccess(userProfile, true);
+        if (onClose && !forceLogin) onClose();
+        return;
+      }
+
+      setErrorMessage("Unable to complete sign up. Please try again.");
+    } catch (err: unknown) {
+      setErrorMessage(getFriendlyAuthErrorMessage(err, "signup"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const modalContent = (
+    <div
+      data-lenis-prevent="true"
+      onClick={canClose ? onClose : undefined}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 backdrop-blur-xl bg-slate-950/85 overflow-y-auto ${
+        canClose ? "cursor-pointer" : "cursor-default"
+      }`}
+      role="dialog"
+      aria-modal="true"
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md overflow-hidden rounded-3xl border border-amber-500/20 bg-slate-900/95 text-white shadow-2xl shadow-amber-500/10 backdrop-blur-2xl"
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-amber-500/25 bg-slate-900/98 text-white shadow-2xl shadow-amber-500/10 backdrop-blur-2xl cursor-default my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Glow ambient background accents */}
-        <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full bg-amber-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-yellow-500/10 blur-3xl" />
+        {/* Close Button ONLY if closing is allowed */}
+        {canClose && (
+          <button
+            id="auth-modal-close-btn"
+            onClick={onClose}
+            className="absolute top-4 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close login modal"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+
+        {/* Ambient Glows */}
+        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-amber-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-44 w-44 rounded-full bg-yellow-500/10 blur-3xl" />
 
         {/* Modal Header */}
-        <div className="relative p-6 pb-4 text-center border-b border-white/10">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 shadow-lg shadow-amber-500/30">
-            <Ticket className="h-7 w-7 rotate-[-12deg]" />
+        <div className="relative p-5 pb-3 text-center border-b border-white/10">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 shadow-md shadow-amber-500/30">
+            <Ticket className="h-6 w-6 rotate-[-12deg]" />
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-300 mb-2">
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-            <span>EventSync Access Portal</span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-[11px] font-semibold text-amber-300 mb-1.5">
+            <Sparkles className="h-3 w-3 text-amber-400" />
+            <span>EventSync Portal</span>
           </span>
 
-          <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
-            Welcome to Event<span className="text-amber-400">Sync</span>
+          <h2 className="font-display text-xl font-bold tracking-tight text-white">
+            {authMode === "signin" ? "Sign In to Event" : "Create Your Event"}
+            <span className="text-amber-400">Sync</span> Account
           </h2>
-          <p className="text-xs text-slate-300 mt-1">
-            Sign in with your Gmail account to reserve tickets and access instant digital QR passes.
+          <p className="text-xs text-slate-300 mt-0.5">
+            {authMode === "signin"
+              ? "Access your digital passes, bookings, and instant reservations."
+              : "Register once to save your tickets, profile, and digital entry passes."}
           </p>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-4 relative">
-          {errorMessage && (
-            <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300 text-center">
-              {errorMessage}
-            </div>
-          )}
+        <div className="p-5 space-y-3.5 relative">
+          {/* Sign In vs Sign Up Tab Toggle */}
+          <div className="flex rounded-xl bg-slate-800/90 p-1 border border-white/10 text-xs font-semibold">
+            <button
+              type="button"
+              id="tab-auth-signin"
+              onClick={() => {
+                setAuthMode("signin");
+                setErrorMessage("");
+                setSuccessMessage("");
+                setUnconfirmedEmail(null);
+                setHasCredentialError(false);
+                setIsEmailRateLimited(false);
+                setRateLimitCandidate(null);
+              }}
+              className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+                authMode === "signin"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              id="tab-auth-signup"
+              onClick={() => {
+                setAuthMode("signup");
+                setErrorMessage("");
+                setSuccessMessage("");
+                setUnconfirmedEmail(null);
+                setHasCredentialError(false);
+                setIsEmailRateLimited(false);
+                setRateLimitCandidate(null);
+              }}
+              className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center ${
+                authMode === "signup"
+                  ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
 
-          {!isCustomMode ? (
-            <div className="space-y-4">
-              {/* One-Click Google / Gmail Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                id="btn-google-login-direct"
-                onClick={handleOneClickGoogleLogin}
-                disabled={isSubmitting}
-                className="w-full flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 p-4 hover:bg-white/15 hover:border-amber-400/50 transition-all cursor-pointer group shadow-lg"
+          {/* Status Banners */}
+          <AnimatePresence>
+            {successMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-300 flex items-start gap-2.5"
               >
-                <div className="flex items-center gap-3">
-                  {/* Google G SVG Icon */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-2 shadow-xs shrink-0">
-                    <svg className="h-6 w-6" viewBox="0 0 24 24">
-                      <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                      />
-                      <path
-                        fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-left">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-white">Continue with Google</span>
-                      <span className="rounded bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-bold text-amber-300">
-                        Fast
-                      </span>
-                    </div>
-                    <span className="text-xs text-slate-400 block truncate max-w-[200px]">
-                      {email}
-                    </span>
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <span className="font-semibold block text-emerald-200">Success</span>
+                  <span className="text-[11px] leading-relaxed text-emerald-300/90 block">
+                    {successMessage}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+            {errorMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300"
+              >
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
+                  <div className="flex-1 leading-relaxed">
+                    <span>{errorMessage}</span>
+                    {unconfirmedEmail && (
+                      <div className="mt-2 pt-2 border-t border-rose-500/20">
+                        <button
+                          type="button"
+                          onClick={handleResendConfirmation}
+                          disabled={isResendingEmail}
+                          className="inline-flex items-center gap-1.5 font-semibold text-amber-400 hover:text-amber-300 underline cursor-pointer disabled:opacity-50"
+                        >
+                          {isResendingEmail && <Loader2 className="h-3 w-3 animate-spin" />}
+                          <span>Resend verification email to {unconfirmedEmail}</span>
+                        </button>
+                      </div>
+                    )}
+                    {hasCredentialError && authMode === "signin" && (
+                      <div className="mt-2 pt-2 border-t border-rose-500/20 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px]">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAuthMode("signup");
+                            setErrorMessage("");
+                            setHasCredentialError(false);
+                          }}
+                          className="font-semibold text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                        >
+                          Need an account? Click here to register
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleForgotPassword}
+                          disabled={isResettingPassword}
+                          className="text-slate-300 hover:text-white underline cursor-pointer disabled:opacity-50 inline-flex items-center gap-1"
+                        >
+                          {isResettingPassword && <Loader2 className="h-3 w-3 animate-spin" />}
+                          <span>Reset password</span>
+                        </button>
+                      </div>
+                    )}
+                    {isEmailRateLimited && authMode === "signup" && (
+                      <div className="mt-2.5 pt-2.5 border-t border-rose-500/20 space-y-2">
+                        <button
+                          type="button"
+                          id="btn-rate-limit-instant-entry"
+                          onClick={() => {
+                            const instantUser: UserProfile = {
+                              name: rateLimitCandidate?.name || name.trim() || "Event Attendee",
+                              email:
+                                rateLimitCandidate?.email ||
+                                email.trim().toLowerCase() ||
+                                "guest@eventsync.app",
+                              avatar: "boy-animated-svg",
+                              gender: "boy",
+                              phone: rateLimitCandidate?.phone || phone.trim() || undefined,
+                              loginTime: new Date().toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }),
+                            };
+                            onLoginSuccess(instantUser, true);
+                            if (onClose && !forceLogin) onClose();
+                          }}
+                          className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold text-xs hover:from-amber-400 hover:to-yellow-400 transition-all flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
+                        >
+                          <CheckCircle2 className="h-4 w-4 shrink-0 text-slate-950" />
+                          <span>
+                            Instant Access: Enter as{" "}
+                            {rateLimitCandidate?.name || name.trim() || "Attendee"}
+                          </span>
+                        </button>
+                        <p className="text-[11px] text-amber-200/90 leading-tight">
+                          ⚡ <strong>Tip:</strong> In Supabase Dashboard → <em>Authentication</em> →{" "}
+                          <em>Providers</em> → <em>Email</em>, turn OFF{" "}
+                          <em>&quot;Confirm email&quot;</em> to enable unlimited instant signups for
+                          all Gmail accounts.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </motion.button>
-
-              <div className="relative flex items-center justify-center text-center">
-                <div className="w-full border-t border-white/10" />
-                <span className="bg-slate-900 px-3 text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                  or use another Gmail
-                </span>
-                <div className="w-full border-t border-white/10" />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsCustomMode(true)}
-                className="w-full rounded-2xl border border-white/10 bg-slate-800/60 py-3 text-xs font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
-              >
-                Sign in with another Gmail / Email
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleCustomSubmit} className="space-y-3">
+          {/* Email / Password Form */}
+          <form
+            onSubmit={authMode === "signin" ? handleSignIn : handleSignUp}
+            className="space-y-3"
+          >
+            {authMode === "signup" && (
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
                 <div className="relative">
@@ -202,75 +713,191 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
                     required
-                    className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                    className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
                   />
                 </div>
               </div>
+            )}
 
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Gmail Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <input
-                    id="auth-email-input"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="example@gmail.com"
-                    required
-                    className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Mobile Number (for SMS Passes)
-                </label>
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
-                  id="auth-phone-input"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+91 98765 43210"
-                  className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2.5 px-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  id="auth-email-input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (hasCredentialError) setHasCredentialError(false);
+                  }}
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck="false"
+                  required
+                  className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
                 />
               </div>
+            </div>
 
-              <div className="flex gap-2 pt-2">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-medium text-slate-300">Password</label>
+                {authMode === "signin" ? (
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={isResettingPassword || isSubmitting}
+                    className="text-[11px] text-amber-400 hover:text-amber-300 hover:underline cursor-pointer disabled:opacity-50"
+                  >
+                    {isResettingPassword ? "Sending reset..." : "Forgot password?"}
+                  </button>
+                ) : (
+                  <span className="text-[10px] text-slate-400">Min. 6 characters</span>
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
+                  id="auth-password-input"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={authMode === "signup" ? "Create a password" : "Enter your password"}
+                  autoComplete={authMode === "signup" ? "new-password" : "current-password"}
+                  required
+                  minLength={6}
+                  className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2 pl-9 pr-10 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                />
                 <button
                   type="button"
-                  onClick={() => setIsCustomMode(false)}
-                  className="flex-1 rounded-xl border border-white/10 bg-slate-800/50 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-2.5 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-yellow-400 shadow-md shadow-amber-500/20 cursor-pointer"
-                >
-                  {isSubmitting ? "Logging in..." : "Sign In with Gmail"}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-            </form>
-          )}
+            </div>
 
-          {/* Guarantee Badges */}
+            {authMode === "signup" && (
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Mobile Number (Optional)
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    id="auth-phone-input"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+1 555-0100"
+                    autoComplete="tel"
+                    className="w-full rounded-xl border border-white/15 bg-slate-800/80 py-2 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  />
+                </div>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              id="auth-submit-btn"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-2.5 px-4 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-yellow-400 shadow-md shadow-amber-500/20 cursor-pointer transition-all disabled:opacity-50 mt-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>{authMode === "signin" ? "Signing In..." : "Creating Account..."}</span>
+                </>
+              ) : (
+                <span>{authMode === "signin" ? "Sign In" : "Create Account"}</span>
+              )}
+            </button>
+          </form>
+
+          {/* Toggle between Sign In & Create Account */}
+          <div className="text-center pt-2">
+            {authMode === "signin" ? (
+              <p className="text-xs text-slate-400">
+                Don&apos;t have an account yet?{" "}
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setAuthMode("signup");
+                    setErrorMessage("");
+                    setSuccessMessage("");
+                    setUnconfirmedEmail(null);
+                  }}
+                  className="font-semibold text-amber-400 hover:underline cursor-pointer disabled:opacity-50"
+                >
+                  Create one now
+                </button>
+              </p>
+            ) : (
+              <p className="text-xs text-slate-400">
+                Already registered?{" "}
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setAuthMode("signin");
+                    setErrorMessage("");
+                    setSuccessMessage("");
+                    setUnconfirmedEmail(null);
+                  }}
+                  className="font-semibold text-amber-400 hover:underline cursor-pointer disabled:opacity-50"
+                >
+                  Sign In here
+                </button>
+              </p>
+            )}
+          </div>
+
+          {/* Guest Access Option */}
+          <div className="text-center pt-1">
+            <button
+              type="button"
+              id="auth-guest-btn"
+              onClick={() => {
+                const guestUser: UserProfile = {
+                  name: "Guest Explorer",
+                  email: "guest@eventsync.app",
+                  avatar: "boy-animated-svg",
+                  gender: "boy",
+                  loginTime: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                };
+                onLoginSuccess(guestUser, false);
+                if (onClose && !forceLogin) onClose();
+              }}
+              className="text-[11px] text-slate-400 hover:text-amber-400 transition-colors cursor-pointer inline-flex items-center gap-1 font-medium"
+            >
+              <span>Or explore preview as</span>
+              <span className="text-amber-400 font-semibold underline">Guest Explorer</span>
+            </button>
+          </div>
+
+          {/* Trust Footnote */}
           <div className="pt-2 flex items-center justify-center gap-4 text-[11px] text-slate-400 border-t border-white/5">
             <span className="flex items-center gap-1">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Secure Google OAuth</span>
+              <span>Secure Verification</span>
             </span>
             <span className="flex items-center gap-1">
               <Lock className="h-3.5 w-3.5 text-amber-400" />
-              <span>Instant Exit Anytime</span>
+              <span>Encrypted Session</span>
             </span>
           </div>
         </div>
       </motion.div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalContent, document.body) : modalContent;
 };
