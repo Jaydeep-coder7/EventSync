@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Live Events — EventSync</title>
+  <meta name="description" content="Browse and filter live concerts, tech conferences, sports matches, and arts festivals across India with instant online seat reservation." />
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Top Scroll Progress Bar -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- Interactive Fluid Particles Canvas Background -->
+  <canvas id="fluid-particles-canvas"></canvas>
+
+  <div class="app-wrapper">
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <div class="container nav-container">
+        <!-- Logo -->
+        <a href="index.html" class="brand-logo" id="nav-brand-logo">
+          <span class="brand-icon">🎟️</span>
+          <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+          <span class="live-badge"><span class="pulse-dot"></span>LIVE</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="nav-links-desktop" aria-label="Main Navigation">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="events.html" class="nav-link active">Explore Events</a>
+          <a href="my-bookings.html" class="nav-link">
+            My Passes
+            <span class="nav-booking-badge" style="display: none;">0</span>
+          </a>
+        </nav>
+
+        <!-- Nav Actions -->
+        <div class="nav-actions">
+          <button class="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Theme">
+            <span class="theme-toggle-icon">☀️</span>
+          </button>
+          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Mobile Menu" aria-expanded="false">
+            ☰
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer Overlay & Menu -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <a href="index.html" class="mobile-nav-link">
+        <span>🏠 Home</span>
+      </a>
+      <a href="events.html" class="mobile-nav-link active">
+        <span>🎪 Explore Events</span>
+      </a>
+      <a href="my-bookings.html" class="mobile-nav-link">
+        <span>🎟️ My Passes</span>
+        <span class="nav-booking-badge" style="display: none;">0</span>
+      </a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container section">
+        <!-- Interactive Back Button and Breadcrumb -->
+        <div class="top-back-bar">
+          <button type="button" class="btn-back" id="global-back-btn" data-fallback="index.html" aria-label="Go back to Home">
+            <span class="back-arrow">←</span>
+            <span class="back-text">Back to Home</span>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="index.html">Home</a>
+            <span class="crumb-sep">/</span>
+            <span class="crumb-current">All Live Events</span>
+          </div>
+        </div>
+
+        <!-- Page Title Header -->
+        <div class="section-header" style="margin-bottom: 1.75rem;">
+          <div class="section-title-wrap">
+            <span class="badge-amber-sm">Live Experience Directory</span>
+            <h1 class="section-title">Explore All Live Events</h1>
+            <p class="section-subtitle">Real-time availability, instant digital gate passes, and verified seating</p>
+          </div>
+        </div>
+
+        <!-- Live Filters & Controls Panel -->
+        <section class="catalog-filter-panel" aria-label="Event Filters">
+          <div class="filter-grid-row">
+            <!-- 1. Live Search Input -->
+            <div class="filter-group">
+              <label for="catalog-search" class="filter-label">Search Events</label>
+              <input 
+                type="text" 
+                id="catalog-search" 
+                class="filter-input" 
+                placeholder="Search by name, artist, city, venue..." 
+              />
+            </div>
+
+            <!-- 2. Category Filter -->
+            <div class="filter-group">
+              <label for="catalog-category" class="filter-label">Category</label>
+              <select id="catalog-category" class="filter-select">
+                <option value="All">All Categories</option>
+                <option value="Music">Music</option>
+                <option value="Technology">Technology</option>
+                <option value="Food & Drink">Food & Drink</option>
+                <option value="Arts & Theatre">Arts & Theatre</option>
+                <option value="Sports">Sports</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
+
+            <!-- 3. City Filter -->
+            <div class="filter-group">
+              <label for="catalog-city" class="filter-label">City</label>
+              <select id="catalog-city" class="filter-select">
+                <option value="All">All Cities</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Delhi NCR">Delhi NCR</option>
+                <option value="Goa">Goa</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Pune">Pune</option>
+              </select>
+            </div>
+
+            <!-- 4. Price Slider Filter -->
+            <div class="filter-group">
+              <label for="catalog-price-slider" class="filter-label">
+                Max Price: <span id="price-slider-display" class="price-slider-display">₹5,000</span>
+              </label>
+              <div class="price-slider-wrap">
+                <input 
+                  type="range" 
+                  id="catalog-price-slider" 
+                  class="price-slider" 
+                  min="500" 
+                  max="10000" 
+                  step="250" 
+                  value="10000" 
+                />
+              </div>
+            </div>
+
+            <!-- 5. Sort Dropdown -->
+            <div class="filter-group">
+              <label for="catalog-sort" class="filter-label">Sort By</label>
+              <select id="catalog-sort" class="filter-select">
+                <option value="recommended">✨ Recommended</option>
+                <option value="price-low">💰 Price: Low to High</option>
+                <option value="price-high">💎 Price: High to Low</option>
+                <option value="date-nearest">📅 Nearest Date</option>
+                <option value="rating">⭐ Highest Rated</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Reset Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 0.5rem;">
+            <!-- Category Pills Shortcut -->
+            <div class="category-chips-bar" id="catalog-category-pills" style="justify-content: flex-start;">
+              <button class="chip-btn active" data-category="All">All</button>
+              <button class="chip-btn" data-category="Music">Music</button>
+              <button class="chip-btn" data-category="Technology">Tech</button>
+              <button class="chip-btn" data-category="Food & Drink">Food</button>
+              <button class="chip-btn" data-category="Arts & Theatre">Theatre</button>
+              <button class="chip-btn" data-category="Sports">Sports</button>
+            </div>
+
+            <button id="reset-filters-btn" class="btn-text" style="color: var(--accent-amber);">
+              ↺ Reset All Filters
+            </button>
+          </div>
+        </section>
+
+        <!-- Results Info & Counter -->
+        <div class="results-info-bar">
+          <span id="results-count-text">Loading verified events...</span>
+          <span id="results-sync-indicator" style="font-size: 0.78rem; color: var(--accent-amber); display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span class="pulse-dot"></span> Live Local Database
+          </span>
+        </div>
+
+        <!-- Dynamic Events Grid -->
+        <div id="events-grid-container" class="event-grid" aria-live="polite">
+          <!-- Skeletons while loading -->
+          <div class="skeleton-card">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line" style="width: 40%"></div>
+              <div class="skeleton-line" style="width: 80%"></div>
+              <div class="skeleton-line" style="width: 60%"></div>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line" style="width: 40%"></div>
+              <div class="skeleton-line" style="width: 80%"></div>
+              <div class="skeleton-line" style="width: 60%"></div>
+            </div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line" style="width: 40%"></div>
+              <div class="skeleton-line" style="width: 80%"></div>
+              <div class="skeleton-line" style="width: 60%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <a href="index.html" class="brand-logo" style="margin-bottom: 0.75rem;">
+              <span class="brand-icon">🎟️</span>
+              <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+            </a>
+            <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 320px; margin-bottom: 1rem;">
+              Direct live entertainment discovery. Reserve seats and access verified tickets.
+            </p>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Navigation</h4>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="events.html">Browse Events</a></li>
+              <li><a href="my-bookings.html">My Passes</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Categories</h4>
+            <ul class="footer-links">
+              <li><a href="events.html?category=Music">Music</a></li>
+              <li><a href="events.html?category=Technology">Technology</a></li>
+              <li><a href="events.html?category=Sports">Sports</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Customer Care</h4>
+            <ul class="footer-links">
+              <li><a href="#" class="open-support-modal" data-tab="retrieval">Retrieve Lost Passes</a></li>
+              <li><a href="#" class="open-support-modal" data-tab="help">Gate Check-in FAQ</a></li>
+              <li><a href="#" class="open-support-modal" data-tab="contact">24/7 Live Concierge</a></li>
+              <li><a href="tel:18002027962" style="color: var(--accent-amber); font-weight: 600;">Helpline: 1800-202-SYNC</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 EventSync Inc. Handcrafted for modern live experiences.</p>
+          <p>Verified Secure Ticketing • Instant Digital QR Passes</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Global Application Scripts -->
+  <script type="module" src="js/script.js"></script>
+  <script type="module">
+    import { fetchEvents, filterAndSortEvents } from "./js/api.js";
+    import { openBookingModal } from "./js/booking.js";
+
+    let rawEvents = [];
+
+    // Filter Elements
+    const searchInput = document.getElementById("catalog-search");
+    const categorySelect = document.getElementById("catalog-category");
+    const citySelect = document.getElementById("catalog-city");
+    const priceSlider = document.getElementById("catalog-price-slider");
+    const priceDisplay = document.getElementById("price-slider-display");
+    const sortSelect = document.getElementById("catalog-sort");
+    const resetBtn = document.getElementById("reset-filters-btn");
+    const gridContainer = document.getElementById("events-grid-container");
+    const resultsCountText = document.getElementById("results-count-text");
+    const categoryPills = document.querySelectorAll("#catalog-category-pills .chip-btn");
+
+    // Initialize Page
+    async function initEventsPage() {
+      try {
+        rawEvents = await fetchEvents();
+
+        // Check URL Query Parameters (e.g. ?q=rock&category=Music)
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialQuery = urlParams.get("q") || "";
+        const initialCategory = urlParams.get("category") || "All";
+
+        if (initialQuery) searchInput.value = initialQuery;
+        if (initialCategory) {
+          categorySelect.value = initialCategory;
+          updateCategoryPills(initialCategory);
+        }
+
+        // Set max price slider value according to data
+        const maxEventPrice = Math.max(...rawEvents.map(e => e.price || 0), 5000);
+        priceSlider.max = Math.ceil(maxEventPrice / 500) * 500;
+        priceSlider.value = priceSlider.max;
+        priceDisplay.textContent = `₹${parseInt(priceSlider.value, 10).toLocaleString('en-IN')}`;
+
+        applyFilters();
+      } catch (err) {
+        console.error("Failed to load events:", err);
+        gridContainer.innerHTML = `
+          <div class="empty-state-box" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">⚠️</div>
+            <h3 class="empty-state-title">Unable to load event directory</h3>
+            <p class="empty-state-desc">Could not load event data from data/events.json. Please check your network or server.</p>
+          </div>
+        `;
+        resultsCountText.textContent = "0 events loaded";
+      }
+    }
+
+    // Apply Filters and Re-render
+    function applyFilters() {
+      const criteria = {
+        searchQuery: searchInput.value,
+        category: categorySelect.value,
+        city: citySelect.value,
+        maxPrice: parseInt(priceSlider.value, 10),
+        sortBy: sortSelect.value
+      };
+
+      const filtered = filterAndSortEvents(rawEvents, criteria);
+      renderGrid(filtered);
+
+      resultsCountText.textContent = `Showing ${filtered.length} of ${rawEvents.length} live events`;
+    }
+
+    // Render Event Cards
+    function renderGrid(events) {
+      if (!events || events.length === 0) {
+        gridContainer.innerHTML = `
+          <div class="empty-state-box" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="empty-state-title">No events matched your search</h3>
+            <p class="empty-state-desc">Try loosening your search terms, changing the category, or adjusting the price slider.</p>
+            <button id="empty-reset-btn" class="btn-primary">Clear All Filters</button>
+          </div>
+        `;
+        document.getElementById("empty-reset-btn")?.addEventListener("click", resetAllFilters);
+        return;
+      }
+
+      gridContainer.innerHTML = events.map(event => {
+        const bookedPercent = Math.min(Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100), 98);
+        const tagHtml = event.tag 
+          ? `<span class="badge-tag ${event.tag === 'Selling Fast' ? 'tag-selling-fast' : 'tag-featured'}">${event.tag}</span>` 
+          : '';
+
+        return `
+          <article class="event-card" id="card-${event.id}">
+            <div class="event-card-media">
+              ${tagHtml}
+              <img src="${event.image}" alt="${event.title}" class="event-card-img" loading="lazy" />
+              <span class="event-category-badge">${event.category}</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-card-date">
+                <span>📅</span>
+                <span>${event.displayDate || event.date}</span>
+              </div>
+              <h3 class="event-card-title">
+                <a href="event-details.html?id=${event.id}">${event.title}</a>
+              </h3>
+              <p class="event-card-venue">
+                <span>📍</span>
+                <span>${event.venue}, ${event.city}</span>
+              </p>
+
+              <!-- Capacity Progress -->
+              <div class="capacity-row">
+                <div class="capacity-text">
+                  <span>${bookedPercent}% Booked</span>
+                  <span>${event.totalSeats - event.bookedSeats} seats left</span>
+                </div>
+                <div class="capacity-bar-track">
+                  <div class="capacity-bar-fill" style="width: ${bookedPercent}%"></div>
+                </div>
+              </div>
+
+              <!-- Footer Pricing & CTA -->
+              <div class="event-card-footer">
+                <div class="price-box">
+                  <span class="price-label">Starts at</span>
+                  <div>
+                    <span class="price-val">₹${event.price.toLocaleString('en-IN')}</span>
+                    ${event.originalPrice ? `<span class="price-val-strike">₹${event.originalPrice.toLocaleString('en-IN')}</span>` : ''}
+                  </div>
+                </div>
+                <div class="card-actions">
+                  <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm">Details</a>
+                  <button class="btn-primary btn-sm book-card-btn" data-event-id="${event.id}">Book Now</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Attach Book Now click handlers
+      gridContainer.querySelectorAll(".book-card-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const eventId = btn.getAttribute("data-event-id");
+          const event = rawEvents.find(ev => ev.id === eventId);
+          if (event) {
+            openBookingModal(event);
+          }
+        });
+      });
+    }
+
+    // Reset All Filters Helper
+    function resetAllFilters() {
+      searchInput.value = "";
+      categorySelect.value = "All";
+      citySelect.value = "All";
+      priceSlider.value = priceSlider.max;
+      priceDisplay.textContent = `₹${parseInt(priceSlider.value, 10).toLocaleString('en-IN')}`;
+      sortSelect.value = "recommended";
+      updateCategoryPills("All");
+      applyFilters();
+    }
+
+    function updateCategoryPills(selectedCategory) {
+      categoryPills.forEach(pill => {
+        if (pill.getAttribute("data-category").toLowerCase() === selectedCategory.toLowerCase()) {
+          pill.classList.add("active");
+        } else {
+          pill.classList.remove("active");
+        }
+      });
+    }
+
+    // Event Listeners for Live Search and Filters
+    searchInput?.addEventListener("input", () => applyFilters());
+    categorySelect?.addEventListener("change", () => {
+      updateCategoryPills(categorySelect.value);
+      applyFilters();
+    });
+    citySelect?.addEventListener("change", () => applyFilters());
+    sortSelect?.addEventListener("change", () => applyFilters());
+
+    priceSlider?.addEventListener("input", () => {
+      priceDisplay.textContent = `₹${parseInt(priceSlider.value, 10).toLocaleString('en-IN')}`;
+      applyFilters();
+    });
+
+    categoryPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        const cat = pill.getAttribute("data-category");
+        categorySelect.value = cat;
+        updateCategoryPills(cat);
+        applyFilters();
+      });
+    });
+
+    resetBtn?.addEventListener("click", resetAllFilters);
+
+    initEventsPage();
+  </script>
+</body>
+</html>

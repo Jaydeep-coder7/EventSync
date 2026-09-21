@@ -1,0 +1,883 @@
+[
+  {
+    "id": "eh-01",
+    "title": "Neon Pulse: Electro-Sonic Music Festival 2026",
+    "tag": "Selling Fast",
+    "category": "Music",
+    "date": "2026-10-18",
+    "displayDate": "Sat, Oct 18, 2026",
+    "time": "5:00 PM - 1:00 AM IST",
+    "venue": "Bandra Kurla Amphitheatre Grounds",
+    "city": "Mumbai",
+    "address": "BKC Complex, Bandra East, Mumbai, Maharashtra 400051",
+    "price": 1499,
+    "originalPrice": 1999,
+    "totalSeats": 2500,
+    "bookedSeats": 2180,
+    "rating": 4.9,
+    "reviewCount": 428,
+    "shortDescription": "Experience 12 international and Indian electronic artists, laser synesthesia shows, and immersive spatial audio.",
+    "fullDescription": "Prepare for India's most electrifying sonic journey. Neon Pulse brings together legendary synth pioneers, cutting-edge techno producers, and live audiovisual installations spanning two multi-level stages. Enjoy artisan street food pavilions, neon art walkways, curated lounges, and state-of-the-art d&b audiotechnik sound systems.",
+    "image": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Vanguard Audio Collective",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      "role": "Premier Festival Producer",
+      "bio": "Producing groundbreaking multi-sensory live audio events across major music capitals since 2018.",
+      "verified": true,
+      "eventsOrganized": 34
+    },
+    "highlights": [
+      "2 Open-Air Stages with Cinematic Visuals",
+      "Custom 360° Laser & Holographic Light Show",
+      "Gourmet Artisan Food Vendors",
+      "VIP Lounges with Dedicated Fast Access"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-ga",
+        "name": "General Admission",
+        "price": 1499,
+        "description": "Full festival access to both stages, food court & art installations.",
+        "remaining": 220
+      },
+      {
+        "id": "tier-vip",
+        "name": "VIP Golden Circle Pass",
+        "price": 2999,
+        "description": "Express entry, elevated VIP viewing deck, 2 complimentary beverages & private lounge access.",
+        "remaining": 45
+      }
+    ]
+  },
+  {
+    "id": "eh-02",
+    "title": "Global Tech Horizon & AI Summit 2026",
+    "tag": "Featured",
+    "category": "Technology",
+    "date": "2026-10-24",
+    "displayDate": "Fri, Oct 24, 2026",
+    "time": "9:00 AM - 6:00 PM IST",
+    "venue": "Bengaluru International Exhibition Centre (BIEC)",
+    "city": "Bengaluru",
+    "address": "10th Mile, Tumkur Road, Madavara Post, Bengaluru 562123",
+    "price": 2499,
+    "originalPrice": 3499,
+    "totalSeats": 1800,
+    "bookedSeats": 1420,
+    "rating": 4.88,
+    "reviewCount": 512,
+    "shortDescription": "The premier conference on next-gen AI architectures, LLM agents, quantum computing, and autonomous robotics.",
+    "fullDescription": "Join over 2,000 engineering leaders, researchers, and tech founders for a full day of inspiring keynotes, deep-dive technical workshops, and high-impact executive roundtables. Featuring 40+ speakers from premier AI labs and global unicorns, a startup pitch playground, and 1-on-1 networking opportunities.",
+    "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "TechVentures Institute",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "role": "Global Tech Event Consortium",
+      "bio": "Curating high-density technology summits that bridge research and scalable enterprise applications.",
+      "verified": true,
+      "eventsOrganized": 58
+    },
+    "highlights": [
+      "Keynotes from Leading Generative AI Founders",
+      "Hands-on Code & Architecture Masterclasses",
+      "Grand Buffet & Founder Networking Reception",
+      "Direct Pitch Access to Top VC Partners"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-standard",
+        "name": "Full Summit Pass",
+        "price": 2499,
+        "description": "Access to all keynotes, breakout sessions, expo floor & lunch.",
+        "remaining": 180
+      },
+      {
+        "id": "tier-executive",
+        "name": "Executive & Speaker VIP",
+        "price": 4999,
+        "description": "Reserved front-row seating, private speaker dinner & VC roundtable entry.",
+        "remaining": 30
+      }
+    ]
+  },
+  {
+    "id": "eh-03",
+    "title": "Royal Heritage Culinary & Artisan Gala",
+    "tag": "Exclusive",
+    "category": "Food & Drink",
+    "date": "2026-11-07",
+    "displayDate": "Sat, Nov 7, 2026",
+    "time": "1:00 PM - 7:00 PM IST",
+    "venue": "Taj Falaknuma Palace Courtyard",
+    "city": "Hyderabad",
+    "address": "Engine Bowli, Fatima Nagar, Falaknuma, Hyderabad 500053",
+    "price": 1899,
+    "originalPrice": 2299,
+    "totalSeats": 600,
+    "bookedSeats": 490,
+    "rating": 4.95,
+    "reviewCount": 187,
+    "shortDescription": "Savor authentic regional royal recipes from celebrated master chefs paired with curated heritage desserts and mocktails.",
+    "fullDescription": "Celebrate the royal gastronomic heritage in the serene courtyard of historic palace grounds. This boutique gala features authentic dum biryanis, Awadhi kebabs, artisanal street confectionery, live sitar and sufi fusion performances, and chef-curated tasting menus highlighting organic regional spices.",
+    "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Heritage Flavors Guild",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
+      "role": "Regional Hospitality Alliance",
+      "bio": "Preserving classical recipes and legendary culinary traditions across India.",
+      "verified": true,
+      "eventsOrganized": 22
+    },
+    "highlights": [
+      "Welcome Royal Drink & Souvenir Silver Coin",
+      "Over 30 Heritage Master Chef Specialities",
+      "Live Sufi & Acoustic Fusion Recital",
+      "Valet Parking & Palace Garden Walk"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-tasting",
+        "name": "General Tasting Feast",
+        "price": 1899,
+        "description": "Full access to culinary pavilions, unlimited tasting portions & live concerts.",
+        "remaining": 75
+      },
+      {
+        "id": "tier-sommelier",
+        "name": "Royal Degustation VIP Table",
+        "price": 3299,
+        "description": "Reserved palatial table seating, personal butler service & signature gift basket.",
+        "remaining": 15
+      }
+    ]
+  },
+  {
+    "id": "eh-04",
+    "title": "Symphony Under the Stars: Cinematic Masterpieces",
+    "tag": "Popular",
+    "category": "Arts & Theatre",
+    "date": "2026-10-30",
+    "displayDate": "Thu, Oct 30, 2026",
+    "time": "7:30 PM - 10:00 PM IST",
+    "venue": "Siri Fort Auditorium & Open-Air Amphitheatre",
+    "city": "New Delhi",
+    "address": "August Kranti Marg, Siri Fort Institutional Area, New Delhi 110049",
+    "price": 799,
+    "originalPrice": 999,
+    "totalSeats": 3500,
+    "bookedSeats": 2980,
+    "rating": 4.9,
+    "reviewCount": 630,
+    "shortDescription": "A live 70-piece philharmonic orchestra playing iconic film scores from Hans Zimmer, A.R. Rahman, and John Williams.",
+    "fullDescription": "Sit under the crisp open night sky as sweeping orchestral melodies bring legendary cinematic moments to life. Featuring stunning synchronised high-definition visuals on monumental projection surfaces, choir performances, and beloved themes from Interstellar, Roja, Gladiator, Bombay Theme, and Inception.",
+    "image": "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Delhi Philharmonic Society",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+      "role": "Symphony Performing Society",
+      "bio": "Bringing classical and cinematic orchestral experiences to open-air audiences worldwide.",
+      "verified": true,
+      "eventsOrganized": 84
+    },
+    "highlights": [
+      "70-Piece Live Symphony Orchestra & 30-Voice Choir",
+      "Massive 4K LED Screen Synced Visuals",
+      "Outdoor Garden Seating with Food Stalls",
+      "Acoustically Mastered Amphitheatre"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-lawn",
+        "name": "Open Lawn General Seating",
+        "price": 799,
+        "description": "Lawn cushion seating, clear center stage sightlines.",
+        "remaining": 310
+      },
+      {
+        "id": "tier-reserved",
+        "name": "Reserved Terrace Club Seat",
+        "price": 1499,
+        "description": "Cushioned reserved seat in prime bowl with priority venue entrance.",
+        "remaining": 92
+      }
+    ]
+  },
+  {
+    "id": "eh-05",
+    "title": "Goa Beachfront Marathon & Sunset 10K",
+    "tag": "Active",
+    "category": "Sports & Fitness",
+    "date": "2026-11-14",
+    "displayDate": "Sat, Nov 14, 2026",
+    "time": "5:30 AM - 11:30 AM IST",
+    "venue": "Miramar Beach Promenade",
+    "city": "Panaji, Goa",
+    "address": "Miramar Beach Road, Panaji, Goa 403001",
+    "price": 499,
+    "originalPrice": 699,
+    "totalSeats": 5000,
+    "bookedSeats": 4350,
+    "rating": 4.85,
+    "reviewCount": 394,
+    "shortDescription": "Breathtaking coastal course stretching across palm-fringed sands with 5K, 10K, and Half Marathon routes.",
+    "fullDescription": "Lace up your running shoes for India's most scenic coastal road race. Run past Arabian sea waves, heritage Portuguese quarters, and golden sunrises. Features electronic chip timing, tender coconut hydration stations every 2 km, certified pace teams, and an energetic finish-line carnival with live percussion and fresh tropical juices.",
+    "image": "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Coastal Stride Athletics",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+      "role": "Certified Race Director",
+      "bio": "Organizing national level endurance road and trail races since 2014.",
+      "verified": true,
+      "eventsOrganized": 41
+    },
+    "highlights": [
+      "Official Certified Course with RFID Bibs",
+      "Finisher Metal Medal & Dri-Fit Running Tee",
+      "Instant SMS Timing & Digital Certificate",
+      "Post-Race Beach Breakfast & Live Music"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-10k",
+        "name": "10K Coastal Challenge Entry",
+        "price": 499,
+        "description": "Bib number, RFID timing chip, commemorative technical tee & medal.",
+        "remaining": 410
+      },
+      {
+        "id": "tier-half",
+        "name": "Half Marathon (21.1 km)",
+        "price": 799,
+        "description": "Full coastal route, pacing buses, energy gel packs & engraved finisher medal.",
+        "remaining": 140
+      }
+    ]
+  },
+  {
+    "id": "eh-06",
+    "title": "Venture Bharat: Startup & Angel Investor Conclave",
+    "tag": "Networking",
+    "category": "Business & Networking",
+    "date": "2026-11-20",
+    "displayDate": "Fri, Nov 20, 2026",
+    "time": "10:00 AM - 5:30 PM IST",
+    "venue": "Leela Palace Grand Ballroom",
+    "city": "Bengaluru",
+    "address": "23 HAL Old Airport Rd, Kodihalli, Bengaluru 560008",
+    "price": 1299,
+    "originalPrice": 1799,
+    "totalSeats": 450,
+    "bookedSeats": 380,
+    "rating": 4.92,
+    "reviewCount": 210,
+    "shortDescription": "Connect with top tier seed & Series A investors, pitch live on stage, and attend venture growth panels.",
+    "fullDescription": "Designed specifically for high-growth founders, emerging operators, and active angel syndicates. 25 vetted pre-seed and seed founders pitch to a panel of institutional VCs with ₹500Cr+ in collective dry powder. Features rapid 1-on-1 networking rotations, term-sheet breakdown workshops, and high-tea mixer.",
+    "image": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Founders Guild India",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
+      "role": "Venture Ecosystem Builder",
+      "bio": "Connecting visionary tech founders with active investors across India.",
+      "verified": true,
+      "eventsOrganized": 62
+    },
+    "highlights": [
+      "Live On-Stage Pitch Competition with ₹10 Lakh Grant",
+      "1-on-1 Speed Dating with 30+ Angel Networks & VCs",
+      "Direct WhatsApp & Contact Access to Investors",
+      "Five-Star Buffet Lunch & Networking High Tea"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-attendee",
+        "name": "General Founder / Attendee",
+        "price": 1299,
+        "description": "Full access to keynotes, pitch stage, expo hall & buffet lunch.",
+        "remaining": 50
+      },
+      {
+        "id": "tier-pitch",
+        "name": "Founder Pitch Slot + Investor FastPass",
+        "price": 3499,
+        "description": "3-minute on-stage pitch slot, slide deck distribution to 100+ angels & private lounge.",
+        "remaining": 8
+      }
+    ]
+  },
+  {
+    "id": "eh-07",
+    "title": "The Great Indian Street Food & Craft Carnival",
+    "tag": "Concluded",
+    "category": "Food & Drink",
+    "date": "2026-09-15",
+    "displayDate": "Tue, Sep 15, 2026",
+    "time": "12:00 PM - 9:00 PM IST",
+    "venue": "Jawaharlal Nehru Stadium Grounds",
+    "city": "New Delhi",
+    "address": "Pragati Vihar, Lodhi Road, New Delhi 110003",
+    "price": 299,
+    "originalPrice": 499,
+    "totalSeats": 4000,
+    "bookedSeats": 3100,
+    "rating": 4.78,
+    "reviewCount": 780,
+    "shortDescription": "Over 70 street food stalls from 18 states, artisanal ice creams, live indie bands, and flea market popups.",
+    "fullDescription": "A grand celebration of India's unmatched street food tapestry. Sample Old Delhi chole bhature, Kolkata kathi rolls, Mumbai pav bhaji, Benaras tamatar chaat, Hyderabadi haleem, and modern fusion desserts. Paired with artisanal mocktail gardens, live acoustic sets, and traditional handicraft artisans.",
+    "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Bharat Food Collective",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
+      "role": "Community Culinary Organizer",
+      "bio": "Celebrating regional cuisine diversity and artisan culinary traditions.",
+      "verified": true,
+      "eventsOrganized": 45
+    },
+    "highlights": [
+      "70+ Authentic Regional Stalls from 18 States",
+      "Live Indie Bands & Punjabi Dhol Performances",
+      "Free Entry for Kids Under 10 Years",
+      "Dedicated Family Seating & Kids Fun Zone"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-foodie",
+        "name": "General Admission Pass",
+        "price": 299,
+        "description": "Carnival entry, 2 complimentary food tasting coupons & souvenir badge.",
+        "remaining": 450
+      },
+      {
+        "id": "tier-beerpass",
+        "name": "Foodie Mega Passport",
+        "price": 899,
+        "description": "Fast-track food lines, ₹600 food voucher redeemable across all stalls & VIP seating.",
+        "remaining": 110
+      }
+    ]
+  },
+  {
+    "id": "eh-08",
+    "title": "Modern Chroma: Immersive Digital Light Museum",
+    "tag": "Trending",
+    "category": "Arts & Theatre",
+    "date": "2026-11-12",
+    "displayDate": "Thu, Nov 12, 2026",
+    "time": "11:00 AM - 9:00 PM IST",
+    "venue": "Nita Mukesh Ambani Cultural Centre (NMACC)",
+    "city": "Mumbai",
+    "address": "Jio World Centre, G Block BKC, Bandra Kurla Complex, Mumbai 400098",
+    "price": 599,
+    "originalPrice": 799,
+    "totalSeats": 1200,
+    "bookedSeats": 940,
+    "rating": 4.88,
+    "reviewCount": 342,
+    "shortDescription": "Step inside 15 mind-bending immersive projection chambers, reactive generative art, and spatial light labyrinths.",
+    "fullDescription": "Modern Chroma transforms 30,000 square feet into an ethereal dreamscape of responsive light, sound, and visual art. Featuring installations by international media artists experimenting with machine learning, generative geometry, motion tracking, and spatial ambient compositions.",
+    "image": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Chroma New Media Lab",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=200&q=80",
+      "role": "Interactive Exhibition Curators",
+      "bio": "Fusing technology, mathematics, and contemporary visual arts into tangible experiences.",
+      "verified": true,
+      "eventsOrganized": 19
+    },
+    "highlights": [
+      "15 Thematic Responsive Light Installations",
+      "Infinite Mirror Room & Reactive Particle Fog",
+      "Photography & Reels Permitted Everywhere",
+      "Luminescent Mocktails at Gallery Lounge"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-standard-art",
+        "name": "Timed Entry Ticket",
+        "price": 599,
+        "description": "Full 90-minute walk-through experience across all 15 gallery chambers.",
+        "remaining": 160
+      },
+      {
+        "id": "tier-anytime-art",
+        "name": "Anytime VIP Flexible Pass",
+        "price": 999,
+        "description": "Arrive at any hour, skip the queue, plus complimentary glow drink.",
+        "remaining": 40
+      }
+    ]
+  },
+  {
+    "id": "eh-09",
+    "title": "Full-Stack Cloud & AI Engineering Masterclass",
+    "tag": "Workshop",
+    "category": "Technology",
+    "date": "2026-11-28",
+    "displayDate": "Sat, Nov 28, 2026",
+    "time": "10:00 AM - 4:00 PM IST",
+    "venue": "IIT Delhi Research Park Auditorium",
+    "city": "New Delhi",
+    "address": "Hauz Khas, New Delhi, Delhi 110016",
+    "price": 0,
+    "originalPrice": 1499,
+    "totalSeats": 200,
+    "bookedSeats": 185,
+    "rating": 4.91,
+    "reviewCount": 115,
+    "shortDescription": "Free hands-on technical workshop building Kubernetes clusters, automated CI/CD pipelines, and LLM agent backends.",
+    "fullDescription": "Sponsored by open source developer foundations, this intensive 1-day crash workshop is designed for software engineers, college students, and tech enthusiasts. Walk away with practical code templates for production deployment, cloud scalability, and generative AI integrations.",
+    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "OpenCloud Community India",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
+      "role": "Nonprofit Developer Guild",
+      "bio": "Empowering software developers with free enterprise-grade workshops and open-source tooling.",
+      "verified": true,
+      "eventsOrganized": 31
+    },
+    "highlights": [
+      "100% Free Sponsored Community Workshop",
+      "Hands-on Lab Cloud Credits Provided",
+      "Verified Certificate of Completion",
+      "Free Pizza, Coffee & Developer Goodies"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-free",
+        "name": "Free Community Seat",
+        "price": 0,
+        "description": "Full workshop access, digital lab workbook, and certificate.",
+        "remaining": 15
+      }
+    ]
+  },
+  {
+    "id": "eh-10",
+    "title": "Sunburn Sunset: Goa Electronic Beach Carnival 2026",
+    "tag": "Trending",
+    "category": "Music",
+    "date": "2026-11-14",
+    "displayDate": "Sat, Nov 14, 2026",
+    "time": "4:00 PM - 2:00 AM IST",
+    "venue": "Vagator Coastal Arena & Beachfront",
+    "city": "Goa",
+    "address": "Vagator Beach Road, Anjuna, Goa 403509",
+    "price": 1999,
+    "originalPrice": 2799,
+    "totalSeats": 3500,
+    "bookedSeats": 2890,
+    "rating": 4.93,
+    "reviewCount": 684,
+    "shortDescription": "Sunset beachside stage featuring tropical house, melodic techno, world-class pyrotechnics, and seaside dining.",
+    "fullDescription": "Immerse yourself in the ultimate seaside celebration as the sun sets over the Arabian Sea. Sunburn Sunset brings 15 world-touring DJs and homegrown indie-electronic acts together on a colossal open-air stage. Experience fire dancer performances, beach volleyball, organic cocktail bars, and sunset chillout zones.",
+    "image": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Sunburn Coast Experiences",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      "role": "Premier Beach Festival Host",
+      "bio": "Crafting legendary electronic music gatherings along the coasts of Goa since 2012.",
+      "verified": true,
+      "eventsOrganized": 62
+    },
+    "highlights": [
+      "Epic Oceanfront Stage with Laser Projections",
+      "Live Sunset Acoustic Warm-up Session",
+      "Artisan Seafood & Tropical Cocktail Shacks",
+      "Complimentary Eco-friendly Shuttle Service"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-beach-ga",
+        "name": "General Beach Access",
+        "price": 1999,
+        "description": "Access to main beach dance arena and food village.",
+        "remaining": 510
+      },
+      {
+        "id": "tier-sunset-vip",
+        "name": "Sunset VIP Lounge Pass",
+        "price": 3899,
+        "description": "Elevated sea-view deck, express bar queue, 2 welcome drinks & private washrooms.",
+        "remaining": 100
+      }
+    ]
+  },
+  {
+    "id": "eh-11",
+    "title": "Royalty & Spices: Jaipur Gourmet Heritage Trail",
+    "tag": "Concluded",
+    "category": "Food & Drink",
+    "date": "2026-09-10",
+    "displayDate": "Thu, Sep 10, 2026",
+    "time": "6:30 PM - 10:30 PM IST",
+    "venue": "Diggi Palace Grand Courtyard",
+    "city": "Jaipur",
+    "address": "Shivaji Marg, C-Scheme, Jaipur, Rajasthan 302004",
+    "price": 1799,
+    "originalPrice": 2499,
+    "totalSeats": 350,
+    "bookedSeats": 295,
+    "rating": 4.96,
+    "reviewCount": 178,
+    "shortDescription": "A candlelit royal Rajasthani banquet curated by master khansamas with live classical Sarangi and sitar melodies.",
+    "fullDescription": "Step inside the historic arches of Diggi Palace for an unforgettable gastronomic immersion into Rajasthan's royal culinary archives. Taste authentic Laal Maas, Dal Baati Churma, Bajre ki Roti, and smoked Ker Sangri prepared with heirloom spice blends. Accompanied by live Sufi and classical folk musicians under starlit canopies.",
+    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Heritage Palate Society",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "role": "Culinary Historian",
+      "bio": "Reviving forgotten royal recipes and hosting authentic multi-course dining gatherings across India.",
+      "verified": true,
+      "eventsOrganized": 29
+    },
+    "highlights": [
+      "7-Course Royal Rajasthani Tasting Menu",
+      "Live Sarangi & Sufi Musical Performances",
+      "Historic Palace Architecture Tour",
+      "Complimentary Handcrafted Saffron Mukhwas Kit"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-royal-dinner",
+        "name": "Grand Royal Dinner Pass",
+        "price": 1799,
+        "description": "Complete 7-course feast and palace performance seating.",
+        "remaining": 45
+      },
+      {
+        "id": "tier-maharaja-table",
+        "name": "Maharaja VIP Table (Couple Pass)",
+        "price": 3999,
+        "description": "Private candlelit fountain table, dedicated butler, and vintage souvenir keepsake.",
+        "remaining": 10
+      }
+    ]
+  },
+  {
+    "id": "eh-12",
+    "title": "Deccan FinTech & Web3 Conclave 2026",
+    "tag": "Networking",
+    "category": "Business & Networking",
+    "date": "2026-11-22",
+    "displayDate": "Sun, Nov 22, 2026",
+    "time": "10:00 AM - 5:30 PM IST",
+    "venue": "Hyderabad International Convention Centre (HICC)",
+    "city": "Hyderabad",
+    "address": "Novotel Complex, HITEC City, Hyderabad, Telangana 500081",
+    "price": 1299,
+    "originalPrice": 1999,
+    "totalSeats": 900,
+    "bookedSeats": 710,
+    "rating": 4.84,
+    "reviewCount": 240,
+    "shortDescription": "Connect with top venture capitalists, banking executives, crypto innovators, and 40+ funded startup founders.",
+    "fullDescription": "Hyderabad's flagship business gathering uniting fintech architects, decentralized finance pioneers, and angel syndicates. Topics include UPI 3.0 integrations, cross-border remittance APIs, regulatory sandboxes, and institutional digital assets. Features speed-networking sessions, VC pitch battles, and executive luncheons.",
+    "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Deccan Venture Forum",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+      "role": "Startup Ecosystem Builder",
+      "bio": "Accelerating technological leadership and capital partnerships throughout South India.",
+      "verified": true,
+      "eventsOrganized": 41
+    },
+    "highlights": [
+      "40+ Startup Founder Lightning Pitches",
+      "Curated 1-on-1 VC Office Hours",
+      "Deluxe Executive Buffet Lunch & Tea",
+      "Full Delegate Directory Access"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-delegate",
+        "name": "Delegate Pass",
+        "price": 1299,
+        "description": "Full conference entry, keynote halls, and lunch buffet.",
+        "remaining": 160
+      },
+      {
+        "id": "tier-investor-pass",
+        "name": "Investor & Founder Pass",
+        "price": 2799,
+        "description": "Exclusive access to VC lounge, pitch sessions, and evening networking dinner.",
+        "remaining": 30
+      }
+    ]
+  },
+  {
+    "id": "eh-13",
+    "title": "Kolkata Classical Arts & Sitar Symphony",
+    "tag": "Curated",
+    "category": "Arts & Theatre",
+    "date": "2026-11-26",
+    "displayDate": "Thu, Nov 26, 2026",
+    "time": "6:00 PM - 9:30 PM IST",
+    "venue": "Rabindra Sadan Cultural Auditorium",
+    "city": "Kolkata",
+    "address": "Cathedral Road, Maidan, Kolkata, West Bengal 700071",
+    "price": 499,
+    "originalPrice": 899,
+    "totalSeats": 600,
+    "bookedSeats": 480,
+    "rating": 4.95,
+    "reviewCount": 312,
+    "shortDescription": "Mesmerizing evening of Indian classical Ragas, master Sitar jugalbandi, and traditional Kathak storytelling.",
+    "fullDescription": "Experience the sublime elegance of Kolkata's cultural heart at Rabindra Sadan. Featuring national award-winning sitar maestros accompanied by lightning-speed tabla rhythms and expressive Kathak choreography portraying ancient mythological narratives.",
+    "image": "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Bengal Heritage Arts Trust",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
+      "role": "Cultural Foundation",
+      "bio": "Preserving classical Indian performing arts and mentoring the next generation of musical prodigies.",
+      "verified": true,
+      "eventsOrganized": 73
+    },
+    "highlights": [
+      "Live 90-Minute Sitar & Tabla Jugalbandi",
+      "Acoustically Perfect Historic Hall Seating",
+      "Kathak Dance Drama on Indian Legends",
+      "Complimentary Traditional Bengali Sweets"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-balcony",
+        "name": "Balcony Tier",
+        "price": 499,
+        "description": "Elevated view with clear acoustics across the entire stage.",
+        "remaining": 80
+      },
+      {
+        "id": "tier-orchestra",
+        "name": "Orchestra Front Stalls",
+        "price": 999,
+        "description": "Prime rows 1-8 seating directly in front of the maestros.",
+        "remaining": 40
+      }
+    ]
+  },
+  {
+    "id": "eh-14",
+    "title": "Western Ghats Trail Challenge & Half Marathon 2026",
+    "tag": "Adventure",
+    "category": "Sports & Fitness",
+    "date": "2026-11-29",
+    "displayDate": "Sun, Nov 29, 2026",
+    "time": "5:30 AM - 12:00 PM IST",
+    "venue": "Lonavala Valley Eco Trail Base",
+    "city": "Pune",
+    "address": "Tiger Point Foothills, Lonavala, Maharashtra 410401",
+    "price": 899,
+    "originalPrice": 1299,
+    "totalSeats": 800,
+    "bookedSeats": 620,
+    "rating": 4.89,
+    "reviewCount": 195,
+    "shortDescription": "10K & 21K scenic misty mountain runs through lush valleys, waterfall paths, and ancient cliff viewpoints.",
+    "fullDescription": "Lace up your trail shoes for Western India's most breathtaking morning run. Navigate misty pine ridges, stream crossings, and challenging hill climbs surrounded by the scenic peaks of the Western Ghats. Fully supported with medical teams, hydration stations every 2km, and post-run breakfast feasts.",
+    "image": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Ghats Adventure Athletics",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "role": "Marathon & Trail Director",
+      "bio": "Certified ultra-marathoners organizing high-safety mountain running events across India.",
+      "verified": true,
+      "eventsOrganized": 37
+    },
+    "highlights": [
+      "RFID Chip-Timed 10K and 21K Trail Runs",
+      "Custom Finisher Medal & Dry-Fit Technical Jersey",
+      "Hot Farm Breakfast & Protein Recovery Bar",
+      "Full Medical & Physiotherapy Support Stations"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-10k-run",
+        "name": "10K Misty Mountain Run",
+        "price": 899,
+        "description": "Includes timing bib, event dry-fit t-shirt, finisher medal & hot breakfast.",
+        "remaining": 110
+      },
+      {
+        "id": "tier-21k-half",
+        "name": "21K Half Marathon Challenge",
+        "price": 1299,
+        "description": "Full 21km trail circuit, technical jersey, heavy finisher medal & recovery zone.",
+        "remaining": 70
+      }
+    ]
+  },
+  {
+    "id": "eh-15",
+    "title": "Carnatic Fusion & Synth Odyssey",
+    "tag": "Selling Fast",
+    "category": "Music",
+    "date": "2026-12-05",
+    "displayDate": "Sat, Dec 5, 2026",
+    "time": "7:00 PM - 10:30 PM IST",
+    "venue": "Kalakshetra Open-Air Amphitheatre",
+    "city": "Chennai",
+    "address": "Thiruvanmiyur, Chennai, Tamil Nadu 600041",
+    "price": 799,
+    "originalPrice": 1199,
+    "totalSeats": 1200,
+    "bookedSeats": 1050,
+    "rating": 4.92,
+    "reviewCount": 460,
+    "shortDescription": "Soulful violin and veena harmonies fused with ambient analog synthesizers, percussion, and live acoustic loops.",
+    "fullDescription": "Witness a magical collision of ancient South Indian classical heritage and modern ambient electronic sound design. Leading violin maestros and synth wizards perform collaborative original compositions against a heritage banyan tree backdrop at Chennai's iconic Kalakshetra.",
+    "image": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "Madras Soundscapes",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      "role": "Experimental Music Guild",
+      "bio": "Championing genre-bending musical journeys that connect tradition with modern electronic instrumentation.",
+      "verified": true,
+      "eventsOrganized": 26
+    },
+    "highlights": [
+      "Acoustic Fusion under Chennai Heritage Trees",
+      "Special Guest Percussionists & Mridangam Solo",
+      "Artisan Filter Coffee & South Indian Snacks",
+      "Immersive Quadraphonic Surround Sound System"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-fusion-ga",
+        "name": "General Admission",
+        "price": 799,
+        "description": "Amphitheatre stone tier seating with excellent acoustics.",
+        "remaining": 110
+      },
+      {
+        "id": "tier-fusion-premium",
+        "name": "Premium Front Row Cushion Pass",
+        "price": 1499,
+        "description": "Front stage row with handwoven cushions and complimentary filter coffee.",
+        "remaining": 40
+      }
+    ]
+  },
+  {
+    "id": "eh-16",
+    "title": "CyberShield AI & Cloud Defence Summit 2026",
+    "tag": "Conference",
+    "category": "Technology",
+    "date": "2026-12-12",
+    "displayDate": "Sat, Dec 12, 2026",
+    "time": "9:30 AM - 5:30 PM IST",
+    "venue": "DLF CyberHub Convention Center",
+    "city": "Gurugram",
+    "address": "DLF Cyber City, Sector 24, Gurugram, Haryana 122002",
+    "price": 1499,
+    "originalPrice": 2199,
+    "totalSeats": 500,
+    "bookedSeats": 380,
+    "rating": 4.87,
+    "reviewCount": 164,
+    "shortDescription": "Premier cybersecurity conference on zero-trust architecture, AI-driven threat mitigation, and enterprise compliance.",
+    "fullDescription": "Join chief information security officers, ethical hackers, and infrastructure architects for an intensive day of red-team vs blue-team case studies, live hacking demonstrations, and modern cloud security frameworks in the heart of Cyber City.",
+    "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80"
+    ],
+    "organizer": {
+      "name": "National Cyber Defenders Alliance",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+      "role": "Cyber Threat Research Collective",
+      "bio": "Educating enterprise engineers on defending digital infrastructure against sophisticated cyber attacks.",
+      "verified": true,
+      "eventsOrganized": 33
+    },
+    "highlights": [
+      "Live Ethical Hacking & Exploit Demonstrations",
+      "CISO Panel on AI Ransomware Trends",
+      "Enterprise Cloud Security Playbooks",
+      "Interactive Capture-The-Flag (CTF) Tournament"
+    ],
+    "ticketTiers": [
+      {
+        "id": "tier-cyber-pass",
+        "name": "Conference Pass",
+        "price": 1499,
+        "description": "Full access to keynotes, CTF viewing, lunch & event badge.",
+        "remaining": 90
+      },
+      {
+        "id": "tier-cyber-vip",
+        "name": "VIP Architect Pass",
+        "price": 2899,
+        "description": "Includes closed-door CISO roundtable access and exclusive workshop recording archives.",
+        "remaining": 30
+      }
+    ]
+  }
+]

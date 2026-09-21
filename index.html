@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSync — Curated Live Experiences & Digital Passes</title>
+  <meta name="description" content="Discover and book premier concerts, tech summits, cultural festivals, and live sports across India with instant digital QR gate passes." />
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Top Scroll Progress Bar -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- Interactive Fluid Particles Canvas Background -->
+  <canvas id="fluid-particles-canvas"></canvas>
+
+  <div class="app-wrapper">
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <div class="container nav-container">
+        <!-- Logo -->
+        <a href="index.html" class="brand-logo" id="nav-brand-logo">
+          <span class="brand-icon">🎟️</span>
+          <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+          <span class="live-badge"><span class="pulse-dot"></span>LIVE</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="nav-links-desktop" aria-label="Main Navigation">
+          <a href="index.html" class="nav-link active">Home</a>
+          <a href="events.html" class="nav-link">Explore Events</a>
+          <a href="my-bookings.html" class="nav-link">
+            My Passes
+            <span class="nav-booking-badge" style="display: none;">0</span>
+          </a>
+        </nav>
+
+        <!-- Nav Actions -->
+        <div class="nav-actions">
+          <a href="events.html" class="btn-primary btn-sm" id="nav-explore-btn">Browse All</a>
+          
+          <!-- Theme Toggle (Dark/Light) -->
+          <button class="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Theme">
+            <span class="theme-toggle-icon">☀️</span>
+          </button>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Mobile Menu" aria-expanded="false">
+            ☰
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer Overlay & Menu -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <a href="index.html" class="mobile-nav-link active">
+        <span>🏠 Home</span>
+      </a>
+      <a href="events.html" class="mobile-nav-link">
+        <span>🎪 Explore Events</span>
+      </a>
+      <a href="my-bookings.html" class="mobile-nav-link">
+        <span>🎟️ My Passes</span>
+        <span class="nav-booking-badge" style="display: none;">0</span>
+      </a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-section" id="home-hero">
+        <div class="hero-background-art"></div>
+        <div class="container hero-content">
+          <!-- Live Badge Row -->
+          <div class="hero-badge-row">
+            <span class="badge-amber-sm">
+              <span class="pulse-dot"></span> Live Sync Engine • Instant QR Gate Passes
+            </span>
+          </div>
+
+          <!-- Hero Headline -->
+          <h1 class="hero-title">
+            Don't Just Hear About It.<br />
+            <span class="text-amber">Be In The Room.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Curated concerts, tech summits, cultural fests, and sports championships across India. 
+            Real-time verified seat allocation with zero hidden fees.
+          </p>
+
+          <!-- Live Search Bar -->
+          <form id="hero-search-form" class="hero-search-bar" role="search">
+            <div class="search-input-group">
+              <span class="search-icon">🔍</span>
+              <input 
+                type="text" 
+                id="hero-search-input" 
+                class="search-input" 
+                placeholder="Search artists, festivals, summits, or venues..." 
+                aria-label="Search events"
+              />
+            </div>
+            <select id="hero-category-select" class="search-select" aria-label="Select Category">
+              <option value="All">All Categories</option>
+              <option value="Music">Music</option>
+              <option value="Technology">Technology</option>
+              <option value="Food & Drink">Food & Drink</option>
+              <option value="Arts & Theatre">Arts & Theatre</option>
+              <option value="Sports">Sports</option>
+              <option value="Business">Business</option>
+            </select>
+            <button type="submit" class="btn-primary" id="hero-search-submit">
+              Explore Events →
+            </button>
+          </form>
+
+          <!-- Quick Category Chips -->
+          <div class="category-chips-bar" id="hero-category-chips">
+            <button class="chip-btn active" data-category="All">✨ All</button>
+            <button class="chip-btn" data-category="Music">🎵 Music</button>
+            <button class="chip-btn" data-category="Technology">⚡ Technology</button>
+            <button class="chip-btn" data-category="Food & Drink">🍷 Food & Drink</button>
+            <button class="chip-btn" data-category="Arts & Theatre">🎭 Arts & Theatre</button>
+            <button class="chip-btn" data-category="Sports">🏆 Sports</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Horizontal Scroll Grid Section: Spotlight & Selling Fast -->
+      <section class="horizontal-scroll-section" id="spotlight-scroll-section">
+        <div class="container">
+          <div class="horizontal-scroll-header">
+            <div class="section-title-wrap">
+              <span class="badge-amber-sm">🔥 High Demand Live Stages</span>
+              <h2 class="section-title">Spotlight & Selling Fast</h2>
+              <p class="section-subtitle">Swipe or scroll through trending live shows with limited passes remaining</p>
+            </div>
+            <div class="scroll-controls">
+              <button type="button" class="scroll-arrow-btn" id="h-scroll-prev" aria-label="Scroll Left">‹</button>
+              <button type="button" class="scroll-arrow-btn" id="h-scroll-next" aria-label="Scroll Right">›</button>
+            </div>
+          </div>
+
+          <!-- Horizontal Track Container -->
+          <div class="horizontal-scroll-track" id="h-scroll-track" tabindex="0" role="region" aria-label="Spotlight Events Carousel">
+            <!-- Rendered dynamically by Fetch API -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured / Upcoming Events Section -->
+      <section class="section" id="featured-events-section">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-title-wrap">
+              <span class="badge-amber-sm">Curated Selection</span>
+              <h2 class="section-title">Featured Live Experiences</h2>
+              <p class="section-subtitle">Hand-picked premier events filling fast this season</p>
+            </div>
+            <a href="events.html" class="btn-secondary" id="view-all-events-btn">
+              View All Events (16+) →
+            </a>
+          </div>
+
+          <!-- Dynamic Events Grid Container -->
+          <div id="featured-events-grid" class="event-grid" aria-live="polite">
+            <!-- Rendered dynamically by Fetch API in script below -->
+            <div class="skeleton-card">
+              <div class="skeleton-media"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line" style="width: 40%"></div>
+                <div class="skeleton-line" style="width: 80%"></div>
+                <div class="skeleton-line" style="width: 60%"></div>
+              </div>
+            </div>
+            <div class="skeleton-card">
+              <div class="skeleton-media"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line" style="width: 40%"></div>
+                <div class="skeleton-line" style="width: 80%"></div>
+                <div class="skeleton-line" style="width: 60%"></div>
+              </div>
+            </div>
+            <div class="skeleton-card">
+              <div class="skeleton-media"></div>
+              <div class="skeleton-body">
+                <div class="skeleton-line" style="width: 40%"></div>
+                <div class="skeleton-line" style="width: 80%"></div>
+                <div class="skeleton-line" style="width: 60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Why Choose EventSync Feature Highlights -->
+      <section class="section" style="background: rgba(15, 23, 42, 0.4); border-top: 1px solid var(--border-subtle);">
+        <div class="container">
+          <div class="section-header" style="text-align: center; justify-content: center; flex-direction: column;">
+            <span class="badge-amber-sm">Verified Ticketing Standard</span>
+            <h2 class="section-title">Built for Real Fans & Organizers</h2>
+            <p class="section-subtitle">Experience transparent event access engineered with zero friction</p>
+          </div>
+
+          <div class="event-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+            <div class="tier-card" style="padding: 1.5rem;">
+              <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚡</div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Instant Digital Pass</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Confirmed tickets produce a cryptographically verified gate QR code instantly viewable on your mobile screen.
+              </p>
+            </div>
+
+            <div class="tier-card" style="padding: 1.5rem;">
+              <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛡️</div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Zero Hidden Convenience Fees</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Transparent pricing shown upfront in INR (₹) with clear taxes and zero surprise platform markups.
+              </p>
+            </div>
+
+            <div class="tier-card" style="padding: 1.5rem;">
+              <div style="font-size: 2rem; margin-bottom: 0.75rem;">📅</div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">One-Click Calendar Sync</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Download universal `.ics` schedule files for Google Calendar, Apple Calendar, and Outlook in a single tap.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Service & Dedicated Fan Support Section -->
+      <section class="customer-service-section" id="customer-service">
+        <div class="container">
+          <div class="section-header" style="text-align: center; justify-content: center; flex-direction: column;">
+            <span class="badge-amber-sm">🎧 24/7 Dedicated Fan Care</span>
+            <h2 class="section-title">Customer Service & Ticketing Assistance</h2>
+            <p class="section-subtitle">Real-time assistance for gate access, instant pass retrieval, venue guidelines, and refunds</p>
+          </div>
+
+          <div class="cs-grid">
+            <div class="cs-card">
+              <div class="cs-icon-box">🔍</div>
+              <h3 class="cs-card-title">Instant Pass Retrieval</h3>
+              <p class="cs-card-desc">Can't locate your booked ticket? Enter your email to instantly search and resend your gate QR code.</p>
+              <button type="button" class="cs-card-action open-support-modal" data-tab="retrieval">
+                <span>Retrieve My Pass</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <div class="cs-card">
+              <div class="cs-icon-box">🎟️</div>
+              <h3 class="cs-card-title">Gate & Venue Entry Help</h3>
+              <p class="cs-card-desc">Learn about mobile QR gate check-ins, security protocols, entry timings, and offline pass access.</p>
+              <button type="button" class="cs-card-action open-support-modal" data-tab="help">
+                <span>View Gate Guide</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <div class="cs-card">
+              <div class="cs-icon-box">💳</div>
+              <h3 class="cs-card-title">Refund & Cancellation</h3>
+              <p class="cs-card-desc">Clear 100% money-back guarantee for cancelled shows, plus one-tap self-service cancellation.</p>
+              <button type="button" class="cs-card-action open-support-modal" data-tab="help">
+                <span>Policy Details</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <div class="cs-card">
+              <div class="cs-icon-box">💬</div>
+              <h3 class="cs-card-title">Live Concierge Desk</h3>
+              <p class="cs-card-desc">Need assistance with seating tiers or group bookings? Submit a ticket with &lt; 5 min response time.</p>
+              <button type="button" class="cs-card-action open-support-modal" data-tab="contact">
+                <span>Open Support Desk</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Customer Care Direct Contact Banner -->
+          <div class="cs-contact-banner">
+            <div>
+              <h3 class="cs-contact-info-title">Need Immediate Help at the Venue?</h3>
+              <p class="cs-contact-info-sub">Our dedicated helpline operates 7 days a week from 8:00 AM to 11:30 PM IST for all ticket holders.</p>
+            </div>
+            <div class="cs-cta-group">
+              <a href="tel:18002027962" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <span>📞 1800-202-SYNC</span>
+              </a>
+              <button type="button" class="btn-primary open-support-modal" data-tab="contact">
+                <span>Raise Care Ticket</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <a href="index.html" class="brand-logo" style="margin-bottom: 0.75rem;">
+              <span class="brand-icon">🎟️</span>
+              <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+            </a>
+            <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 320px; margin-bottom: 1rem;">
+              India's premier live entertainment platform. Bringing you closer to the music, ideas, and games you love.
+            </p>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Explore</h4>
+            <ul class="footer-links">
+              <li><a href="events.html?category=Music">Live Music & Concerts</a></li>
+              <li><a href="events.html?category=Technology">Tech Summits & AI</a></li>
+              <li><a href="events.html?category=Food%20%26%20Drink">Food & Wine Fests</a></li>
+              <li><a href="events.html?category=Sports">Sports & Tournaments</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Account</h4>
+            <ul class="footer-links">
+              <li><a href="my-bookings.html">My Bookings & Passes</a></li>
+              <li><a href="events.html">Browse All Events</a></li>
+              <li><a href="index.html">Live Status</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-col-title">Customer Care</h4>
+            <ul class="footer-links">
+              <li><a href="#" class="open-support-modal" data-tab="retrieval">Retrieve Lost Passes</a></li>
+              <li><a href="#" class="open-support-modal" data-tab="help">Gate Check-in FAQ</a></li>
+              <li><a href="#" class="open-support-modal" data-tab="contact">24/7 Live Concierge</a></li>
+              <li><a href="tel:18002027962" style="color: var(--accent-amber); font-weight: 600;">Helpline: 1800-202-SYNC</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 EventSync Inc. Handcrafted for modern live experiences.</p>
+          <p>Verified Secure Ticketing • Instant Digital QR Passes</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Global Application Scripts -->
+  <script type="module" src="js/script.js"></script>
+  <script type="module">
+    import { fetchEvents, filterAndSortEvents } from "./js/api.js";
+    import { openBookingModal } from "./js/booking.js";
+
+    // Load and render featured events on the Home Page
+    async function loadHomePageEvents() {
+      const grid = document.getElementById("featured-events-grid");
+      const hTrack = document.getElementById("h-scroll-track");
+
+      try {
+        const events = await fetchEvents();
+
+        // 1. Populate Horizontal Scroll Grid with high-demand / spotlight events
+        if (hTrack) {
+          renderHorizontalCards(events.slice(0, 8), hTrack);
+          initHorizontalScrollControls();
+        }
+
+        // 2. Populate Standard Featured Events Grid
+        if (grid) {
+          const featured = events.slice(0, 6);
+          renderEventCards(featured, grid);
+        }
+      } catch (err) {
+        console.error("Error loading events:", err);
+        if (grid) {
+          grid.innerHTML = `
+            <div class="empty-state-box" style="grid-column: 1 / -1;">
+              <div class="empty-state-icon">⚠️</div>
+              <h3 class="empty-state-title">Could not load featured events</h3>
+              <p class="empty-state-desc">Please ensure data/events.json is available via local HTTP server.</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function renderHorizontalCards(events, track) {
+      track.innerHTML = events.map(event => {
+        const bookedPercent = Math.min(Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100), 98);
+        return `
+          <div class="h-event-card" id="h-card-${event.id}">
+            <div class="h-card-media">
+              <span class="h-card-tag">${event.tag || "🔥 " + bookedPercent + "% Booked"}</span>
+              <img src="${event.image}" alt="${event.title}" class="h-card-img" loading="lazy" />
+              <span class="h-card-category">${event.category}</span>
+            </div>
+            <div class="h-card-body">
+              <div class="h-card-date">
+                <span>📅</span>
+                <span>${event.displayDate || event.date}</span>
+              </div>
+              <h3 class="h-card-title">
+                <a href="event-details.html?id=${event.id}">${event.title}</a>
+              </h3>
+              <p class="h-card-venue">
+                <span>📍</span>
+                <span>${event.venue}, ${event.city}</span>
+              </p>
+              <div class="h-card-footer">
+                <div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">Starts at</div>
+                  <div class="h-card-price-num">₹${event.price.toLocaleString('en-IN')}</div>
+                </div>
+                <div style="display: flex; gap: 0.4rem;">
+                  <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm" style="padding: 0.35rem 0.65rem;">Details</a>
+                  <button type="button" class="btn-primary btn-sm book-h-btn" data-event-id="${event.id}" style="padding: 0.35rem 0.75rem;">Book</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      track.querySelectorAll(".book-h-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const eventId = btn.getAttribute("data-event-id");
+          const allEvents = await fetchEvents();
+          const event = allEvents.find(ev => ev.id === eventId);
+          if (event) openBookingModal(event);
+        });
+      });
+    }
+
+    function initHorizontalScrollControls() {
+      const track = document.getElementById("h-scroll-track");
+      const prevBtn = document.getElementById("h-scroll-prev");
+      const nextBtn = document.getElementById("h-scroll-next");
+      if (!track) return;
+
+      const scrollDistance = 350;
+      prevBtn?.addEventListener("click", () => {
+        track.scrollBy({ left: -scrollDistance, behavior: "smooth" });
+      });
+      nextBtn?.addEventListener("click", () => {
+        track.scrollBy({ left: scrollDistance, behavior: "smooth" });
+      });
+    }
+
+    function renderEventCards(events, container) {
+      container.innerHTML = events.map(event => {
+        const bookedPercent = Math.min(Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100), 98);
+        const tagHtml = event.tag 
+          ? `<span class="badge-tag ${event.tag === 'Selling Fast' ? 'tag-selling-fast' : 'tag-featured'}">${event.tag}</span>` 
+          : '';
+
+        return `
+          <article class="event-card" id="card-${event.id}">
+            <div class="event-card-media">
+              ${tagHtml}
+              <img src="${event.image}" alt="${event.title}" class="event-card-img" loading="lazy" />
+              <span class="event-category-badge">${event.category}</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-card-date">
+                <span>📅</span>
+                <span>${event.displayDate || event.date}</span>
+              </div>
+              <h3 class="event-card-title">
+                <a href="event-details.html?id=${event.id}">${event.title}</a>
+              </h3>
+              <p class="event-card-venue">
+                <span>📍</span>
+                <span>${event.venue}, ${event.city}</span>
+              </p>
+
+              <!-- Capacity Progress -->
+              <div class="capacity-row">
+                <div class="capacity-text">
+                  <span>${bookedPercent}% Booked</span>
+                  <span>${event.totalSeats - event.bookedSeats} seats left</span>
+                </div>
+                <div class="capacity-bar-track">
+                  <div class="capacity-bar-fill" style="width: ${bookedPercent}%"></div>
+                </div>
+              </div>
+
+              <!-- Footer Pricing & CTA -->
+              <div class="event-card-footer">
+                <div class="price-box">
+                  <span class="price-label">Starts at</span>
+                  <div>
+                    <span class="price-val">₹${event.price.toLocaleString('en-IN')}</span>
+                    ${event.originalPrice ? `<span class="price-val-strike">₹${event.originalPrice.toLocaleString('en-IN')}</span>` : ''}
+                  </div>
+                </div>
+                <div class="card-actions">
+                  <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm">Details</a>
+                  <button class="btn-primary btn-sm book-card-btn" data-event-id="${event.id}">Book Now</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Attach Book Now click handlers
+      container.querySelectorAll(".book-card-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const eventId = btn.getAttribute("data-event-id");
+          const allEvents = await fetchEvents();
+          const event = allEvents.find(ev => ev.id === eventId);
+          if (event) {
+            openBookingModal(event);
+          }
+        });
+      });
+    }
+
+    // Hero Search Form submission -> redirects to events.html with parameters
+    const heroForm = document.getElementById("hero-search-form");
+    heroForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const query = document.getElementById("hero-search-input")?.value.trim() || "";
+      const category = document.getElementById("hero-category-select")?.value || "All";
+      const params = new URLSearchParams();
+      if (query) params.set("q", query);
+      if (category && category !== "All") params.set("category", category);
+      window.location.href = `events.html?${params.toString()}`;
+    });
+
+    // Category chips click handler
+    document.querySelectorAll("#hero-category-chips .chip-btn").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const cat = chip.getAttribute("data-category");
+        if (cat === "All") {
+          window.location.href = "events.html";
+        } else {
+          window.location.href = `events.html?category=${encodeURIComponent(cat)}`;
+        }
+      });
+    });
+
+    loadHomePageEvents();
+  </script>
+</body>
+</html>

@@ -1,146 +1,130 @@
 # EventSync — Curated Live Experiences & Digital Passes
 
-EventSync is a modern, high-performance event discovery and ticketing web application. Built for live concerts, tech summits, sports tournaments, comedy tours, theatre, and cultural festivals, EventSync offers interactive event booking, digital QR gate passes, dynamic seating tiers, and fluid visual effects.
-
-![EventSync Preview](public/favicon.ico)
+EventSync is a modern, high-performance event discovery and ticketing web application built using traditional web standards: **HTML5**, **CSS3**, **JavaScript ES6+**, **DOM Manipulation**, **Fetch API**, and **LocalStorage**.
 
 ---
 
-## ✨ Features
+## 📁 Target Project Structure
 
-- **Dynamic Hero & Discovery**:
-  - Curated event showcase with multi-category filter chips (Music, Technology, Food & Drink, Arts & Theatre, Sports, Business).
-  - Live search with instant filtering and keyboard shortcuts.
-  - Featured & Selling Fast horizontal scrolling carousels.
-
-- **Fluid Particle Vector Background**:
-  - Atmospheric simplex noise-driven fluid particle field powered by `@bundui/components/fluid-particles-background`.
-  - Radiant ember blooms, constellation filament connectors, and interactive cursor deflection.
-  - Automatic dark and light mode synchronization.
-
-- **Interactive Ticketing Engine**:
-  - Real-time tier selection (General, Silver, Gold, VIP, Backstage Lounge).
-  - Quantity counter with real-time seat availability limits.
-  - Transparent pricing breakdowns with tax, discount vouchers, and instant order totals in INR (₹).
-
-- **Digital Passes & Gate QR Codes**:
-  - Instant digital gate pass generation upon booking confirmation.
-  - High-contrast scannable QR codes for venue check-ins.
-  - One-click `.ics` calendar file export and smart reminder notifications.
-
-- **Booking & Favorites Management**:
-  - "My Passes" tab to manage active, upcoming, and past event tickets.
-  - Bookmark and save favorite events across sessions.
-  - Secure ticket cancellation with automated seat release.
-
-- **Host & Publish Events**:
-  - Guided event creation form for event organizers to list new live experiences with tiered ticket allocations.
-
-- **Smooth Cinematic Polish**:
-  - Lenis smooth inertial scrolling with scroll progress bar.
-  - Motion transitions and micro-interactions.
-  - Dark / Light theme toggle with persistent user preferences.
+```
+EventSync/
+├── index.html              # Home page: Hero, search, category chips, featured events, CTA
+├── events.html             # Events catalog: Live search, category/city/price filters, sorting
+├── event-details.html      # Event details: Gallery, description, schedule, organizer, tiers
+├── my-bookings.html        # My passes: Stored in LocalStorage, digital QR pass, calendar export
+├── css/
+│   └── style.css           # Complete responsive CSS3 design system (Dark/Light mode, luxury theme)
+├── js/
+│   ├── script.js           # Core UI: Theme toggle, mobile hamburger menu, fluid particle background
+│   ├── api.js              # Fetch API client: Loads data/events.json, filtering, and sorting
+│   ├── booking.js          # Booking engine: LocalStorage persistence, modal, scannable QR code
+│   ├── validation.js       # Client-side form validations (Name, Email, Phone, Quantity)
+│   └── auth.js             # Session & guest authentication manager
+├── data/
+│   └── events.json         # Simulated REST API endpoint containing 16 verified events
+├── images/                 # Image assets and icons
+└── README.md               # Documentation and execution instructions
+```
 
 ---
 
-## 🛠️ Tech Stack
+## ✨ Features & Assignment Capabilities
 
-- **Framework**: [React 18+](https://react.dev/) with [TypeScript](https://www.typescriptlang.org/)
-- **Routing**: [TanStack Router](https://tanstack.com/router)
-- **State & Data**: [TanStack Query (React Query)](https://tanstack.com/query)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
-- **Animations**: [Motion (`motion/react`)](https://motion.dev/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Smooth Scroll**: [Lenis](https://github.com/darkroomengineering/lenis)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Backend / Auth**: [Supabase](https://supabase.com/)
+1. **Home Page (`index.html`)**:
+   - EventSync brand identity with live pulse indicator.
+   - Interactive Hero section with animated stage background and HTML5 Canvas fluid particle field.
+   - Live search bar and quick category chips (Music, Technology, Food & Drink, Arts & Theatre, Sports).
+   - Dynamically rendered Featured Events grid loaded via standard **Fetch API**.
+   - "Explore Events" button linking to the catalog and instant "Book Now" CTAs.
+
+2. **Events Catalog Page (`events.html`)**:
+   - Responsive multi-column grid of verified event cards.
+   - **Live Search**: Instant keyword filtering across title, artist, venue, city, and description without page reload.
+   - **Category & City Filtering**: Single-click category filters and metropolitan city selection.
+   - **Price Range Slider**: Dynamic interactive slider filtering events up to ₹10,000.
+   - **Sorting Engine**: Sort by Price (Low to High / High to Low), Nearest Date, and Highest Rated.
+   - **Loading & Empty States**: Shimmer skeleton cards during fetch; friendly empty state with filter reset.
+
+3. **Event Details Page (`event-details.html`)**:
+   - Reads URL query parameter `?id=...` dynamically.
+   - Interactive photo gallery thumbnail switcher.
+   - Full event itinerary, date, time, venue address, and curated highlights checklist.
+   - Verified organizer profile card with verified badge.
+   - Available ticket tiers (General Admission, VIP Circle, Lounge).
+   - Sticky booking sidebar with price breakdown and "Book Now" trigger.
+
+4. **Interactive Booking Engine (`js/booking.js` & `js/validation.js`)**:
+   - Modal dialog with step-by-step booking form.
+   - Tier selection and quantity counter (- / +) with seat availability validation.
+   - **Input Validation**: Full name (letters only), email format, 10-digit phone number.
+   - Live pricing calculation including 18% GST and convenience fees.
+   - Saves confirmed bookings to **HTML5 LocalStorage** under key `eventsync_bookings`.
+
+5. **Digital Gate Pass & QR Code Verification**:
+   - Generates unique reference code (e.g. `ES-824190`).
+   - Draws a scannable digital QR-like matrix directly onto an HTML5 Canvas.
+   - Perforated ticket layout with notch cutouts.
+   - One-click `.ics` calendar invitation download.
+
+6. **My Bookings (`my-bookings.html`)**:
+   - Reads all active bookings from **LocalStorage**.
+   - Displays event thumbnail, date, time, venue, ticket tier, attendee name, and total paid.
+   - "View QR Gate Pass" button to re-display the scannable ticket.
+   - "Cancel Pass" button with confirmation prompt that updates LocalStorage.
+   - Empty state prompt when no passes are currently booked.
+
+7. **Responsive Design & Accessibility**:
+   - Mobile, tablet, laptop, and desktop layouts.
+   - Animated mobile navigation drawer with hamburger toggle.
+   - Dark / Light mode toggle persisted in `localStorage`.
+   - Touch targets designed to adhere to 44px+ guidelines.
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Technology Stack
 
-### Prerequisites
+- **HTML5**: Semantic tags (`<header>`, `<main>`, `<article>`, `<section>`, `<nav>`, `<aside>`, `<footer>`, `<canvas>`).
+- **CSS3**: CSS Custom Properties (Variables), Flexbox, CSS Grid, Media Queries, Keyframe Animations.
+- **JavaScript (ES6+)**: ES Modules (`import`/`export`), async/await, Fetch API, DOM manipulation, LocalStorage API, Canvas 2D Context.
+- **No Framework Dependencies**: 100% free of React, React DOM, or TypeScript runtime dependencies.
 
-- Node.js (v18 or higher recommended)
-- npm, pnpm, or bun
+---
 
-### 1. Clone the repository
+## 🚀 How to Run the Project Locally
 
+### Option 1: Using VS Code Live Server (Easiest)
+1. Open the project folder in VS Code.
+2. Install the **Live Server** extension.
+3. Right-click `index.html` and click **"Open with Live Server"**.
+4. The website will open in your default browser at `http://127.0.0.1:5500`.
+
+### Option 2: Using Python Simple HTTP Server
+Open your terminal in the project root directory and run:
 ```bash
-git clone <your-repository-url>
-cd eventsync
+# Python 3
+python -m http.server 3000
 ```
+Open `http://localhost:3000` in your web browser.
 
-### 2. Install dependencies
-
+### Option 3: Using Node.js (npx serve or npm)
 ```bash
-npm install
-```
+# Using npx serve
+npx serve . -l 3000
 
-### 3. Environment Configuration
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env
-```
-
-Ensure your `.env` contains the required credentials:
-
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### 4. Run Development Server
-
-```bash
+# OR using npm dev script
 npm run dev
 ```
 
-The app will be running locally at `http://localhost:3000`.
-
 ---
 
-## 📦 Available Scripts
+## 🔒 Authentication & Supabase Notes
 
-- `npm run dev` — Starts the development server on port 3000.
-- `npm run build` — Builds the optimized static production application into `dist/`.
-- `npm run lint` — Runs ESLint checks across the codebase.
-- `npm run preview` — Previews the production build locally.
-
----
-
-## 🔄 Syncing to GitHub
-
-To push or sync this project with your GitHub repository:
-
-### Option A: Via AI Studio / Lovable UI (Recommended)
-1. Open the **Settings** or **Project** menu in the top-right toolbar.
-2. Select **Connect to GitHub** (or **Export to GitHub**).
-3. Authorize your GitHub account and select or create your destination repository.
-4. Your repository will stay automatically synced with every commit!
-
-### Option B: Via Git CLI
-If you prefer pushing directly to an existing GitHub repository:
-
-```bash
-# Initialize git if not already initialized
-git init -b main
-
-# Add and commit all changes
-git add .
-git commit -m "feat: complete EventSync application with fluid particles background"
-
-# Add your GitHub repository remote
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-
-# Push to GitHub
-git push -u origin main
-```
+- This project is configured with a frictionless **Local Session Manager** (`js/auth.js`) that persists guest attendees and booking profiles in `localStorage`.
+- This ensures any evaluator or student can test all booking and gate pass workflows immediately without requiring external API keys.
+- If you wish to connect real Supabase Auth, you can initialize the Supabase client via the CDN in `js/auth.js` by adding your `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the [MIT License](LICENSE).
+Academic and College Project Submission — MIT License.
