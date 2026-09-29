@@ -89,12 +89,32 @@ export function filterAndSortEvents(events, criteria = {}) {
 
   // 2. Category Filter
   if (category && category !== "All") {
-    results = results.filter((e) => e.category?.toLowerCase() === category.toLowerCase());
+    const catLower = category.toLowerCase().trim();
+    results = results.filter((e) => {
+      const eCat = (e.category || "").toLowerCase().trim();
+      if (eCat === catLower) return true;
+      if (catLower.includes("art") && (eCat.includes("art") || eCat.includes("theatre"))) {
+        return true;
+      }
+      if (catLower.includes("theatre") && (eCat.includes("theatre") || eCat.includes("art"))) {
+        return true;
+      }
+      if (catLower.includes("food") && eCat.includes("food")) {
+        return true;
+      }
+      return false;
+    });
   }
 
   // 3. City Filter
   if (city && city !== "All") {
-    results = results.filter((e) => e.city?.toLowerCase() === city.toLowerCase());
+    const cityLower = city.toLowerCase().trim();
+    results = results.filter((e) => {
+      const eCity = (e.city || "").toLowerCase().trim();
+      if (eCity === cityLower) return true;
+      if (cityLower.includes("delhi") && eCity.includes("delhi")) return true;
+      return false;
+    });
   }
 
   // 4. Maximum Price Filter

@@ -93,20 +93,25 @@ EventSync/
 ## 🚀 How to Run the Project Locally
 
 ### Option 1: Using VS Code Live Server (Easiest)
+
 1. Open the project folder in VS Code.
 2. Install the **Live Server** extension.
 3. Right-click `index.html` and click **"Open with Live Server"**.
 4. The website will open in your default browser at `http://127.0.0.1:5500`.
 
 ### Option 2: Using Python Simple HTTP Server
+
 Open your terminal in the project root directory and run:
+
 ```bash
 # Python 3
 python -m http.server 3000
 ```
+
 Open `http://localhost:3000` in your web browser.
 
 ### Option 3: Using Node.js (npx serve or npm)
+
 ```bash
 # Using npx serve
 npx serve . -l 3000

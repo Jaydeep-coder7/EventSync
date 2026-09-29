@@ -1,6 +1,6 @@
 /**
  * EventSync - Validation Service
- * Provides client-side validation logic for booking forms and user inputs
+ * Provides client-side validation logic for booking forms, user inputs, and authentication
  */
 
 /**
@@ -36,7 +36,7 @@ export function validateEmail(email) {
   if (!emailRegex.test(trimmed)) {
     return {
       isValid: false,
-      message: "Please enter a valid email address (e.g., name@domain.com).",
+      message: "Please enter a valid email address (e.g., name@example.com).",
     };
   }
   return { isValid: true, message: "" };
@@ -45,13 +45,17 @@ export function validateEmail(email) {
 /**
  * Validates phone number (standard 10-digit mobile, optionally with country code)
  * @param {string} phone
- * @returns {{ isValid: boolean, message: string }}
+ * @param {boolean} required
+ * @returns {{ isValid: boolean, message: string, formatted?: string }}
  */
-export function validatePhone(phone) {
+export function validatePhone(phone, required = true) {
   if (!phone || phone.trim() === "") {
+    if (!required) {
+      return { isValid: true, message: "", formatted: "" };
+    }
     return { isValid: false, message: "Please enter your 10-digit mobile number." };
   }
-  // Strip spaces, dashes, and +91 prefix if present
+  // Strip spaces, dashes, parentheses and +91 prefix
   const cleaned = phone
     .replace(/[\s\-()]/g, "")
     .replace(/^\+91/, "")
@@ -60,6 +64,89 @@ export function validatePhone(phone) {
     return { isValid: false, message: "Phone number must be exactly 10 digits." };
   }
   return { isValid: true, message: "", formatted: cleaned };
+}
+
+/**
+ * Validates password strength (minimum 8 characters)
+ * @param {string} password
+ * @returns {{ isValid: boolean, message: string }}
+ */
+export function validatePassword(password) {
+  if (!password || password.length === 0) {
+    return { isValid: false, message: "Password is required." };
+  }
+  if (password.length < 8) {
+    return { isValid: false, message: "Password must be at least 8 characters long." };
+  }
+  return { isValid: true, message: "" };
+}
+
+/**
+ * Validates that confirm password matches the chosen password
+ * @param {string} password
+ * @param {string} confirmPassword
+ * @returns {{ isValid: boolean, message: string }}
+ */
+export function validateConfirmPassword(password, confirmPassword) {
+  if (!confirmPassword || confirmPassword.length === 0) {
+    return { isValid: false, message: "Please confirm your password." };
+  }
+  if (password !== confirmPassword) {
+    return { isValid: false, message: "Passwords do not match." };
+  }
+  return { isValid: true, message: "" };
+}
+
+/**
+ * Validates Login credentials
+ * @param {{ email: string, password: string }} data
+ * @returns {{ isValid: boolean, errors: Object }}
+ */
+export function validateLoginForm(data) {
+  const errors = {};
+
+  const emailCheck = validateEmail(data.email);
+  if (!emailCheck.isValid) errors.email = emailCheck.message;
+
+  const passCheck = validatePassword(data.password);
+  if (!passCheck.isValid) errors.password = passCheck.message;
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
+}
+
+/**
+ * Validates Signup form inputs
+ * @param {{ fullName: string, email: string, phone?: string, password: string, confirmPassword: string }} data
+ * @returns {{ isValid: boolean, errors: Object }}
+ */
+export function validateSignupForm(data) {
+  const errors = {};
+
+  const nameCheck = validateName(data.fullName);
+  if (!nameCheck.isValid) errors.fullName = nameCheck.message;
+
+  const emailCheck = validateEmail(data.email);
+  if (!emailCheck.isValid) errors.email = emailCheck.message;
+
+  // Phone is optional for signup; validate only if provided
+  if (data.phone && data.phone.trim() !== "") {
+    const phoneCheck = validatePhone(data.phone, false);
+    if (!phoneCheck.isValid) errors.phone = phoneCheck.message;
+  }
+
+  const passCheck = validatePassword(data.password);
+  if (!passCheck.isValid) errors.password = passCheck.message;
+
+  const confirmCheck = validateConfirmPassword(data.password, data.confirmPassword);
+  if (!confirmCheck.isValid) errors.confirmPassword = confirmCheck.message;
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 }
 
 /**
@@ -100,7 +187,7 @@ export function validateBookingForm(formData, maxAvailable = 10) {
   const emailCheck = validateEmail(formData.email);
   if (!emailCheck.isValid) errors.email = emailCheck.message;
 
-  const phoneCheck = validatePhone(formData.phone);
+  const phoneCheck = validatePhone(formData.phone, true);
   if (!phoneCheck.isValid) errors.phone = phoneCheck.message;
 
   const qtyCheck = validateQuantity(formData.quantity, maxAvailable);

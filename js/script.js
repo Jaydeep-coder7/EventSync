@@ -5,23 +5,179 @@
 
 import { getBookings } from "./booking.js";
 import { initCustomerSupportTriggers } from "./support.js";
+import { restoreSession, getCurrentUser, signOut, listenForAuthChanges } from "./auth.js";
 
 // Initialize on DOM Ready
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initMobileNav();
   initScrollProgress();
-  initBookingBadge();
   initFluidParticlesBackground();
   highlightActiveNavLink();
   initSmartBackButtons();
   initCustomerSupportTriggers();
+
+  // Restore session from Supabase
+  await restoreSession();
+  initNavbarAuth();
+  initBookingBadge();
+
+  // Listen for auth changes from Supabase
+  listenForAuthChanges(() => {
+    initNavbarAuth();
+    initBookingBadge();
+  });
+
+  // Listen for custom auth events across components
+  window.addEventListener("eventsync:auth-changed", () => {
+    initNavbarAuth();
+    initBookingBadge();
+  });
 
   // Listen for booking updates across windows/components
   window.addEventListener("eventsync:booking-updated", () => {
     initBookingBadge();
   });
 });
+
+/**
+ * Initializes and manages the Navbar User Profile and Dropdown
+ */
+export function initNavbarAuth() {
+  const user = getCurrentUser();
+  const navActions = document.querySelector(".nav-actions");
+  const mobileDrawer = document.getElementById("mobile-nav-drawer");
+
+  if (!navActions) return;
+
+  // 1. Desktop Profile Menu
+  let userWrap = document.getElementById("user-nav-profile-wrap");
+  let guestBtn = document.getElementById("nav-guest-signin-btn");
+
+  if (user) {
+    if (guestBtn) guestBtn.remove();
+    if (!userWrap) {
+      userWrap = document.createElement("div");
+      userWrap.id = "user-nav-profile-wrap";
+      userWrap.className = "user-nav-dropdown-wrap";
+      // Insert before theme toggle or first child of navActions
+      navActions.insertBefore(userWrap, navActions.firstChild);
+    }
+
+    userWrap.innerHTML = `
+      <button type="button" class="user-nav-btn" id="user-profile-menu-toggle" aria-expanded="false" aria-haspopup="true" title="Account Menu">
+        <img src="${user.avatar}" alt="${user.name}" class="user-nav-avatar" />
+        <span class="user-nav-greeting">Hi, <strong class="user-nav-name">${user.firstName}</strong></span>
+        <span class="user-nav-arrow">▾</span>
+      </button>
+      <div class="user-nav-menu" id="user-nav-dropdown-menu" role="menu">
+        <div class="user-menu-profile">
+          <img src="${user.avatar}" alt="${user.name}" class="user-menu-avatar" />
+          <div class="user-menu-info">
+            <span class="user-menu-name">${user.name}</span>
+            <span class="user-menu-email">${user.email}</span>
+          </div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <a href="my-bookings.html" class="user-menu-link" role="menuitem">
+          <span class="menu-icon">🎟️</span>
+          <span>My Bookings</span>
+        </a>
+        <a href="events.html" class="user-menu-link" role="menuitem">
+          <span class="menu-icon">🎪</span>
+          <span>Explore Events</span>
+        </a>
+        <div class="user-menu-divider"></div>
+        <button type="button" class="user-menu-link user-menu-logout" id="nav-logout-btn" role="menuitem">
+          <span class="menu-icon">🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    `;
+
+    // Dropdown toggle handler
+    const toggleBtn = userWrap.querySelector("#user-profile-menu-toggle");
+    const menu = userWrap.querySelector("#user-nav-dropdown-menu");
+
+    toggleBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = menu?.classList.toggle("open");
+      toggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    // Close on outside click
+    document.addEventListener("click", (e) => {
+      if (!userWrap.contains(e.target)) {
+        menu?.classList.remove("open");
+        toggleBtn?.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Logout trigger
+    const logoutBtn = userWrap.querySelector("#nav-logout-btn");
+    logoutBtn?.addEventListener("click", async () => {
+      logoutBtn.innerHTML = `<span class="menu-icon">⏳</span><span>Logging out...</span>`;
+      logoutBtn.disabled = true;
+      await signOut();
+      showToast("Signed out of EventSync.", "info");
+      setTimeout(() => {
+        window.location.replace("auth.html");
+      }, 300);
+    });
+  } else {
+    if (userWrap) userWrap.remove();
+    // Only show Sign In button if not on auth page
+    if (!window.location.pathname.includes("auth.html")) {
+      if (!guestBtn) {
+        guestBtn = document.createElement("a");
+        guestBtn.id = "nav-guest-signin-btn";
+        guestBtn.href = "auth.html";
+        guestBtn.className = "btn-secondary btn-sm";
+        guestBtn.textContent = "Sign In";
+        navActions.insertBefore(guestBtn, navActions.firstChild);
+      }
+    }
+  }
+
+  // 2. Mobile Drawer User Section
+  if (mobileDrawer) {
+    let mobileUserCard = document.getElementById("mobile-user-card");
+    if (user) {
+      if (!mobileUserCard) {
+        mobileUserCard = document.createElement("div");
+        mobileUserCard.id = "mobile-user-card";
+        mobileUserCard.className = "mobile-user-card";
+        mobileDrawer.appendChild(mobileUserCard);
+      }
+
+      mobileUserCard.innerHTML = `
+        <div class="mobile-user-info">
+          <img src="${user.avatar}" alt="${user.name}" class="mobile-user-avatar" />
+          <div class="mobile-user-details">
+            <span class="mobile-user-name">${user.name}</span>
+            <span class="mobile-user-email">${user.email}</span>
+          </div>
+        </div>
+        <button type="button" class="mobile-logout-btn" id="mobile-drawer-logout-btn">
+          <span>🚪</span> Logout
+        </button>
+      `;
+
+      const mobileLogoutBtn = mobileUserCard.querySelector("#mobile-drawer-logout-btn");
+      mobileLogoutBtn?.addEventListener("click", async () => {
+        mobileLogoutBtn.innerHTML = `<span>⏳</span> Signing out...`;
+        mobileLogoutBtn.disabled = true;
+        await signOut();
+        showToast("Signed out of EventSync.", "info");
+        setTimeout(() => {
+          window.location.replace("auth.html");
+        }, 300);
+      });
+    } else {
+      if (mobileUserCard) mobileUserCard.remove();
+    }
+  }
+}
 
 /**
  * Initializes interactive and reliable back buttons across all secondary pages
@@ -139,6 +295,20 @@ function initMobileNav() {
   mobileNav.querySelectorAll("a").forEach((a) => {
     a.addEventListener("click", () => toggleMenu(false));
   });
+
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mobileNav.classList.contains("open")) {
+      toggleMenu(false);
+    }
+  });
+
+  // Auto-close on resize to tablet/desktop
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768 && mobileNav.classList.contains("open")) {
+      toggleMenu(false);
+    }
+  });
 }
 
 /**
@@ -206,165 +376,8 @@ function initFluidParticlesBackground() {
   const canvas = document.getElementById("fluid-particles-canvas");
   if (!canvas) return;
 
+  // Reduced, unobtrusive subtle background canvas - disabled to prevent AI-generated floating sparkle look
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-
-  let width = (canvas.width = window.innerWidth);
-  let height = (canvas.height = window.innerHeight);
-
-  // Resize handler
-  window.addEventListener("resize", () => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  });
-
-  // Mouse interaction state
-  const mouse = {
-    x: width / 2,
-    y: height / 2,
-    vx: 0,
-    vy: 0,
-    prevX: width / 2,
-    prevY: height / 2,
-    radius: 120,
-    active: false,
-  };
-
-  window.addEventListener("mousemove", (e) => {
-    mouse.prevX = mouse.x;
-    mouse.prevY = mouse.y;
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    mouse.vx = (mouse.x - mouse.prevX) * 0.5;
-    mouse.vy = (mouse.y - mouse.prevY) * 0.5;
-    mouse.active = true;
-  });
-
-  window.addEventListener("mouseleave", () => {
-    mouse.active = false;
-  });
-
-  // Particle color palette (Amber, Golden Embers, Neon Magenta, Electric Cyan, Stardust)
-  const colors = [
-    { r: 245, g: 158, b: 11, a: 0.85 }, // Amber 500
-    { r: 251, g: 191, b: 36, a: 0.8 }, // Amber 400
-    { r: 217, g: 119, b: 6, a: 0.75 }, // Amber 600
-    { r: 244, g: 63, b: 94, a: 0.7 }, // Rose / Neon Magenta
-    { r: 14, g: 165, b: 233, a: 0.75 }, // Electric Cyan
-    { r: 254, g: 243, b: 199, a: 0.9 }, // Stardust Gold
-  ];
-
-  const particleCount = Math.min(Math.floor((width * height) / 4500), 220);
-  const particles = [];
-
-  class Particle {
-    constructor() {
-      this.reset(true);
-    }
-
-    reset(initial = false) {
-      this.x = Math.random() * width;
-      this.y = initial ? Math.random() * height : height + 10;
-      this.vx = (Math.random() - 0.5) * 0.6;
-      this.vy = -Math.random() * 0.8 - 0.2;
-      this.size = Math.random() * 2.2 + 0.8;
-      this.baseAlpha = Math.random() * 0.5 + 0.35;
-      this.color = colors[Math.floor(Math.random() * colors.length)];
-      this.life = Math.random() * 300 + 150;
-      this.age = 0;
-      this.isGlow = Math.random() > 0.75;
-    }
-
-    update() {
-      this.age++;
-      if (this.age > this.life || this.y < -20 || this.x < -20 || this.x > width + 20) {
-        this.reset();
-      }
-
-      // Continuous gentle drift
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Mouse deflection & swirl
-      if (mouse.active) {
-        const dx = this.x - mouse.x;
-        const dy = this.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < mouse.radius && dist > 0) {
-          const force = (1 - dist / mouse.radius) * 1.5;
-          const angle = Math.atan2(dy, dx);
-          // Radial push + swirl
-          this.x += Math.cos(angle) * force * 2.5 - Math.sin(angle) * force * 1.5;
-          this.y += Math.sin(angle) * force * 2.5 + Math.cos(angle) * force * 1.5;
-        }
-      }
-    }
-
-    draw() {
-      const alphaProgress = Math.sin((this.age / this.life) * Math.PI);
-      const currentAlpha = this.baseAlpha * alphaProgress;
-      const { r, g, b } = this.color;
-
-      if (this.isGlow) {
-        const glowRad = this.size * 3.5;
-        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowRad);
-        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${currentAlpha * 0.9})`);
-        grad.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${currentAlpha * 0.3})`);
-        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, glowRad, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Core particle dot
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${currentAlpha})`;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
-  }
-
-  // Animation Loop
-  let animationId;
-  function animate() {
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw connecting constellation filaments between close particles
-    const maxDist = 70;
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const p1 = particles[i];
-        const p2 = particles[j];
-        const dx = p1.x - p2.x;
-        const dy = p1.y - p2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < maxDist) {
-          const filamentAlpha = (1 - dist / maxDist) * 0.15;
-          ctx.strokeStyle = `rgba(245, 158, 11, ${filamentAlpha})`;
-          ctx.lineWidth = 0.6;
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
-        }
-      }
-    }
-
-    // Update & draw particles
-    for (let i = 0; i < particles.length; i++) {
-      particles[i].update();
-      particles[i].draw();
-    }
-
-    animationId = requestAnimationFrame(animate);
-  }
-
-  animate();
+  canvas.style.display = "none";
 }

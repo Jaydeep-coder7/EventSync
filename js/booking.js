@@ -4,17 +4,30 @@
  */
 
 import { validateBookingForm } from "./validation.js";
+import { getCurrentUser } from "./auth.js";
 
 const BOOKINGS_STORAGE_KEY = "eventsync_bookings";
 
 /**
- * Retrieves all saved bookings from LocalStorage
+ * Retrieves all saved bookings from LocalStorage, filtered by current user if logged in
  * @returns {Array} List of booking objects
  */
 export function getBookings() {
   try {
     const raw = localStorage.getItem(BOOKINGS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const all = raw ? JSON.parse(raw) : [];
+    const currentUser = getCurrentUser();
+
+    if (currentUser && currentUser.email) {
+      const userEmail = currentUser.email.toLowerCase();
+      return all.filter(
+        (b) =>
+          (b.customerEmail && b.customerEmail.toLowerCase() === userEmail) ||
+          (b.userEmail && b.userEmail.toLowerCase() === userEmail) ||
+          (b.userId && b.userId === currentUser.id),
+      );
+    }
+    return all;
   } catch (err) {
     console.error("Error reading bookings from LocalStorage:", err);
     return [];
@@ -22,22 +35,32 @@ export function getBookings() {
 }
 
 /**
- * Saves a new booking to LocalStorage
+ * Saves a new booking to LocalStorage associated with current Supabase user
  * @param {Object} booking
  * @returns {Object} Saved booking with assigned ID and timestamp
  */
 export function saveBooking(booking) {
-  const bookings = getBookings();
+  let allBookings = [];
+  try {
+    const raw = localStorage.getItem(BOOKINGS_STORAGE_KEY);
+    allBookings = raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    allBookings = [];
+  }
+
+  const currentUser = getCurrentUser();
   const bookingId = "ES-" + Math.floor(100000 + Math.random() * 900000);
   const newBooking = {
     ...booking,
     bookingId,
+    userId: currentUser ? currentUser.id : undefined,
+    userEmail: currentUser ? currentUser.email : booking.customerEmail,
     status: "Confirmed",
     createdAt: new Date().toISOString(),
   };
 
-  bookings.unshift(newBooking);
-  localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+  allBookings.unshift(newBooking);
+  localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(allBookings));
 
   // Dispatch custom event to notify other components/pages
   window.dispatchEvent(new CustomEvent("eventsync:booking-updated"));
@@ -50,12 +73,19 @@ export function saveBooking(booking) {
  * @returns {boolean} Success status
  */
 export function cancelBooking(bookingId) {
-  let bookings = getBookings();
-  const initialLength = bookings.length;
-  bookings = bookings.filter((b) => b.bookingId !== bookingId);
+  let allBookings = [];
+  try {
+    const raw = localStorage.getItem(BOOKINGS_STORAGE_KEY);
+    allBookings = raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    allBookings = [];
+  }
 
-  if (bookings.length !== initialLength) {
-    localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+  const initialLength = allBookings.length;
+  allBookings = allBookings.filter((b) => b.bookingId !== bookingId);
+
+  if (allBookings.length !== initialLength) {
+    localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(allBookings));
     window.dispatchEvent(new CustomEvent("eventsync:booking-updated"));
     return true;
   }
@@ -295,20 +325,41 @@ export function openBookingModal(event, preselectedTierId = null) {
           <div class="form-grid-2">
             <div class="form-group">
               <label for="booking-name" class="form-label">Full Name *</label>
-              <input type="text" id="booking-name" class="form-input" placeholder="e.g. Aditi Sharma" required />
+              <input 
+                type="text" 
+                id="booking-name" 
+                class="form-input" 
+                placeholder="e.g. Aditi Sharma" 
+                value="${(getCurrentUser()?.name || "").replace(/"/g, "&quot;")}"
+                required 
+              />
               <span id="name-error" class="form-error"></span>
             </div>
 
             <div class="form-group">
               <label for="booking-phone" class="form-label">Phone Number *</label>
-              <input type="tel" id="booking-phone" class="form-input" placeholder="e.g. 9876543210" required />
+              <input 
+                type="tel" 
+                id="booking-phone" 
+                class="form-input" 
+                placeholder="e.g. 9876543210" 
+                value="${(getCurrentUser()?.phone || "").replace(/"/g, "&quot;")}"
+                required 
+              />
               <span id="phone-error" class="form-error"></span>
             </div>
           </div>
 
           <div class="form-group">
             <label for="booking-email" class="form-label">Email Address (for Digital QR Pass) *</label>
-            <input type="email" id="booking-email" class="form-input" placeholder="e.g. aditi.sharma@example.com" required />
+            <input 
+              type="email" 
+              id="booking-email" 
+              class="form-input" 
+              placeholder="e.g. aditi.sharma@example.com" 
+              value="${(getCurrentUser()?.email || "").replace(/"/g, "&quot;")}"
+              required 
+            />
             <span id="email-error" class="form-error"></span>
           </div>
 
@@ -633,4 +684,3 @@ export function promptCancelBooking(booking, onConfirm) {
     }
   });
 }
-

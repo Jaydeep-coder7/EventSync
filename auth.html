@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In & Register — EventSync</title>
+    <meta
+      name="description"
+      content="Sign in to your EventSync account to access your digital event gate passes, verified bookings, and premier live experiences."
+    />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="auth-page-body">
+    <!-- Fullscreen Event Ambience Backdrop -->
+    <div class="auth-bg-art" aria-hidden="true"></div>
+
+    <!-- Main Viewport -->
+    <main class="auth-viewport">
+      <div class="auth-card-container">
+        <div class="auth-card animate-scale-up">
+          <!-- Header -->
+          <header class="auth-card-header">
+            <a href="index.html" class="auth-brand-logo">
+              <span class="brand-icon">🎟️</span>
+              <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+            </a>
+            <h1 class="auth-headline">Experience More. Be There.</h1>
+            <p class="auth-subtitle">Discover events. Book your moment. Make memories.</p>
+          </header>
+
+          <!-- Dynamic Alert Message Box -->
+          <div id="auth-alert-box" class="auth-alert-box" role="alert" aria-live="polite">
+            <span id="auth-alert-icon" class="auth-alert-icon">⚠️</span>
+            <span id="auth-alert-message" class="auth-alert-message"></span>
+          </div>
+
+          <!-- Auth Navigation Tabs -->
+          <div class="auth-tabs-nav" role="tablist" aria-label="Authentication Options">
+            <button
+              type="button"
+              class="auth-tab-btn active"
+              id="tab-btn-login"
+              role="tab"
+              aria-selected="true"
+              aria-controls="form-login"
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              class="auth-tab-btn"
+              id="tab-btn-signup"
+              role="tab"
+              aria-selected="false"
+              aria-controls="form-signup"
+            >
+              Create Account
+            </button>
+          </div>
+
+          <!-- ==========================================
+             1. LOGIN FORM
+             ========================================== -->
+          <form
+            id="form-login"
+            class="auth-form active"
+            novalidate
+            role="tabpanel"
+            aria-labelledby="tab-btn-login"
+          >
+            <!-- Email Field -->
+            <div class="auth-field">
+              <label for="login-email" class="auth-label">Email Address</label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="email"
+                  id="login-email"
+                  class="auth-input"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <span id="login-email-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="auth-field">
+              <label for="login-password" class="auth-label">Password</label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="password"
+                  id="login-password"
+                  class="auth-input"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  class="auth-toggle-pwd"
+                  data-target="login-password"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <span id="login-password-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Options Row: Remember Me & Forgot Password -->
+            <div class="auth-options-row">
+              <label class="auth-remember-label">
+                <input type="checkbox" id="login-remember" checked />
+                <span>Keep me signed in</span>
+              </label>
+              <a
+                href="#"
+                id="forgot-password-link"
+                style="color: var(--accent-amber); font-size: 0.82rem; text-decoration: underline"
+              >
+                Need help?
+              </a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="auth-btn-submit" id="btn-login-submit">
+              <span class="btn-text">Sign In</span>
+            </button>
+
+            <!-- Switch Prompt -->
+            <div class="auth-switch-prompt">
+              Don't have an account?
+              <button type="button" class="auth-switch-btn" id="switch-to-signup">Sign up</button>
+            </div>
+          </form>
+
+          <!-- ==========================================
+             2. SIGNUP FORM
+             ========================================== -->
+          <form
+            id="form-signup"
+            class="auth-form"
+            novalidate
+            role="tabpanel"
+            aria-labelledby="tab-btn-signup"
+          >
+            <!-- Full Name Field -->
+            <div class="auth-field">
+              <label for="signup-name" class="auth-label">Full Name</label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="text"
+                  id="signup-name"
+                  class="auth-input"
+                  placeholder="e.g. Vikramaditya Rao"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+              <span id="signup-name-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Email Field -->
+            <div class="auth-field">
+              <label for="signup-email" class="auth-label">Email Address</label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="email"
+                  id="signup-email"
+                  class="auth-input"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <span id="signup-email-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Phone Field (Optional) -->
+            <div class="auth-field">
+              <label for="signup-phone" class="auth-label">
+                Mobile Number
+                <span style="font-size: 0.75rem; color: var(--text-subtle); font-weight: normal"
+                  >(Optional)</span
+                >
+              </label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="tel"
+                  id="signup-phone"
+                  class="auth-input"
+                  placeholder="e.g. 9876543210"
+                  autocomplete="tel"
+                />
+              </div>
+              <span id="signup-phone-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="auth-field">
+              <label for="signup-password" class="auth-label"
+                >Password
+                <span style="font-size: 0.75rem; color: var(--text-subtle); font-weight: normal"
+                  >(Min 8 characters)</span
+                ></label
+              >
+              <div class="auth-input-wrapper">
+                <input
+                  type="password"
+                  id="signup-password"
+                  class="auth-input"
+                  placeholder="Create a strong password"
+                  autocomplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  class="auth-toggle-pwd"
+                  data-target="signup-password"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <span id="signup-password-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="auth-field">
+              <label for="signup-confirm-password" class="auth-label">Confirm Password</label>
+              <div class="auth-input-wrapper">
+                <input
+                  type="password"
+                  id="signup-confirm-password"
+                  class="auth-input"
+                  placeholder="Re-enter your password"
+                  autocomplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  class="auth-toggle-pwd"
+                  data-target="signup-confirm-password"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <span id="signup-confirm-password-error" class="auth-field-error"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="auth-btn-submit" id="btn-signup-submit">
+              <span class="btn-text">Create Account</span>
+            </button>
+
+            <!-- Switch Prompt -->
+            <div class="auth-switch-prompt">
+              Already have an account?
+              <button type="button" class="auth-switch-btn" id="switch-to-login">Login</button>
+            </div>
+          </form>
+
+          <!-- OAuth Section (Google Sign-In) -->
+          <div class="auth-oauth-divider">
+            <span>Or Continue With</span>
+          </div>
+
+          <button type="button" class="auth-btn-google" id="btn-google-oauth">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+              />
+            </svg>
+            <span>Continue with Google</span>
+            <span class="google-badge-info" title="Requires Google Provider enabled in Supabase"
+              >Supabase Auth</span
+            >
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Core Scripts -->
+    <script type="module" src="js/script.js"></script>
+    <script type="module">
+      import {
+        signIn,
+        signUp,
+        signInWithGoogle,
+        redirectIfAuthenticated,
+        getCurrentUser,
+        restoreSession,
+      } from "./js/auth.js";
+      import { validateLoginForm, validateSignupForm } from "./js/validation.js";
+      import { showToast } from "./js/script.js";
+
+      // Immediate check: If user is already authenticated, redirect to destination
+      (async () => {
+        await redirectIfAuthenticated();
+      })();
+
+      // DOM Elements
+      const tabBtnLogin = document.getElementById("tab-btn-login");
+      const tabBtnSignup = document.getElementById("tab-btn-signup");
+      const formLogin = document.getElementById("form-login");
+      const formSignup = document.getElementById("form-signup");
+      const switchToSignupBtn = document.getElementById("switch-to-signup");
+      const switchToLoginBtn = document.getElementById("switch-to-login");
+      const alertBox = document.getElementById("auth-alert-box");
+      const alertMsg = document.getElementById("auth-alert-message");
+      const alertIcon = document.getElementById("auth-alert-icon");
+      const btnGoogle = document.getElementById("btn-google-oauth");
+
+      // Retrieve destination URL from query params if available
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get("redirect") || "index.html";
+
+      // Show alert inside auth card
+      function showAlert(message, type = "error") {
+        if (!alertBox || !alertMsg) return;
+        alertBox.className = `auth-alert-box show alert-${type}`;
+        alertIcon.textContent = type === "success" ? "✓" : type === "info" ? "ℹ️" : "⚠️";
+        alertMsg.textContent = message;
+        alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      function clearAlert() {
+        if (!alertBox) return;
+        alertBox.className = "auth-alert-box";
+        alertMsg.textContent = "";
+      }
+
+      // Toggle Tabs
+      function setTab(tabName) {
+        clearAlert();
+        clearErrors(formLogin);
+        clearErrors(formSignup);
+
+        if (tabName === "signup") {
+          tabBtnLogin.classList.remove("active");
+          tabBtnLogin.setAttribute("aria-selected", "false");
+          tabBtnSignup.classList.add("active");
+          tabBtnSignup.setAttribute("aria-selected", "true");
+          formLogin.classList.remove("active");
+          formSignup.classList.add("active");
+          document.getElementById("signup-name")?.focus();
+        } else {
+          tabBtnSignup.classList.remove("active");
+          tabBtnSignup.setAttribute("aria-selected", "false");
+          tabBtnLogin.classList.add("active");
+          tabBtnLogin.setAttribute("aria-selected", "true");
+          formSignup.classList.remove("active");
+          formLogin.classList.add("active");
+          document.getElementById("login-email")?.focus();
+        }
+      }
+
+      tabBtnLogin.addEventListener("click", () => setTab("login"));
+      tabBtnSignup.addEventListener("click", () => setTab("signup"));
+      switchToSignupBtn.addEventListener("click", () => setTab("signup"));
+      switchToLoginBtn.addEventListener("click", () => setTab("login"));
+
+      // Password Show/Hide Toggle
+      document.querySelectorAll(".auth-toggle-pwd").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const targetId = btn.getAttribute("data-target");
+          const input = document.getElementById(targetId);
+          if (!input) return;
+
+          if (input.type === "password") {
+            input.type = "text";
+            btn.textContent = "🙈";
+            btn.setAttribute("aria-label", "Hide password");
+          } else {
+            input.type = "password";
+            btn.textContent = "👁️";
+            btn.setAttribute("aria-label", "Show password");
+          }
+        });
+      });
+
+      // Clear form inline errors
+      function clearErrors(form) {
+        form.querySelectorAll(".auth-field-error").forEach((el) => (el.textContent = ""));
+        form.querySelectorAll(".auth-input").forEach((el) => el.classList.remove("has-error"));
+      }
+
+      // Apply validation errors to inputs
+      function applyErrors(errors, prefix) {
+        for (const [key, msg] of Object.entries(errors)) {
+          let fieldId = "";
+          if (key === "fullName") fieldId = `${prefix}-name`;
+          else if (key === "confirmPassword") fieldId = `${prefix}-confirm-password`;
+          else fieldId = `${prefix}-${key}`;
+
+          const input = document.getElementById(fieldId);
+          const errEl = document.getElementById(`${fieldId}-error`);
+
+          if (input) input.classList.add("has-error");
+          if (errEl) errEl.textContent = msg;
+        }
+      }
+
+      // Set button loading state
+      function setBtnLoading(button, isLoading, normalText) {
+        if (isLoading) {
+          button.disabled = true;
+          button.innerHTML = `<span class="auth-spinner"></span><span>Processing...</span>`;
+        } else {
+          button.disabled = false;
+          button.innerHTML = `<span class="btn-text">${normalText}</span>`;
+        }
+      }
+
+      // ========================================================
+      // LOGIN SUBMISSION HANDLER
+      // ========================================================
+      formLogin.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearAlert();
+        clearErrors(formLogin);
+
+        const emailInput = document.getElementById("login-email");
+        const passwordInput = document.getElementById("login-password");
+        const submitBtn = document.getElementById("btn-login-submit");
+
+        const credentials = {
+          email: emailInput?.value || "",
+          password: passwordInput?.value || "",
+        };
+
+        // Client-side validation
+        const validation = validateLoginForm(credentials);
+        if (!validation.isValid) {
+          applyErrors(validation.errors, "login");
+          return;
+        }
+
+        setBtnLoading(submitBtn, true, "Sign In");
+
+        try {
+          const { user, session, friendlyError } = await signIn(
+            credentials.email,
+            credentials.password,
+          );
+
+          if (friendlyError) {
+            showAlert(friendlyError, "error");
+            showToast(friendlyError, "error");
+            setBtnLoading(submitBtn, false, "Sign In");
+            return;
+          }
+
+          if (user) {
+            const greetingName = user.firstName || user.name || "Member";
+            showAlert(`Welcome back, ${greetingName}! Redirecting to EventSync...`, "success");
+            showToast(`Welcome back, ${greetingName}!`, "success");
+
+            setTimeout(() => {
+              window.location.replace(redirectUrl);
+            }, 800);
+          } else {
+            showAlert("Sign in completed. Redirecting...", "success");
+            setTimeout(() => {
+              window.location.replace(redirectUrl);
+            }, 800);
+          }
+        } catch (err) {
+          console.error("Login unexpected error:", err);
+          showAlert("An unexpected error occurred during login. Please try again.", "error");
+          setBtnLoading(submitBtn, false, "Sign In");
+        }
+      });
+
+      // ========================================================
+      // SIGNUP SUBMISSION HANDLER
+      // ========================================================
+      formSignup.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearAlert();
+        clearErrors(formSignup);
+
+        const nameInput = document.getElementById("signup-name");
+        const emailInput = document.getElementById("signup-email");
+        const phoneInput = document.getElementById("signup-phone");
+        const passwordInput = document.getElementById("signup-password");
+        const confirmInput = document.getElementById("signup-confirm-password");
+        const submitBtn = document.getElementById("btn-signup-submit");
+
+        const formData = {
+          fullName: nameInput?.value || "",
+          email: emailInput?.value || "",
+          phone: phoneInput?.value || "",
+          password: passwordInput?.value || "",
+          confirmPassword: confirmInput?.value || "",
+        };
+
+        // Client-side validation
+        const validation = validateSignupForm(formData);
+        if (!validation.isValid) {
+          applyErrors(validation.errors, "signup");
+          return;
+        }
+
+        setBtnLoading(submitBtn, true, "Create Account");
+
+        try {
+          const { user, session, friendlyError } = await signUp(formData.email, formData.password, {
+            fullName: formData.fullName,
+            phone: formData.phone,
+          });
+
+          if (friendlyError) {
+            showAlert(friendlyError, "error");
+            showToast(friendlyError, "error");
+            setBtnLoading(submitBtn, false, "Create Account");
+            return;
+          }
+
+          // Check if session was immediately created (auto-confirm enabled)
+          if (session && user) {
+            const greetingName = user.firstName || user.name || "Member";
+            showAlert(
+              `Account created successfully! Welcome to EventSync, ${greetingName}.`,
+              "success",
+            );
+            showToast(`Welcome to EventSync, ${greetingName}!`, "success");
+
+            setTimeout(() => {
+              window.location.replace(redirectUrl);
+            }, 900);
+          } else {
+            // If email confirmation is required by Supabase project
+            showAlert(
+              "Account created! Please check your email inbox to confirm your account before signing in.",
+              "success",
+            );
+            showToast("Registration email sent. Please verify.", "info");
+            setBtnLoading(submitBtn, false, "Create Account");
+            setTab("login");
+          }
+        } catch (err) {
+          console.error("Signup unexpected error:", err);
+          showAlert(
+            "An unexpected error occurred during account creation. Please try again.",
+            "error",
+          );
+          setBtnLoading(submitBtn, false, "Create Account");
+        }
+      });
+
+      // ========================================================
+      // GOOGLE OAUTH HANDLER
+      // ========================================================
+      btnGoogle?.addEventListener("click", async () => {
+        clearAlert();
+        btnGoogle.disabled = true;
+        btnGoogle.style.opacity = "0.7";
+
+        try {
+          const { error, friendlyError } = await signInWithGoogle();
+          if (friendlyError) {
+            showAlert(friendlyError, "info");
+            showToast(friendlyError, "info");
+          }
+        } catch (err) {
+          showAlert(
+            "Google sign-in is not yet configured in Supabase. Please sign in with your email.",
+            "info",
+          );
+        } finally {
+          btnGoogle.disabled = false;
+          btnGoogle.style.opacity = "1";
+        }
+      });
+
+      // Forgot password link helper
+      document.getElementById("forgot-password-link")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        showAlert(
+          "To reset your password, please contact the EventSync Concierge at support@eventsync.app or use the demo login credentials.",
+          "info",
+        );
+        showToast("Need password assistance? Contact support.", "info");
+      });
+    </script>
+  </body>
+</html>

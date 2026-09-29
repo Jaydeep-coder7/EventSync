@@ -1,554 +1,942 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EventSync — Curated Live Experiences & Digital Passes</title>
-  <meta name="description" content="Discover and book premier concerts, tech summits, cultural festivals, and live sports across India with instant digital QR gate passes." />
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <!-- Top Scroll Progress Bar -->
-  <div id="scroll-progress-bar"></div>
-
-  <!-- Interactive Fluid Particles Canvas Background -->
-  <canvas id="fluid-particles-canvas"></canvas>
-
-  <div class="app-wrapper">
-    <!-- Navigation Bar -->
-    <header class="navbar">
-      <div class="container nav-container">
-        <!-- Logo -->
-        <a href="index.html" class="brand-logo" id="nav-brand-logo">
-          <span class="brand-icon">🎟️</span>
-          <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
-          <span class="live-badge"><span class="pulse-dot"></span>LIVE</span>
-        </a>
-
-        <!-- Desktop Navigation Links -->
-        <nav class="nav-links-desktop" aria-label="Main Navigation">
-          <a href="index.html" class="nav-link active">Home</a>
-          <a href="events.html" class="nav-link">Explore Events</a>
-          <a href="my-bookings.html" class="nav-link">
-            My Passes
-            <span class="nav-booking-badge" style="display: none;">0</span>
-          </a>
-        </nav>
-
-        <!-- Nav Actions -->
-        <div class="nav-actions">
-          <a href="events.html" class="btn-primary btn-sm" id="nav-explore-btn">Browse All</a>
-          
-          <!-- Theme Toggle (Dark/Light) -->
-          <button class="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Theme">
-            <span class="theme-toggle-icon">☀️</span>
-          </button>
-
-          <!-- Mobile Hamburger Toggle -->
-          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Mobile Menu" aria-expanded="false">
-            ☰
-          </button>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventSync — Curated Live Experiences & Digital Passes</title>
+    <meta
+      name="description"
+      content="Discover and book premier concerts, tech summits, cultural festivals, and live sports across India with instant digital QR gate passes."
+    />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Protected Page Auth Gate (Guards against unauthenticated view) -->
+    <div id="page-auth-gate" class="page-auth-gate">
+      <div class="auth-gate-inner">
+        <div class="auth-gate-logo">🎟️</div>
+        <div class="auth-gate-spinner"></div>
+        <div class="auth-gate-text">Authenticating EventSync session...</div>
       </div>
-    </header>
-
-    <!-- Mobile Drawer Overlay & Menu -->
-    <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
-    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
-      <a href="index.html" class="mobile-nav-link active">
-        <span>🏠 Home</span>
-      </a>
-      <a href="events.html" class="mobile-nav-link">
-        <span>🎪 Explore Events</span>
-      </a>
-      <a href="my-bookings.html" class="mobile-nav-link">
-        <span>🎟️ My Passes</span>
-        <span class="nav-booking-badge" style="display: none;">0</span>
-      </a>
     </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Hero Section -->
-      <section class="hero-section" id="home-hero">
-        <div class="hero-background-art"></div>
-        <div class="container hero-content">
-          <!-- Live Badge Row -->
-          <div class="hero-badge-row">
-            <span class="badge-amber-sm">
-              <span class="pulse-dot"></span> Live Sync Engine • Instant QR Gate Passes
-            </span>
-          </div>
+    <!-- Top Scroll Progress Bar -->
+    <div id="scroll-progress-bar"></div>
 
-          <!-- Hero Headline -->
-          <h1 class="hero-title">
-            Don't Just Hear About It.<br />
-            <span class="text-amber">Be In The Room.</span>
-          </h1>
-          <p class="hero-subtitle">
-            Curated concerts, tech summits, cultural fests, and sports championships across India. 
-            Real-time verified seat allocation with zero hidden fees.
-          </p>
+    <div class="app-wrapper">
+      <!-- Navigation Bar -->
+      <header class="navbar">
+        <div class="container nav-container">
+          <!-- Logo -->
+          <a href="index.html" class="brand-logo" id="nav-brand-logo">
+            <span class="brand-icon">🎟️</span>
+            <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+          </a>
 
-          <!-- Live Search Bar -->
-          <form id="hero-search-form" class="hero-search-bar" role="search">
-            <div class="search-input-group">
-              <span class="search-icon">🔍</span>
-              <input 
-                type="text" 
-                id="hero-search-input" 
-                class="search-input" 
-                placeholder="Search artists, festivals, summits, or venues..." 
-                aria-label="Search events"
-              />
-            </div>
-            <select id="hero-category-select" class="search-select" aria-label="Select Category">
-              <option value="All">All Categories</option>
-              <option value="Music">Music</option>
-              <option value="Technology">Technology</option>
-              <option value="Food & Drink">Food & Drink</option>
-              <option value="Arts & Theatre">Arts & Theatre</option>
-              <option value="Sports">Sports</option>
-              <option value="Business">Business</option>
-            </select>
-            <button type="submit" class="btn-primary" id="hero-search-submit">
-              Explore Events →
+          <!-- Desktop Navigation Links: EventSync | Home | Events | My Bookings | Explore Events -->
+          <nav class="nav-links-desktop" aria-label="Main Navigation">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="events.html" class="nav-link">Events</a>
+            <a href="my-bookings.html" class="nav-link">
+              My Bookings
+              <span class="nav-booking-badge" style="display: none">0</span>
+            </a>
+            <a href="events.html" class="nav-link">Explore Events</a>
+          </nav>
+
+          <!-- Nav Actions -->
+          <div class="nav-actions">
+            <!-- Theme Toggle (Dark/Light) -->
+            <button class="theme-toggle-btn" aria-label="Toggle Theme" title="Toggle Theme">
+              <span class="theme-toggle-icon">☀️</span>
             </button>
-          </form>
 
-          <!-- Quick Category Chips -->
-          <div class="category-chips-bar" id="hero-category-chips">
-            <button class="chip-btn active" data-category="All">✨ All</button>
-            <button class="chip-btn" data-category="Music">🎵 Music</button>
-            <button class="chip-btn" data-category="Technology">⚡ Technology</button>
-            <button class="chip-btn" data-category="Food & Drink">🍷 Food & Drink</button>
-            <button class="chip-btn" data-category="Arts & Theatre">🎭 Arts & Theatre</button>
-            <button class="chip-btn" data-category="Sports">🏆 Sports</button>
+            <!-- Mobile Hamburger Toggle -->
+            <button
+              class="mobile-menu-btn"
+              id="mobile-menu-toggle"
+              aria-label="Open Mobile Menu"
+              aria-expanded="false"
+            >
+              ☰
+            </button>
           </div>
         </div>
-      </section>
+      </header>
 
-      <!-- Horizontal Scroll Grid Section: Spotlight & Selling Fast -->
-      <section class="horizontal-scroll-section" id="spotlight-scroll-section">
-        <div class="container">
-          <div class="horizontal-scroll-header">
-            <div class="section-title-wrap">
-              <span class="badge-amber-sm">🔥 High Demand Live Stages</span>
-              <h2 class="section-title">Spotlight & Selling Fast</h2>
-              <p class="section-subtitle">Swipe or scroll through trending live shows with limited passes remaining</p>
-            </div>
-            <div class="scroll-controls">
-              <button type="button" class="scroll-arrow-btn" id="h-scroll-prev" aria-label="Scroll Left">‹</button>
-              <button type="button" class="scroll-arrow-btn" id="h-scroll-next" aria-label="Scroll Right">›</button>
-            </div>
-          </div>
-
-          <!-- Horizontal Track Container -->
-          <div class="horizontal-scroll-track" id="h-scroll-track" tabindex="0" role="region" aria-label="Spotlight Events Carousel">
-            <!-- Rendered dynamically by Fetch API -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Featured / Upcoming Events Section -->
-      <section class="section" id="featured-events-section">
-        <div class="container">
-          <div class="section-header">
-            <div class="section-title-wrap">
-              <span class="badge-amber-sm">Curated Selection</span>
-              <h2 class="section-title">Featured Live Experiences</h2>
-              <p class="section-subtitle">Hand-picked premier events filling fast this season</p>
-            </div>
-            <a href="events.html" class="btn-secondary" id="view-all-events-btn">
-              View All Events (16+) →
-            </a>
-          </div>
-
-          <!-- Dynamic Events Grid Container -->
-          <div id="featured-events-grid" class="event-grid" aria-live="polite">
-            <!-- Rendered dynamically by Fetch API in script below -->
-            <div class="skeleton-card">
-              <div class="skeleton-media"></div>
-              <div class="skeleton-body">
-                <div class="skeleton-line" style="width: 40%"></div>
-                <div class="skeleton-line" style="width: 80%"></div>
-                <div class="skeleton-line" style="width: 60%"></div>
-              </div>
-            </div>
-            <div class="skeleton-card">
-              <div class="skeleton-media"></div>
-              <div class="skeleton-body">
-                <div class="skeleton-line" style="width: 40%"></div>
-                <div class="skeleton-line" style="width: 80%"></div>
-                <div class="skeleton-line" style="width: 60%"></div>
-              </div>
-            </div>
-            <div class="skeleton-card">
-              <div class="skeleton-media"></div>
-              <div class="skeleton-body">
-                <div class="skeleton-line" style="width: 40%"></div>
-                <div class="skeleton-line" style="width: 80%"></div>
-                <div class="skeleton-line" style="width: 60%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Why Choose EventSync Feature Highlights -->
-      <section class="section" style="background: rgba(15, 23, 42, 0.4); border-top: 1px solid var(--border-subtle);">
-        <div class="container">
-          <div class="section-header" style="text-align: center; justify-content: center; flex-direction: column;">
-            <span class="badge-amber-sm">Verified Ticketing Standard</span>
-            <h2 class="section-title">Built for Real Fans & Organizers</h2>
-            <p class="section-subtitle">Experience transparent event access engineered with zero friction</p>
-          </div>
-
-          <div class="event-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
-            <div class="tier-card" style="padding: 1.5rem;">
-              <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚡</div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Instant Digital Pass</h3>
-              <p style="font-size: 0.88rem; color: var(--text-muted);">
-                Confirmed tickets produce a cryptographically verified gate QR code instantly viewable on your mobile screen.
-              </p>
-            </div>
-
-            <div class="tier-card" style="padding: 1.5rem;">
-              <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛡️</div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Zero Hidden Convenience Fees</h3>
-              <p style="font-size: 0.88rem; color: var(--text-muted);">
-                Transparent pricing shown upfront in INR (₹) with clear taxes and zero surprise platform markups.
-              </p>
-            </div>
-
-            <div class="tier-card" style="padding: 1.5rem;">
-              <div style="font-size: 2rem; margin-bottom: 0.75rem;">📅</div>
-              <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">One-Click Calendar Sync</h3>
-              <p style="font-size: 0.88rem; color: var(--text-muted);">
-                Download universal `.ics` schedule files for Google Calendar, Apple Calendar, and Outlook in a single tap.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Customer Service & Dedicated Fan Support Section -->
-      <section class="customer-service-section" id="customer-service">
-        <div class="container">
-          <div class="section-header" style="text-align: center; justify-content: center; flex-direction: column;">
-            <span class="badge-amber-sm">🎧 24/7 Dedicated Fan Care</span>
-            <h2 class="section-title">Customer Service & Ticketing Assistance</h2>
-            <p class="section-subtitle">Real-time assistance for gate access, instant pass retrieval, venue guidelines, and refunds</p>
-          </div>
-
-          <div class="cs-grid">
-            <div class="cs-card">
-              <div class="cs-icon-box">🔍</div>
-              <h3 class="cs-card-title">Instant Pass Retrieval</h3>
-              <p class="cs-card-desc">Can't locate your booked ticket? Enter your email to instantly search and resend your gate QR code.</p>
-              <button type="button" class="cs-card-action open-support-modal" data-tab="retrieval">
-                <span>Retrieve My Pass</span>
-                <span>→</span>
-              </button>
-            </div>
-
-            <div class="cs-card">
-              <div class="cs-icon-box">🎟️</div>
-              <h3 class="cs-card-title">Gate & Venue Entry Help</h3>
-              <p class="cs-card-desc">Learn about mobile QR gate check-ins, security protocols, entry timings, and offline pass access.</p>
-              <button type="button" class="cs-card-action open-support-modal" data-tab="help">
-                <span>View Gate Guide</span>
-                <span>→</span>
-              </button>
-            </div>
-
-            <div class="cs-card">
-              <div class="cs-icon-box">💳</div>
-              <h3 class="cs-card-title">Refund & Cancellation</h3>
-              <p class="cs-card-desc">Clear 100% money-back guarantee for cancelled shows, plus one-tap self-service cancellation.</p>
-              <button type="button" class="cs-card-action open-support-modal" data-tab="help">
-                <span>Policy Details</span>
-                <span>→</span>
-              </button>
-            </div>
-
-            <div class="cs-card">
-              <div class="cs-icon-box">💬</div>
-              <h3 class="cs-card-title">Live Concierge Desk</h3>
-              <p class="cs-card-desc">Need assistance with seating tiers or group bookings? Submit a ticket with &lt; 5 min response time.</p>
-              <button type="button" class="cs-card-action open-support-modal" data-tab="contact">
-                <span>Open Support Desk</span>
-                <span>→</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Customer Care Direct Contact Banner -->
-          <div class="cs-contact-banner">
-            <div>
-              <h3 class="cs-contact-info-title">Need Immediate Help at the Venue?</h3>
-              <p class="cs-contact-info-sub">Our dedicated helpline operates 7 days a week from 8:00 AM to 11:30 PM IST for all ticket holders.</p>
-            </div>
-            <div class="cs-cta-group">
-              <a href="tel:18002027962" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                <span>📞 1800-202-SYNC</span>
-              </a>
-              <button type="button" class="btn-primary open-support-modal" data-tab="contact">
-                <span>Raise Care Ticket</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div>
-            <a href="index.html" class="brand-logo" style="margin-bottom: 0.75rem;">
-              <span class="brand-icon">🎟️</span>
-              <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
-            </a>
-            <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 320px; margin-bottom: 1rem;">
-              India's premier live entertainment platform. Bringing you closer to the music, ideas, and games you love.
-            </p>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Explore</h4>
-            <ul class="footer-links">
-              <li><a href="events.html?category=Music">Live Music & Concerts</a></li>
-              <li><a href="events.html?category=Technology">Tech Summits & AI</a></li>
-              <li><a href="events.html?category=Food%20%26%20Drink">Food & Wine Fests</a></li>
-              <li><a href="events.html?category=Sports">Sports & Tournaments</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Account</h4>
-            <ul class="footer-links">
-              <li><a href="my-bookings.html">My Bookings & Passes</a></li>
-              <li><a href="events.html">Browse All Events</a></li>
-              <li><a href="index.html">Live Status</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="footer-col-title">Customer Care</h4>
-            <ul class="footer-links">
-              <li><a href="#" class="open-support-modal" data-tab="retrieval">Retrieve Lost Passes</a></li>
-              <li><a href="#" class="open-support-modal" data-tab="help">Gate Check-in FAQ</a></li>
-              <li><a href="#" class="open-support-modal" data-tab="contact">24/7 Live Concierge</a></li>
-              <li><a href="tel:18002027962" style="color: var(--accent-amber); font-weight: 600;">Helpline: 1800-202-SYNC</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>© 2026 EventSync Inc. Handcrafted for modern live experiences.</p>
-          <p>Verified Secure Ticketing • Instant Digital QR Passes</p>
-        </div>
+      <!-- Mobile Drawer Overlay & Menu -->
+      <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+      <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+        <a href="index.html" class="mobile-nav-link active">Home</a>
+        <a href="events.html" class="mobile-nav-link">Events</a>
+        <a href="my-bookings.html" class="mobile-nav-link">
+          My Bookings
+          <span class="nav-booking-badge" style="display: none">0</span>
+        </a>
+        <a href="events.html" class="mobile-nav-link">Explore Events</a>
+        <a href="auth.html" class="mobile-nav-link">Profile</a>
       </div>
-    </footer>
-  </div>
 
-  <!-- Global Application Scripts -->
-  <script type="module" src="js/script.js"></script>
-  <script type="module">
-    import { fetchEvents, filterAndSortEvents } from "./js/api.js";
-    import { openBookingModal } from "./js/booking.js";
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section" id="home-hero">
+          <div class="hero-background-art"></div>
+          <div class="container hero-content">
+            <!-- Subtle Editorial Kicker -->
+            <div class="hero-kicker">
+              <span>Verified Ticketing Platform</span>
+              <span class="hero-kicker-sep">/</span>
+              <span>Across India</span>
+            </div>
 
-    // Load and render featured events on the Home Page
-    async function loadHomePageEvents() {
-      const grid = document.getElementById("featured-events-grid");
-      const hTrack = document.getElementById("h-scroll-track");
+            <!-- Natural Human Headline -->
+            <h1 class="hero-title">
+              Find live events worth going to.
+            </h1>
+            <p class="hero-subtitle">
+              Book verified tickets for concerts, tech summits, theatre, and sports across major Indian cities with guaranteed gate entry.
+            </p>
 
-      try {
-        const events = await fetchEvents();
+            <!-- Search & Actions Group -->
+            <div class="hero-actions-container">
+              <form id="hero-search-form" class="hero-search-bar" role="search">
+                <div class="search-input-group">
+                  <span class="search-icon">🔍</span>
+                  <input
+                    type="text"
+                    id="hero-search-input"
+                    class="search-input"
+                    placeholder="Search artist, summit, venue, or city..."
+                    aria-label="Search events"
+                  />
+                </div>
+                <button type="submit" class="btn-primary" id="hero-search-submit">
+                  Search
+                </button>
+              </form>
 
-        // 1. Populate Horizontal Scroll Grid with high-demand / spotlight events
-        if (hTrack) {
-          renderHorizontalCards(events.slice(0, 8), hTrack);
-          initHorizontalScrollControls();
-        }
+              <div class="hero-cta-row">
+                <a href="events.html" class="btn-primary">Browse All 30 Events</a>
+                <a href="#featured-events-section" class="btn-secondary">Scroll Gallery ↓</a>
+              </div>
+            </div>
 
-        // 2. Populate Standard Featured Events Grid
-        if (grid) {
-          const featured = events.slice(0, 6);
-          renderEventCards(featured, grid);
-        }
-      } catch (err) {
-        console.error("Error loading events:", err);
-        if (grid) {
-          grid.innerHTML = `
-            <div class="empty-state-box" style="grid-column: 1 / -1;">
+            <!-- Quick Category Filter Bar -->
+            <div class="category-chips-bar" id="hero-category-chips">
+              <button class="chip-btn active" data-category="All">All Events</button>
+              <button class="chip-btn" data-category="Music">Music</button>
+              <button class="chip-btn" data-category="Technology">Technology</button>
+              <button class="chip-btn" data-category="Theatre">Theatre</button>
+              <button class="chip-btn" data-category="Art">Art</button>
+              <button class="chip-btn" data-category="Food & Drink">Food & Drink</button>
+              <button class="chip-btn" data-category="Sports">Sports</button>
+              <button class="chip-btn" data-category="Comedy">Comedy</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Scroll-Driven Event Gallery (Full-Viewport Snapping & Parallax Progress) -->
+        <section class="scroll-gallery-section" id="featured-events-section" aria-label="Curated Event Gallery">
+          <!-- Floating Top Header Bar -->
+          <div class="gallery-floating-header">
+            <div class="gallery-header-left">
+              <span class="badge-amber-sm">Live Showcase</span>
+              <span class="gallery-header-label">Scroll to browse experiences</span>
+            </div>
+
+            <!-- Dynamic Event Counter: e.g. 01 / 16 (hidden per user selection) -->
+            <div class="gallery-counter-pill" id="gallery-counter-pill" aria-live="polite" style="display: none;">
+              <span class="counter-current" id="counter-current">01</span>
+              <span class="counter-divider">/</span>
+              <span class="counter-total" id="counter-total">16</span>
+            </div>
+
+            <!-- Quick Navigation Controls (hidden per user selection) -->
+            <div class="gallery-nav-controls" style="display: none;">
+              <button
+                type="button"
+                class="carousel-arrow-btn"
+                id="gallery-prev-btn"
+                aria-label="Previous event (scroll up)"
+                title="Previous event (↑)"
+              >
+                ↑ Prev
+              </button>
+              <button
+                type="button"
+                class="carousel-arrow-btn"
+                id="gallery-next-btn"
+                aria-label="Next event (scroll down)"
+                title="Next event (↓)"
+              >
+                Next ↓
+              </button>
+              <a href="events.html" class="btn-primary btn-sm" id="gallery-all-btn">
+                All Events →
+              </a>
+            </div>
+          </div>
+
+          <!-- Scroll-Snap Container -->
+          <div class="gallery-scroll-container" id="gallery-scroll-container" tabindex="0" role="region" aria-label="Event gallery scroll view">
+            <!-- Skeleton slide shown while loading -->
+            <div class="skeleton-gallery-slide">
+              <div class="skeleton-gallery-card">
+                <div class="skeleton-gallery-media"></div>
+                <div class="skeleton-gallery-body">
+                  <div class="skeleton-line" style="width: 25%"></div>
+                  <div class="skeleton-line" style="width: 75%; height: 2rem"></div>
+                  <div class="skeleton-line" style="width: 45%"></div>
+                  <div class="skeleton-line" style="width: 85%"></div>
+                  <div class="skeleton-line" style="width: 35%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Right-Side Navigation / Scroll Controls -->
+          <aside class="gallery-side-nav" id="gallery-side-nav" aria-label="Event gallery quick navigation">
+            <div class="side-nav-card" role="toolbar" aria-label="Event slide navigation controls">
+              <button
+                type="button"
+                class="side-nav-arrow-btn side-nav-up"
+                id="side-nav-prev-btn"
+                aria-label="Previous event"
+                title="Previous event (↑)"
+              >
+                <span class="side-nav-arrow-icon" aria-hidden="true">↑</span>
+              </button>
+              <div class="side-nav-counter" id="side-nav-counter" aria-live="polite">
+                <span class="side-nav-current" id="side-nav-current">01</span>
+                <span class="side-nav-divider">/</span>
+                <span class="side-nav-total" id="side-nav-total">30</span>
+              </div>
+              <button
+                type="button"
+                class="side-nav-arrow-btn side-nav-down"
+                id="side-nav-next-btn"
+                aria-label="Next event"
+                title="Next event (↓)"
+              >
+                <span class="side-nav-arrow-icon" aria-hidden="true">↓</span>
+              </button>
+              <div class="side-nav-divider-h" aria-hidden="true"></div>
+              <button
+                type="button"
+                class="side-nav-action-btn side-nav-top-btn"
+                id="side-nav-top-btn"
+                aria-label="Scroll to top hero section"
+                title="Top of page (Hero)"
+              >
+                <span class="side-nav-action-icon" aria-hidden="true">⌃</span>
+                <span class="side-nav-action-label">TOP</span>
+              </button>
+              <button
+                type="button"
+                class="side-nav-action-btn side-nav-bottom-btn"
+                id="side-nav-bottom-btn"
+                aria-label="Scroll to end of page (after events)"
+                title="End of page (After events)"
+              >
+                <span class="side-nav-action-icon" aria-hidden="true">⌄</span>
+                <span class="side-nav-action-label side-nav-label-desktop">BOTTOM</span>
+                <span class="side-nav-action-label side-nav-label-compact">BTM</span>
+              </button>
+            </div>
+          </aside>
+
+          <!-- Floating Bottom Progress Indicator & Scroll Hint -->
+          <div class="gallery-floating-footer">
+            <div class="gallery-progress-wrap" style="display: none;">
+              <span class="progress-num">0%</span>
+              <div class="gallery-progress-track">
+                <div class="gallery-progress-fill" id="gallery-progress-fill" style="width: 0%"></div>
+              </div>
+              <span class="progress-num" id="gallery-progress-num">100%</span>
+            </div>
+            <div class="gallery-scroll-hint">
+              <span>Scroll down through experiences</span>
+              <span class="gallery-hint-arrow">↓</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Why Choose EventSync Feature Highlights -->
+        <section
+          id="after-events-section"
+          class="section"
+          style="background: rgba(15, 23, 42, 0.4); border-top: 1px solid var(--border-subtle)"
+        >
+          <div class="container">
+            <div
+              class="section-header"
+              style="text-align: left; align-items: flex-start; justify-content: flex-start; flex-direction: column"
+            >
+              <span class="badge-amber-sm">Verified Ticketing Standard</span>
+              <h2 class="section-title">Built for Real Fans & Organizers</h2>
+              <p class="section-subtitle">
+                Experience transparent event access engineered with zero friction
+              </p>
+            </div>
+
+            <div
+              class="event-grid"
+              style="grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr))"
+            >
+              <div class="tier-card" style="padding: 1.5rem">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem">⚡</div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem">
+                  Instant Digital Pass
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted)">
+                  Confirmed tickets produce a cryptographically verified gate QR code instantly
+                  viewable on your mobile screen.
+                </p>
+              </div>
+
+              <div class="tier-card" style="padding: 1.5rem">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem">🛡️</div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem">
+                  Zero Hidden Convenience Fees
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted)">
+                  Transparent pricing shown upfront in INR (₹) with clear taxes and zero surprise
+                  platform markups.
+                </p>
+              </div>
+
+              <div class="tier-card" style="padding: 1.5rem">
+                <div style="font-size: 2rem; margin-bottom: 0.75rem">📅</div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem">
+                  One-Click Calendar Sync
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted)">
+                  Download universal `.ics` schedule files for Google Calendar, Apple Calendar, and
+                  Outlook in a single tap.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Customer Service & Dedicated Fan Support Section -->
+        <section class="customer-service-section" id="customer-service">
+          <div class="container">
+            <div
+              class="section-header"
+              style="text-align: center; justify-content: center; flex-direction: column"
+            >
+              <span class="badge-amber-sm">🎧 24/7 Dedicated Fan Care</span>
+              <h2 class="section-title">Customer Service & Ticketing Assistance</h2>
+              <p class="section-subtitle">
+                Real-time assistance for gate access, instant pass retrieval, venue guidelines, and
+                refunds
+              </p>
+            </div>
+
+            <div class="cs-grid">
+              <div class="cs-card">
+                <div class="cs-icon-box">🔍</div>
+                <h3 class="cs-card-title">Instant Pass Retrieval</h3>
+                <p class="cs-card-desc">
+                  Can't locate your booked ticket? Enter your email to instantly search and resend
+                  your gate QR code.
+                </p>
+                <button
+                  type="button"
+                  class="cs-card-action open-support-modal"
+                  data-tab="retrieval"
+                >
+                  <span>Retrieve My Pass</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              <div class="cs-card">
+                <div class="cs-icon-box">🎟️</div>
+                <h3 class="cs-card-title">Gate & Venue Entry Help</h3>
+                <p class="cs-card-desc">
+                  Learn about mobile QR gate check-ins, security protocols, entry timings, and
+                  offline pass access.
+                </p>
+                <button type="button" class="cs-card-action open-support-modal" data-tab="help">
+                  <span>View Gate Guide</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              <div class="cs-card">
+                <div class="cs-icon-box">💳</div>
+                <h3 class="cs-card-title">Refund & Cancellation</h3>
+                <p class="cs-card-desc">
+                  Clear 100% money-back guarantee for cancelled shows, plus one-tap self-service
+                  cancellation.
+                </p>
+                <button type="button" class="cs-card-action open-support-modal" data-tab="help">
+                  <span>Policy Details</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              <div class="cs-card">
+                <div class="cs-icon-box">💬</div>
+                <h3 class="cs-card-title">Live Concierge Desk</h3>
+                <p class="cs-card-desc">
+                  Need assistance with seating tiers or group bookings? Submit a ticket with &lt; 5
+                  min response time.
+                </p>
+                <button type="button" class="cs-card-action open-support-modal" data-tab="contact">
+                  <span>Open Support Desk</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Customer Care Direct Contact Banner -->
+            <div class="cs-contact-banner">
+              <div>
+                <h3 class="cs-contact-info-title">Need Immediate Help at the Venue?</h3>
+                <p class="cs-contact-info-sub">
+                  Our dedicated helpline operates 7 days a week from 8:00 AM to 11:30 PM IST for all
+                  ticket holders.
+                </p>
+              </div>
+              <div class="cs-cta-group">
+                <a
+                  href="tel:18002027962"
+                  class="btn-secondary"
+                  style="display: inline-flex; align-items: center; gap: 0.5rem"
+                >
+                  <span>📞 1800-202-SYNC</span>
+                </a>
+                <button type="button" class="btn-primary open-support-modal" data-tab="contact">
+                  <span>Raise Care Ticket</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="container">
+          <div class="footer-grid">
+            <div>
+              <a href="index.html" class="brand-logo" style="margin-bottom: 0.75rem">
+                <span class="brand-icon">🎟️</span>
+                <span class="brand-text">Event<span class="brand-highlight">Sync</span></span>
+              </a>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.88rem;
+                  max-width: 320px;
+                  margin-bottom: 1rem;
+                "
+              >
+                India's premier live entertainment platform. Bringing you closer to the music,
+                ideas, and games you love.
+              </p>
+            </div>
+            <div>
+              <h4 class="footer-col-title">Explore</h4>
+              <ul class="footer-links">
+                <li><a href="events.html?category=Music">Live Music & Concerts</a></li>
+                <li><a href="events.html?category=Technology">Tech Summits & AI</a></li>
+                <li><a href="events.html?category=Food%20%26%20Drink">Food & Wine Fests</a></li>
+                <li><a href="events.html?category=Sports">Sports & Tournaments</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="footer-col-title">Account</h4>
+              <ul class="footer-links">
+                <li><a href="my-bookings.html">My Bookings & Passes</a></li>
+                <li><a href="events.html">Browse All Events</a></li>
+                <li><a href="index.html">Live Status</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="footer-col-title">Customer Care</h4>
+              <ul class="footer-links">
+                <li>
+                  <a href="#" class="open-support-modal" data-tab="retrieval"
+                    >Retrieve Lost Passes</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="open-support-modal" data-tab="help">Gate Check-in FAQ</a>
+                </li>
+                <li>
+                  <a href="#" class="open-support-modal" data-tab="contact">24/7 Live Concierge</a>
+                </li>
+                <li>
+                  <a href="tel:18002027962" style="color: var(--accent-amber); font-weight: 600"
+                    >Helpline: 1800-202-SYNC</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© 2026 EventSync Inc. Handcrafted for modern live experiences.</p>
+            <p>Verified Secure Ticketing • Instant Digital QR Passes</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Global Application Scripts -->
+    <script type="module" src="js/script.js"></script>
+    <script type="module">
+      import { requireAuth } from "./js/auth.js";
+      import { fetchEvents, filterAndSortEvents } from "./js/api.js";
+      import { openBookingModal } from "./js/booking.js";
+
+      // Guard page access with real Supabase Auth session
+      const authUser = await requireAuth();
+      if (!authUser) {
+        // requireAuth will redirect to auth.html automatically
+        throw new Error("Redirecting to authentication...");
+      }
+
+      // Dismiss auth gate cleanly
+      const authGate = document.getElementById("page-auth-gate");
+      if (authGate) {
+        authGate.classList.add("hidden");
+        setTimeout(() => authGate.remove(), 350);
+      }
+
+      // Load and render all events in the scroll-driven event gallery on the Home Page
+      async function loadHomePageEvents() {
+        const container = document.getElementById("gallery-scroll-container");
+        const totalCountEl = document.getElementById("counter-total");
+
+        try {
+          const events = await fetchEvents();
+
+          if (container && events.length) {
+            renderGallerySlides(events, container);
+            initScrollGallery(container, events);
+
+            if (totalCountEl) {
+              totalCountEl.textContent = String(events.length).padStart(2, "0");
+            }
+            const allBtn = document.getElementById("gallery-all-btn");
+            if (allBtn) {
+              allBtn.textContent = `All Events (${events.length}) →`;
+            }
+          }
+        } catch (err) {
+          console.error("Error loading events:", err);
+          const sideNav = document.getElementById("gallery-side-nav");
+          if (sideNav) sideNav.style.display = "none";
+          if (container) {
+            container.innerHTML = `
+            <div class="empty-state-box" style="margin: 3rem auto; max-width: 500px; padding: 2rem;">
               <div class="empty-state-icon">⚠️</div>
-              <h3 class="empty-state-title">Could not load featured events</h3>
+              <h3 class="empty-state-title">Could not load gallery events</h3>
               <p class="empty-state-desc">Please ensure data/events.json is available via local HTTP server.</p>
             </div>
           `;
+          }
         }
       }
-    }
 
-    function renderHorizontalCards(events, track) {
-      track.innerHTML = events.map(event => {
-        const bookedPercent = Math.min(Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100), 98);
-        return `
-          <div class="h-event-card" id="h-card-${event.id}">
-            <div class="h-card-media">
-              <span class="h-card-tag">${event.tag || "🔥 " + bookedPercent + "% Booked"}</span>
-              <img src="${event.image}" alt="${event.title}" class="h-card-img" loading="lazy" />
-              <span class="h-card-category">${event.category}</span>
-            </div>
-            <div class="h-card-body">
-              <div class="h-card-date">
-                <span>📅</span>
-                <span>${event.displayDate || event.date}</span>
-              </div>
-              <h3 class="h-card-title">
-                <a href="event-details.html?id=${event.id}">${event.title}</a>
-              </h3>
-              <p class="h-card-venue">
-                <span>📍</span>
-                <span>${event.venue}, ${event.city}</span>
-              </p>
-              <div class="h-card-footer">
-                <div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted);">Starts at</div>
-                  <div class="h-card-price-num">₹${event.price.toLocaleString('en-IN')}</div>
-                </div>
-                <div style="display: flex; gap: 0.4rem;">
-                  <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm" style="padding: 0.35rem 0.65rem;">Details</a>
-                  <button type="button" class="btn-primary btn-sm book-h-btn" data-event-id="${event.id}" style="padding: 0.35rem 0.75rem;">Book</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+      function renderGallerySlides(events, container) {
+        container.innerHTML = events
+          .map((event, index) => {
+            const bookedPercent = Math.min(
+              Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100),
+              98,
+            );
+            const tagHtml = event.tag
+              ? `<span class="gallery-editorial-tag ${event.tag === "Selling Fast" ? "tag-urgency" : ""}">${event.tag}</span>`
+              : "";
+            const slideNum = String(index + 1).padStart(2, "0");
+            const totalNum = String(events.length).padStart(2, "0");
 
-      track.querySelectorAll(".book-h-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-          e.preventDefault();
-          const eventId = btn.getAttribute("data-event-id");
-          const allEvents = await fetchEvents();
-          const event = allEvents.find(ev => ev.id === eventId);
-          if (event) openBookingModal(event);
-        });
-      });
-    }
+            // Subtle editorial layout variation: alternate image proportion, side, and alignment
+            // 0: Classic wide editorial (1.15fr : 1fr)
+            // 1: Inverted editorial (media on right for visual breathing space)
+            // 2: Photography-forward focus (1.35fr media : 1fr content)
+            // 3: Balanced story (1fr : 1.15fr content emphasis)
+            const layoutVariation = index % 4 === 1 ? "layout-media-right" : index % 4 === 2 ? "layout-media-wide" : index % 4 === 3 ? "layout-content-focus" : "";
 
-    function initHorizontalScrollControls() {
-      const track = document.getElementById("h-scroll-track");
-      const prevBtn = document.getElementById("h-scroll-prev");
-      const nextBtn = document.getElementById("h-scroll-next");
-      if (!track) return;
+            return `
+          <section class="gallery-event-slide ${layoutVariation ? `slide-${layoutVariation}` : ""}" id="slide-${event.id}" data-index="${index}" aria-label="Event ${index + 1} of ${events.length}: ${event.title}">
+            <!-- Subtle Ambient Photo Background -->
+            <div class="gallery-slide-backdrop" style="background-image: url('${event.image}')"></div>
+            <div class="gallery-slide-backdrop-overlay"></div>
 
-      const scrollDistance = 350;
-      prevBtn?.addEventListener("click", () => {
-        track.scrollBy({ left: -scrollDistance, behavior: "smooth" });
-      });
-      nextBtn?.addEventListener("click", () => {
-        track.scrollBy({ left: scrollDistance, behavior: "smooth" });
-      });
-    }
-
-    function renderEventCards(events, container) {
-      container.innerHTML = events.map(event => {
-        const bookedPercent = Math.min(Math.round(((event.bookedSeats || 0) / (event.totalSeats || 100)) * 100), 98);
-        const tagHtml = event.tag 
-          ? `<span class="badge-tag ${event.tag === 'Selling Fast' ? 'tag-selling-fast' : 'tag-featured'}">${event.tag}</span>` 
-          : '';
-
-        return `
-          <article class="event-card" id="card-${event.id}">
-            <div class="event-card-media">
-              ${tagHtml}
-              <img src="${event.image}" alt="${event.title}" class="event-card-img" loading="lazy" />
-              <span class="event-category-badge">${event.category}</span>
-            </div>
-            <div class="event-card-body">
-              <div class="event-card-date">
-                <span>📅</span>
-                <span>${event.displayDate || event.date}</span>
-              </div>
-              <h3 class="event-card-title">
-                <a href="event-details.html?id=${event.id}">${event.title}</a>
-              </h3>
-              <p class="event-card-venue">
-                <span>📍</span>
-                <span>${event.venue}, ${event.city}</span>
-              </p>
-
-              <!-- Capacity Progress -->
-              <div class="capacity-row">
-                <div class="capacity-text">
-                  <span>${bookedPercent}% Booked</span>
-                  <span>${event.totalSeats - event.bookedSeats} seats left</span>
-                </div>
-                <div class="capacity-bar-track">
-                  <div class="capacity-bar-fill" style="width: ${bookedPercent}%"></div>
-                </div>
+            <!-- Editorial Event Card (Natural Human Layout with Varied Rhythms) -->
+            <article class="gallery-card ${layoutVariation}" id="card-${event.id}">
+              <!-- Prominent Event Media Image -->
+              <div class="gallery-card-media">
+                ${tagHtml}
+                <img
+                  src="${event.image}"
+                  alt="${event.title}"
+                  class="gallery-card-img"
+                  loading="${index < 2 ? "eager" : "lazy"}"
+                />
               </div>
 
-              <!-- Footer Pricing & CTA -->
-              <div class="event-card-footer">
-                <div class="price-box">
-                  <span class="price-label">Starts at</span>
-                  <div>
-                    <span class="price-val">₹${event.price.toLocaleString('en-IN')}</span>
-                    ${event.originalPrice ? `<span class="price-val-strike">₹${event.originalPrice.toLocaleString('en-IN')}</span>` : ''}
+              <!-- Editorial Event Content -->
+              <div class="gallery-card-content">
+                <div class="gallery-category-line">
+                  <div class="gallery-meta-crumbs">
+                    <span class="gallery-category-name">${event.category}</span>
+                    <span class="gallery-crumb-sep">·</span>
+                    <span class="gallery-city-name">${event.city}</span>
+                  </div>
+                  <span class="gallery-slide-num">${slideNum} / ${totalNum}</span>
+                </div>
+
+                <h2 class="gallery-event-title" data-scroll="title">
+                  <a href="event-details.html?id=${event.id}">${event.title}</a>
+                </h2>
+
+                <div class="gallery-event-meta">
+                  <div class="gallery-meta-item">
+                    <span class="meta-label">Date</span>
+                    <span class="meta-value">${event.displayDate || event.date}</span>
+                  </div>
+                  <div class="gallery-meta-item">
+                    <span class="meta-label">Venue</span>
+                    <span class="meta-value">${event.venue}</span>
+                  </div>
+                  <div class="gallery-meta-item">
+                    <span class="meta-label">Schedule</span>
+                    <span class="meta-value">${event.time || "Doors 6:00 PM IST"}</span>
                   </div>
                 </div>
-                <div class="card-actions">
-                  <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm">Details</a>
-                  <button class="btn-primary btn-sm book-card-btn" data-event-id="${event.id}">Book Now</button>
+
+                ${event.shortDescription ? `<p class="gallery-event-desc">${event.shortDescription}</p>` : ""}
+
+                <!-- Capacity Availability Indicator -->
+                <div class="capacity-row">
+                  <div class="capacity-text">
+                    <span>${bookedPercent}% reserved</span>
+                    <span>${event.totalSeats - event.bookedSeats} tickets left</span>
+                  </div>
+                  <div class="capacity-bar-track">
+                    <div class="capacity-bar-fill" style="width: ${bookedPercent}%"></div>
+                  </div>
+                </div>
+
+                <!-- Price & Booking CTA -->
+                <div class="gallery-card-footer">
+                  <div class="gallery-price-wrap">
+                    <span class="price-label">Tickets from</span>
+                    <div class="price-val">₹${event.price.toLocaleString("en-IN")}</div>
+                    ${event.originalPrice ? `<span class="price-val-strike">₹${event.originalPrice.toLocaleString("en-IN")}</span>` : ""}
+                  </div>
+                  <div class="gallery-card-actions">
+                    <a href="event-details.html?id=${event.id}" class="btn-secondary btn-sm">Details</a>
+                    <button type="button" class="btn-primary btn-sm book-card-btn" data-event-id="${event.id}">Book Now</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </section>
         `;
-      }).join('');
+          })
+          .join("");
 
-      // Attach Book Now click handlers
-      container.querySelectorAll(".book-card-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
+        // Attach Book Now click handlers to open existing booking modal
+        container.querySelectorAll(".book-card-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const eventId = btn.getAttribute("data-event-id");
+            const allEvents = await fetchEvents();
+            const event = allEvents.find((ev) => ev.id === eventId);
+            if (event) {
+              openBookingModal(event);
+            }
+          });
+        });
+      }
+
+      function initScrollGallery(container, events) {
+        if (!container) return;
+
+        const totalEvents = events.length;
+        const prevBtn = document.getElementById("gallery-prev-btn");
+        const nextBtn = document.getElementById("gallery-next-btn");
+        const currentCounterEl = document.getElementById("counter-current");
+        const totalCounterEl = document.getElementById("counter-total");
+        const progressFill = document.getElementById("gallery-progress-fill");
+        const progressNum = document.getElementById("gallery-progress-num");
+        const slides = Array.from(container.querySelectorAll(".gallery-event-slide"));
+
+        // Floating Right-Side Navigation Elements
+        const sideNav = document.getElementById("gallery-side-nav");
+        const sideNavPrevBtn = document.getElementById("side-nav-prev-btn");
+        const sideNavNextBtn = document.getElementById("side-nav-next-btn");
+        const sideNavTopBtn = document.getElementById("side-nav-top-btn");
+        const sideNavBottomBtn = document.getElementById("side-nav-bottom-btn");
+        const sideNavCurrentEl = document.getElementById("side-nav-current");
+        const sideNavTotalEl = document.getElementById("side-nav-total");
+
+        sideNav?.classList.add("is-ready");
+
+        let ticking = false;
+
+        function getActiveIndex() {
+          const scrollTop = container.scrollTop;
+          const containerHeight = container.clientHeight || window.innerHeight;
+          let activeIndex = 0;
+          let minDiff = Infinity;
+          const viewportCenter = scrollTop + containerHeight / 2;
+
+          slides.forEach((slide, idx) => {
+            const slideCenter = slide.offsetTop + slide.offsetHeight / 2;
+            const diff = Math.abs(viewportCenter - slideCenter);
+            if (diff < minDiff) {
+              minDiff = diff;
+              activeIndex = idx;
+            }
+          });
+
+          return activeIndex;
+        }
+
+        function scrollToSlide(index) {
+          if (index < 0) {
+            scrollToTop();
+            return;
+          }
+          const targetIndex = Math.min(totalEvents - 1, Math.max(0, index));
+          const targetSlide = slides[targetIndex];
+          if (targetSlide) {
+            targetSlide.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            const containerHeight = container.clientHeight || window.innerHeight;
+            container.scrollTo({ top: targetIndex * containerHeight, behavior: "smooth" });
+          }
+        }
+
+        function scrollToTop() {
+          container.scrollTo({ top: 0, behavior: "smooth" });
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function scrollToBottom() {
+          const afterEventsSection = document.getElementById("after-events-section");
+          if (afterEventsSection) {
+            afterEventsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight || document.body.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        }
+
+        function updateGalleryState() {
+          const containerHeight = container.clientHeight || window.innerHeight;
+          const scrollTop = container.scrollTop;
+          const maxScroll = Math.max(1, container.scrollHeight - containerHeight);
+
+          // 1. Calculate and update fixed bottom progress bar
+          const rawPercent = (scrollTop / maxScroll) * 100;
+          const progressPercent = Math.min(100, Math.max(0, rawPercent));
+          if (progressFill) {
+            progressFill.style.width = `${progressPercent.toFixed(1)}%`;
+          }
+          if (progressNum) {
+            progressNum.textContent = `${Math.round(progressPercent)}%`;
+          }
+
+          // 2. Determine active slide and update dynamic counters
+          const activeIndex = getActiveIndex();
+          const currentFormatted = String(activeIndex + 1).padStart(2, "0");
+          const totalFormatted = String(totalEvents).padStart(2, "0");
+
+          if (currentCounterEl) {
+            currentCounterEl.textContent = currentFormatted;
+          }
+          if (totalCounterEl) {
+            totalCounterEl.textContent = totalFormatted;
+          }
+
+          // Update floating side navigation indicator
+          if (sideNavCurrentEl) {
+            sideNavCurrentEl.textContent = currentFormatted;
+          }
+          if (sideNavTotalEl) {
+            sideNavTotalEl.textContent = totalFormatted;
+          }
+
+          // Update Side Nav arrow buttons state
+          if (sideNavPrevBtn) {
+            if (activeIndex === 0 && scrollTop <= 15) {
+              sideNavPrevBtn.classList.add("at-start");
+              sideNavPrevBtn.title = "Return to top of page (Hero)";
+            } else {
+              sideNavPrevBtn.classList.remove("at-start");
+              sideNavPrevBtn.title = "Previous event (↑)";
+            }
+          }
+
+          if (sideNavNextBtn) {
+            if (activeIndex >= totalEvents - 1) {
+              sideNavNextBtn.classList.add("disabled");
+              sideNavNextBtn.setAttribute("aria-disabled", "true");
+              sideNavNextBtn.title = "At final event";
+            } else {
+              sideNavNextBtn.classList.remove("disabled");
+              sideNavNextBtn.removeAttribute("aria-disabled");
+              sideNavNextBtn.title = "Next event (↓)";
+            }
+          }
+
+          if (sideNavBottomBtn) {
+            sideNavBottomBtn.classList.remove("disabled");
+            sideNavBottomBtn.removeAttribute("aria-disabled");
+            sideNavBottomBtn.title = "Jump to end of page (after events)";
+          }
+
+          // 3. Update Prev/Next buttons disabled state
+          if (prevBtn) prevBtn.disabled = scrollTop <= 10;
+          if (nextBtn) nextBtn.disabled = scrollTop >= maxScroll - 10;
+
+          // 4. Subtle, calm scroll transitions without floaty over-animation
+          slides.forEach((slide) => {
+            const slideTop = slide.offsetTop;
+            const diff = (scrollTop - slideTop) / containerHeight;
+
+            // Only calculate for slides reasonably near the viewport
+            if (Math.abs(diff) < 1.1) {
+              const contentEl = slide.querySelector(".gallery-card-content");
+              const backdropEl = slide.querySelector(".gallery-slide-backdrop");
+
+              if (contentEl) {
+                const opacity = Math.max(0.65, 1 - Math.abs(diff) * 0.45);
+                contentEl.style.opacity = opacity;
+              }
+              if (backdropEl) {
+                const backdropOpacity = Math.max(0.15, 0.45 * (1 - Math.abs(diff) * 0.7));
+                backdropEl.style.opacity = backdropOpacity;
+              }
+            }
+          });
+
+          ticking = false;
+        }
+
+        function onScroll() {
+          if (!ticking) {
+            requestAnimationFrame(updateGalleryState);
+            ticking = true;
+          }
+        }
+
+        container.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener(
+          "resize",
+          () => {
+            requestAnimationFrame(updateGalleryState);
+          },
+          { passive: true },
+        );
+
+        // Side Navigation Controls
+        sideNavPrevBtn?.addEventListener("click", (e) => {
           e.preventDefault();
-          const eventId = btn.getAttribute("data-event-id");
-          const allEvents = await fetchEvents();
-          const event = allEvents.find(ev => ev.id === eventId);
-          if (event) {
-            openBookingModal(event);
+          const currentIdx = getActiveIndex();
+          if (currentIdx <= 0 || container.scrollTop <= 15) {
+            // At first event: return to beginning/top of page
+            scrollToTop();
+          } else {
+            scrollToSlide(currentIdx - 1);
+          }
+        });
+
+        sideNavNextBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          const currentIdx = getActiveIndex();
+          if (currentIdx < totalEvents - 1) {
+            scrollToSlide(currentIdx + 1);
+          }
+        });
+
+        sideNavTopBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollToTop();
+        });
+
+        sideNavBottomBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollToBottom();
+        });
+
+        // Previous and Next button handlers
+        prevBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          sideNavPrevBtn?.click();
+        });
+
+        nextBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          sideNavNextBtn?.click();
+        });
+
+        // Keyboard arrow navigation when inside gallery or focused
+        container.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowDown" || e.key === "PageDown") {
+            e.preventDefault();
+            sideNavNextBtn?.click();
+          } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+            e.preventDefault();
+            sideNavPrevBtn?.click();
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            scrollToTop();
+          } else if (e.key === "End") {
+            e.preventDefault();
+            scrollToBottom();
+          }
+        });
+
+        // Initial setup
+        setTimeout(updateGalleryState, 150);
+      }
+
+      // Hero Search Form submission -> redirects to events.html with parameters
+      const heroForm = document.getElementById("hero-search-form");
+      heroForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const query = document.getElementById("hero-search-input")?.value.trim() || "";
+        const category = document.getElementById("hero-category-select")?.value || "All";
+        const params = new URLSearchParams();
+        if (query) params.set("q", query);
+        if (category && category !== "All") params.set("category", category);
+        window.location.href = `events.html?${params.toString()}`;
+      });
+
+      // Category chips click handler
+      document.querySelectorAll("#hero-category-chips .chip-btn").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const cat = chip.getAttribute("data-category");
+          if (cat === "All") {
+            window.location.href = "events.html";
+          } else {
+            window.location.href = `events.html?category=${encodeURIComponent(cat)}`;
           }
         });
       });
-    }
 
-    // Hero Search Form submission -> redirects to events.html with parameters
-    const heroForm = document.getElementById("hero-search-form");
-    heroForm?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const query = document.getElementById("hero-search-input")?.value.trim() || "";
-      const category = document.getElementById("hero-category-select")?.value || "All";
-      const params = new URLSearchParams();
-      if (query) params.set("q", query);
-      if (category && category !== "All") params.set("category", category);
-      window.location.href = `events.html?${params.toString()}`;
-    });
-
-    // Category chips click handler
-    document.querySelectorAll("#hero-category-chips .chip-btn").forEach(chip => {
-      chip.addEventListener("click", () => {
-        const cat = chip.getAttribute("data-category");
-        if (cat === "All") {
-          window.location.href = "events.html";
-        } else {
-          window.location.href = `events.html?category=${encodeURIComponent(cat)}`;
-        }
-      });
-    });
-
-    loadHomePageEvents();
-  </script>
-</body>
+      loadHomePageEvents();
+    </script>
+  </body>
 </html>
