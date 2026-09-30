@@ -1,83 +1,104 @@
 # EventSync — Curated Live Experiences & Digital Passes
 
-EventSync is a modern, high-performance event discovery and ticketing web application built using traditional web standards: **HTML5**, **CSS3**, **JavaScript ES6+**, **DOM Manipulation**, **Fetch API**, and **LocalStorage**.
+EventSync is a modern, high-performance event discovery and ticketing web application built using native web standards: **HTML5**, **CSS3**, **JavaScript ES6+**, **DOM Manipulation**, **Fetch API**, **LocalStorage**, and **Supabase Authentication**.
 
 ---
 
-## 📁 Target Project Structure
+## 📁 Project Structure
 
 ```
 EventSync/
-├── index.html              # Home page: Hero, search, category chips, featured events, CTA
-├── events.html             # Events catalog: Live search, category/city/price filters, sorting
-├── event-details.html      # Event details: Gallery, description, schedule, organizer, tiers
-├── my-bookings.html        # My passes: Stored in LocalStorage, digital QR pass, calendar export
+├── index.html              # Home page: Hero, search, category chips, scroll-driven event gallery, and discovery
+├── events.html             # Events catalog: Live search, category/city/price filters, sorting, responsive card grid
+├── event-details.html      # Event details: Gallery switcher, itinerary, venue, organizer, tiers, booking sidebar
+├── my-bookings.html        # My passes: Stored in LocalStorage, digital QR pass, calendar export, cancellation
+├── auth.html               # Authentication: Supabase email & password signup / signin with session restoration
 ├── css/
-│   └── style.css           # Complete responsive CSS3 design system (Dark/Light mode, luxury theme)
+│   └── style.css           # Complete responsive CSS3 design system (Dark/Light mode, amber theme, spacious mobile layout)
 ├── js/
-│   ├── script.js           # Core UI: Theme toggle, mobile hamburger menu, fluid particle background
-│   ├── api.js              # Fetch API client: Loads data/events.json, filtering, and sorting
-│   ├── booking.js          # Booking engine: LocalStorage persistence, modal, scannable QR code
-│   ├── validation.js       # Client-side form validations (Name, Email, Phone, Quantity)
-│   └── auth.js             # Session & guest authentication manager
+│   ├── api.js              # Fetch API client: Loads data/events.json (30 events), filtering, and sorting
+│   ├── auth.js             # Supabase Authentication manager: signup, login, session persistence, auth listeners
+│   ├── booking.js          # Booking engine: LocalStorage persistence, modal, scannable QR code matrix
+│   ├── script.js           # Core UI: Theme toggle, mobile navigation drawer, scroll progress bar, toast alerts
+│   ├── support.js          # Customer care: Booking retrieval modal, pass lookup by email/phone, FAQ accordion
+│   └── validation.js       # Client-side form validations (Name, Email, 10-digit Phone, Quantity limits)
 ├── data/
-│   └── events.json         # Simulated REST API endpoint containing 16 verified events
-├── images/                 # Image assets and icons
-└── README.md               # Documentation and execution instructions
+│   └── events.json         # Simulated REST API endpoint containing 30 verified live experiences across India
+├── images/                 # Optimized venue photography, concert artwork, and icons
+├── public/                 # Static assets deployed directly to dist/ (data, images, favicon)
+├── scripts/
+│   └── post-build.js       # Build script ensuring static data and images are mirrored in dist/
+├── package.json            # Project manifest, Vite development server, ESLint, and Supabase client
+├── vite.config.ts          # Multi-Page Application (MPA) build configuration
+├── tsconfig.json           # TypeScript configuration for build tool support
+├── eslint.config.js        # ESLint code quality configuration
+└── README.md               # Project documentation and execution instructions
 ```
 
 ---
 
-## ✨ Features & Assignment Capabilities
+## ✨ Features & Capabilities
 
 1. **Home Page (`index.html`)**:
-   - EventSync brand identity with live pulse indicator.
-   - Interactive Hero section with animated stage background and HTML5 Canvas fluid particle field.
-   - Live search bar and quick category chips (Music, Technology, Food & Drink, Arts & Theatre, Sports).
-   - Dynamically rendered Featured Events grid loaded via standard **Fetch API**.
-   - "Explore Events" button linking to the catalog and instant "Book Now" CTAs.
+   - EventSync brand identity with live pulse indicator and theme toggle (Dark & Light mode).
+   - High-fidelity concert and venue photographic hero presentation.
+   - Live search bar and quick category chips (Music, Technology, Theatre, Art, Food, Sports, Culture, Business, Comedy, Festival).
+   - **Scroll-Driven Curated Event Gallery**: Full-viewport responsive showcase featuring single-slide snapping, parallax progress indicators, editorial layout variations, slide navigation cards, and spacious mobile breathing room.
+   - Quick direct links to the full events catalog and instant ticket reservation.
 
 2. **Events Catalog Page (`events.html`)**:
-   - Responsive multi-column grid of verified event cards.
-   - **Live Search**: Instant keyword filtering across title, artist, venue, city, and description without page reload.
-   - **Category & City Filtering**: Single-click category filters and metropolitan city selection.
-   - **Price Range Slider**: Dynamic interactive slider filtering events up to ₹10,000.
-   - **Sorting Engine**: Sort by Price (Low to High / High to Low), Nearest Date, and Highest Rated.
-   - **Loading & Empty States**: Shimmer skeleton cards during fetch; friendly empty state with filter reset.
+   - Comprehensive multi-column grid of **30 verified live experiences** spanning 10 major metropolitan cities across India (Hyderabad, Bengaluru, Mumbai, Delhi, Pune, Chennai, Kolkata, Ahmedabad, Jaipur, Kochi).
+   - **Live Search**: Instant keyword filtering across title, artist, venue, city, and description without page reloads.
+   - **Multi-Facet Filtering**: Category pills and metropolitan city selection.
+   - **Price Range Slider**: Dynamic interactive slider filtering events up to ₹10,000 in real time.
+   - **Sorting Engine**: Sort by Recommended, Price (Low to High / High to Low), Nearest Date, and Highest Rated.
+   - **Loading & Empty States**: Shimmer skeleton cards during fetch; friendly empty state with quick filter reset.
 
 3. **Event Details Page (`event-details.html`)**:
-   - Reads URL query parameter `?id=...` dynamically.
+   - Reads URL query parameter `?id=...` dynamically to render verified event specifications.
    - Interactive photo gallery thumbnail switcher.
    - Full event itinerary, date, time, venue address, and curated highlights checklist.
-   - Verified organizer profile card with verified badge.
-   - Available ticket tiers (General Admission, VIP Circle, Lounge).
-   - Sticky booking sidebar with price breakdown and "Book Now" trigger.
+   - Verified organizer profile card with verification badges.
+   - Multi-tier ticket selection (e.g. General Admission, VIP Circle, Lounge passes).
+   - Sticky booking sidebar with price breakdown and direct "Book Now" trigger.
 
 4. **Interactive Booking Engine (`js/booking.js` & `js/validation.js`)**:
-   - Modal dialog with step-by-step booking form.
-   - Tier selection and quantity counter (- / +) with seat availability validation.
-   - **Input Validation**: Full name (letters only), email format, 10-digit phone number.
-   - Live pricing calculation including 18% GST and convenience fees.
+   - Modal dialog with step-by-step booking form and seat availability validation.
+   - Tier selection and dynamic quantity counter (- / +) enforcing ticket limits per transaction.
+   - **Strict Input Validation**: Full name (letters only), email format, 10-digit mobile number.
+   - Live pricing breakdown including 18% GST and convenience fees.
    - Saves confirmed bookings to **HTML5 LocalStorage** under key `eventsync_bookings`.
 
 5. **Digital Gate Pass & QR Code Verification**:
-   - Generates unique reference code (e.g. `ES-824190`).
+   - Generates unique cryptographic reference code (e.g. `ES-824190`).
    - Draws a scannable digital QR-like matrix directly onto an HTML5 Canvas.
-   - Perforated ticket layout with notch cutouts.
-   - One-click `.ics` calendar invitation download.
+   - Perforated ticket layout with notch cutouts, barcode numbers, and verified pass status.
+   - One-click `.ics` calendar invitation export for Apple Calendar, Google Calendar, and Outlook.
 
 6. **My Bookings (`my-bookings.html`)**:
    - Reads all active bookings from **LocalStorage**.
    - Displays event thumbnail, date, time, venue, ticket tier, attendee name, and total paid.
-   - "View QR Gate Pass" button to re-display the scannable ticket.
-   - "Cancel Pass" button with confirmation prompt that updates LocalStorage.
-   - Empty state prompt when no passes are currently booked.
+   - "View QR Gate Pass" button to re-display the scannable ticket and barcode anytime.
+   - "Cancel Pass" button with confirmation prompt that updates seat availability and LocalStorage.
+   - Empty state prompt with direct navigation when no passes are booked.
 
-7. **Responsive Design & Accessibility**:
-   - Mobile, tablet, laptop, and desktop layouts.
-   - Animated mobile navigation drawer with hamburger toggle.
-   - Dark / Light mode toggle persisted in `localStorage`.
-   - Touch targets designed to adhere to 44px+ guidelines.
+7. **Authentication with Supabase (`auth.html` & `js/auth.js`)**:
+   - Powered by **Supabase Auth** (`@supabase/supabase-js`) with persistent user sessions in browser LocalStorage.
+   - Email & password user registration with attendee profile metadata.
+   - Secure sign-in, session restoration on page reload, real-time auth change listeners, and logout.
+   - User profile dropdown in the navigation bar displaying attendee avatar and name.
+   - Seamless guest mode fallback allowing instant browsing and booking without blocking evaluators.
+
+8. **Customer Care & Pass Retrieval Suite (`js/support.js`)**:
+   - Pass retrieval modal allowing attendees to recover lost passes using their registered email or phone.
+   - Interactive FAQ accordion for booking questions, refunds, and ticket transfer policies.
+   - Direct organizer contact and ticketing support dialog.
+
+9. **Responsive Design & Accessibility**:
+   - Comprehensive mobile, tablet, laptop, and desktop layouts with generous touch target sizing (44px+ minimum).
+   - Uncluttered mobile design with spacious card padding, comfortable line-heights, and clear section separation.
+   - Slide-out mobile navigation drawer with hamburger toggle.
+   - High contrast ratios across both Dark and Light themes.
 
 ---
 
@@ -85,17 +106,18 @@ EventSync/
 
 - **HTML5**: Semantic tags (`<header>`, `<main>`, `<article>`, `<section>`, `<nav>`, `<aside>`, `<footer>`, `<canvas>`).
 - **CSS3**: CSS Custom Properties (Variables), Flexbox, CSS Grid, Media Queries, Keyframe Animations.
-- **JavaScript (ES6+)**: ES Modules (`import`/`export`), async/await, Fetch API, DOM manipulation, LocalStorage API, Canvas 2D Context.
-- **No Framework Dependencies**: 100% free of React, React DOM, or TypeScript runtime dependencies.
+- **JavaScript (ES6+)**: ES Modules (`import`/`export`), async/await, Fetch API, DOM manipulation, LocalStorage API, HTML5 Canvas 2D Context.
+- **Authentication**: Supabase Auth SDK (`@supabase/supabase-js`) with persistent browser sessions.
+- **Pure Web Standards**: 100% free of heavy front-end UI runtime frameworks (no React, TanStack, or Tailwind CSS runtime dependencies).
 
 ---
 
 ## 🚀 How to Run the Project Locally
 
-### Option 1: Using VS Code Live Server (Easiest)
+### Option 1: Using VS Code Live Server (Recommended)
 
 1. Open the project folder in VS Code.
-2. Install the **Live Server** extension.
+2. Install the **Live Server** extension (`ritwickdey.liveserver`).
 3. Right-click `index.html` and click **"Open with Live Server"**.
 4. The website will open in your default browser at `http://127.0.0.1:5500`.
 
@@ -110,23 +132,30 @@ python -m http.server 3000
 
 Open `http://localhost:3000` in your web browser.
 
-### Option 3: Using Node.js (npx serve or npm)
+### Option 3: Using Node.js (Vite or npx serve)
 
 ```bash
-# Using npx serve
-npx serve . -l 3000
+# Install dependencies
+npm install
 
-# OR using npm dev script
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
 ```
 
 ---
 
-## 🔒 Authentication & Supabase Notes
+## 🔒 Authentication Configuration
 
-- This project is configured with a frictionless **Local Session Manager** (`js/auth.js`) that persists guest attendees and booking profiles in `localStorage`.
-- This ensures any evaluator or student can test all booking and gate pass workflows immediately without requiring external API keys.
-- If you wish to connect real Supabase Auth, you can initialize the Supabase client via the CDN in `js/auth.js` by adding your `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- **Default Configuration**: EventSync connects to a live Supabase project pre-configured with browser-safe anonymous keys in `js/auth.js`.
+- **Environment Variables**: You can optionally configure your own custom Supabase project credentials in `.env`:
+  ```env
+  VITE_SUPABASE_URL=https://your-project.supabase.co
+  VITE_SUPABASE_ANON_KEY=your-anon-key
+  ```
+- **Session Persistence**: User sessions automatically persist across browser refreshes and synchronize state across all open tabs.
 
 ---
 

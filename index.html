@@ -98,11 +98,10 @@
             </div>
 
             <!-- Natural Human Headline -->
-            <h1 class="hero-title">
-              Find live events worth going to.
-            </h1>
+            <h1 class="hero-title">Find live events worth going to.</h1>
             <p class="hero-subtitle">
-              Book verified tickets for concerts, tech summits, theatre, and sports across major Indian cities with guaranteed gate entry.
+              Book verified tickets for concerts, tech summits, theatre, and sports across major
+              Indian cities with guaranteed gate entry.
             </p>
 
             <!-- Search & Actions Group -->
@@ -118,9 +117,7 @@
                     aria-label="Search events"
                   />
                 </div>
-                <button type="submit" class="btn-primary" id="hero-search-submit">
-                  Search
-                </button>
+                <button type="submit" class="btn-primary" id="hero-search-submit">Search</button>
               </form>
 
               <div class="hero-cta-row">
@@ -144,7 +141,11 @@
         </section>
 
         <!-- Scroll-Driven Event Gallery (Full-Viewport Snapping & Parallax Progress) -->
-        <section class="scroll-gallery-section" id="featured-events-section" aria-label="Curated Event Gallery">
+        <section
+          class="scroll-gallery-section"
+          id="featured-events-section"
+          aria-label="Curated Event Gallery"
+        >
           <!-- Floating Top Header Bar -->
           <div class="gallery-floating-header">
             <div class="gallery-header-left">
@@ -153,14 +154,19 @@
             </div>
 
             <!-- Dynamic Event Counter: e.g. 01 / 16 (hidden per user selection) -->
-            <div class="gallery-counter-pill" id="gallery-counter-pill" aria-live="polite" style="display: none;">
+            <div
+              class="gallery-counter-pill"
+              id="gallery-counter-pill"
+              aria-live="polite"
+              style="display: none"
+            >
               <span class="counter-current" id="counter-current">01</span>
               <span class="counter-divider">/</span>
               <span class="counter-total" id="counter-total">16</span>
             </div>
 
             <!-- Quick Navigation Controls (hidden per user selection) -->
-            <div class="gallery-nav-controls" style="display: none;">
+            <div class="gallery-nav-controls" style="display: none">
               <button
                 type="button"
                 class="carousel-arrow-btn"
@@ -186,7 +192,13 @@
           </div>
 
           <!-- Scroll-Snap Container -->
-          <div class="gallery-scroll-container" id="gallery-scroll-container" tabindex="0" role="region" aria-label="Event gallery scroll view">
+          <div
+            class="gallery-scroll-container"
+            id="gallery-scroll-container"
+            tabindex="0"
+            role="region"
+            aria-label="Event gallery scroll view"
+          >
             <!-- Skeleton slide shown while loading -->
             <div class="skeleton-gallery-slide">
               <div class="skeleton-gallery-card">
@@ -203,7 +215,11 @@
           </div>
 
           <!-- Floating Right-Side Navigation / Scroll Controls -->
-          <aside class="gallery-side-nav" id="gallery-side-nav" aria-label="Event gallery quick navigation">
+          <aside
+            class="gallery-side-nav"
+            id="gallery-side-nav"
+            aria-label="Event gallery quick navigation"
+          >
             <div class="side-nav-card" role="toolbar" aria-label="Event slide navigation controls">
               <button
                 type="button"
@@ -255,10 +271,14 @@
 
           <!-- Floating Bottom Progress Indicator & Scroll Hint -->
           <div class="gallery-floating-footer">
-            <div class="gallery-progress-wrap" style="display: none;">
+            <div class="gallery-progress-wrap" style="display: none">
               <span class="progress-num">0%</span>
               <div class="gallery-progress-track">
-                <div class="gallery-progress-fill" id="gallery-progress-fill" style="width: 0%"></div>
+                <div
+                  class="gallery-progress-fill"
+                  id="gallery-progress-fill"
+                  style="width: 0%"
+                ></div>
               </div>
               <span class="progress-num" id="gallery-progress-num">100%</span>
             </div>
@@ -278,7 +298,12 @@
           <div class="container">
             <div
               class="section-header"
-              style="text-align: left; align-items: flex-start; justify-content: flex-start; flex-direction: column"
+              style="
+                text-align: left;
+                align-items: flex-start;
+                justify-content: flex-start;
+                flex-direction: column;
+              "
             >
               <span class="badge-amber-sm">Verified Ticketing Standard</span>
               <h2 class="section-title">Built for Real Fans & Organizers</h2>
@@ -569,7 +594,14 @@
             // 1: Inverted editorial (media on right for visual breathing space)
             // 2: Photography-forward focus (1.35fr media : 1fr content)
             // 3: Balanced story (1fr : 1.15fr content emphasis)
-            const layoutVariation = index % 4 === 1 ? "layout-media-right" : index % 4 === 2 ? "layout-media-wide" : index % 4 === 3 ? "layout-content-focus" : "";
+            const layoutVariation =
+              index % 4 === 1
+                ? "layout-media-right"
+                : index % 4 === 2
+                  ? "layout-media-wide"
+                  : index % 4 === 3
+                    ? "layout-content-focus"
+                    : "";
 
             return `
           <section class="gallery-event-slide ${layoutVariation ? `slide-${layoutVariation}` : ""}" id="slide-${event.id}" data-index="${index}" aria-label="Event ${index + 1} of ${events.length}: ${event.title}">

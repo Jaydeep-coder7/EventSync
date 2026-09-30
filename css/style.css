@@ -40,7 +40,8 @@
   --shadow-amber: none;
 
   --font-display: "Syne", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --transition-fast: 0.15s ease;
   --transition-normal: 0.22s ease;
@@ -116,11 +117,6 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
-}
-
-/* Background Canvas */
-#fluid-particles-canvas {
-  display: none !important;
 }
 
 /* Top Scroll Progress Bar - Clean and Minimal */
@@ -412,7 +408,9 @@ img {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+  transition:
+    opacity var(--transition-normal),
+    visibility var(--transition-normal);
 }
 
 .mobile-nav-overlay.active {
@@ -494,7 +492,9 @@ img {
   font-size: 0.95rem;
   padding: 0.65rem 1.35rem;
   border-radius: var(--radius-sm);
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
   white-space: nowrap;
 }
@@ -1206,8 +1206,13 @@ img {
 }
 
 @keyframes scrollHintBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(3px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
 }
 
 /* ==========================================================================
@@ -1226,7 +1231,9 @@ img {
   pointer-events: none;
   opacity: 0;
   user-select: none;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
 }
 
 .gallery-side-nav.is-ready {
@@ -1270,7 +1277,9 @@ img {
   outline: none;
   padding: 0;
   box-sizing: border-box;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .side-nav-arrow-icon {
@@ -1498,7 +1507,11 @@ img {
 .gallery-slide-backdrop-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(11, 15, 25, 0.42) 0%, rgba(11, 15, 25, 0.88) 80%);
+  background: radial-gradient(
+    circle at center,
+    rgba(11, 15, 25, 0.42) 0%,
+    rgba(11, 15, 25, 0.88) 80%
+  );
   pointer-events: none;
   z-index: 2;
 }
@@ -1509,7 +1522,11 @@ img {
 }
 
 [data-theme="light"] .gallery-slide-backdrop-overlay {
-  background: radial-gradient(circle at center, rgba(248, 250, 252, 0.52) 0%, rgba(248, 250, 252, 0.9) 80%);
+  background: radial-gradient(
+    circle at center,
+    rgba(248, 250, 252, 0.52) 0%,
+    rgba(248, 250, 252, 0.9) 80%
+  );
 }
 
 /* The Editorial Event Card - Clean Paper/Card Presence */
@@ -1528,7 +1545,9 @@ img {
   padding: 2.25rem;
   align-items: stretch;
   overflow: hidden;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   touch-action: pan-y;
 }
 
@@ -1855,7 +1874,12 @@ img {
 .skeleton-gallery-media {
   height: 380px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.03)
+  );
   background-size: 200% 100%;
   animation: skeletonPulse 1.5s infinite;
 }
@@ -2258,7 +2282,9 @@ img {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(245, 158, 11, 0.25);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(245, 158, 11, 0.25);
   transition: all var(--transition-fast);
   user-select: none;
 }
@@ -2268,7 +2294,9 @@ img {
   border-color: var(--accent-amber);
   color: #ffffff;
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.45);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(245, 158, 11, 0.45);
 }
 
 .carousel-edge-nav:active:not(:disabled) {
@@ -2500,7 +2528,8 @@ img {
 }
 
 @keyframes horizontalEventScrollPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(0.9);
     opacity: 0.7;
     box-shadow: 0 0 4px var(--accent-amber);

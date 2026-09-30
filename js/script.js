@@ -1,6 +1,6 @@
 /**
  * EventSync - Core Application Script
- * Manages responsive navigation, theme toggle, fluid particle background, and UI interactions
+ * Manages responsive navigation, theme toggle, and UI interactions
  */
 
 import { getBookings } from "./booking.js";
@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
   initMobileNav();
   initScrollProgress();
-  initFluidParticlesBackground();
   highlightActiveNavLink();
   initSmartBackButtons();
   initCustomerSupportTriggers();
@@ -366,18 +365,4 @@ export function showToast(message, type = "info") {
     toast.classList.add("fade-out");
     setTimeout(() => toast.remove(), 400);
   }, 3500);
-}
-
-/**
- * Interactive Fluid Particles Canvas Background
- * High-performance HTML5 Canvas simulation with Simplex Noise and interactive mouse deflection
- */
-function initFluidParticlesBackground() {
-  const canvas = document.getElementById("fluid-particles-canvas");
-  if (!canvas) return;
-
-  // Reduced, unobtrusive subtle background canvas - disabled to prevent AI-generated floating sparkle look
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  canvas.style.display = "none";
 }
