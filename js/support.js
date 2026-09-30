@@ -28,8 +28,8 @@ export function openCustomerSupportModal(defaultTab = "help") {
             <span>Back</span>
           </button>
           <div>
-            <span class="badge-amber-sm">24/7 Dedicated Care</span>
-            <h2 class="modal-title" style="font-size: 1.35rem;">Customer Service & Support</h2>
+            <span class="badge-amber-sm">Demo Project Support</span>
+            <h2 class="modal-title" style="font-size: 1.35rem;">Attendee Assistance & Pass Lookup</h2>
           </div>
         </div>
         <button id="support-modal-close-btn" class="modal-close" aria-label="Close modal">&times;</button>
@@ -40,17 +40,17 @@ export function openCustomerSupportModal(defaultTab = "help") {
         <!-- Channels Strip -->
         <div class="support-channel-list">
           <div class="support-channel-item">
-            <span class="support-channel-icon">📞</span>
+            <span class="support-channel-icon">🎓</span>
             <div>
-              <div class="support-channel-label">Toll Free Helpline</div>
-              <div class="support-channel-val">+91 1800-202-SYNC</div>
+              <div class="support-channel-label">Project Status</div>
+              <div class="support-channel-val">College Demo Project</div>
             </div>
           </div>
           <div class="support-channel-item">
-            <span class="support-channel-icon">✉️</span>
+            <span class="support-channel-icon">🎫</span>
             <div>
-              <div class="support-channel-label">Official Care Email</div>
-              <div class="support-channel-val">support@eventsync.in</div>
+              <div class="support-channel-label">Pass Services</div>
+              <div class="support-channel-val">Instant Demo Pass Retrieval</div>
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export function openCustomerSupportModal(defaultTab = "help") {
             <div class="tier-card" style="padding: 1rem 1.25rem;">
               <h4 style="font-size: 0.98rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--accent-amber);">♿ Accessibility & Box Office Inquiries</h4>
               <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.5;">
-                All featured venues are wheelchair accessible and have dedicated priority gates. For companion passes or parking clearance, contact our helpline at +91 1800-202-SYNC.
+                All featured venues are wheelchair accessible and have dedicated priority gates. Use the Instant Pass Retrieval tab above to look up any demo pass by email or phone.
               </p>
             </div>
           </div>
