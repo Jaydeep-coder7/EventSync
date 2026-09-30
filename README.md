@@ -1,278 +1,329 @@
-# EventSync
+# 🎟️ EventSync
 
-EventSync is a responsive event discovery, booking, and digital pass management web application created as a college project/demo. It allows users to explore events, view event details, book tickets, and manage their digital booking passes.
+> **Don't Just Hear About It. Be There With EventSync.**
 
----
+EventSync is a responsive event discovery, booking, and digital pass management web application created as a **college project/demo**.
 
-## Features
+The platform allows users to explore events, search and filter events, view detailed event information, book tickets, generate digital passes with QR codes, and manage their bookings.
 
-- **Event Discovery**: Dynamic catalog featuring rich event cards with images, badges, dates, venues, and ticket pricing.
-- **Search & Instant Filtering**: Real-time keyword search across titles, artists, venues, and cities without page reloads.
-- **Category Filtering**: Single-click category filters matching diverse live entertainment domains.
-- **City & Price Filtering**: Filter events across 10 metropolitan cities and adjust prices dynamically via an interactive slider.
-- **Sorting Engine**: Sort events by Recommended, Price (Low to High / High to Low), Nearest Date, and Highest Rated.
-- **30 Realistic Demo Events**: Comprehensive dataset covering diverse entertainment, culture, and industry gatherings.
-- **Scroll-Driven Event Gallery**: Full-viewport responsive showcase on the home page with single-slide snapping, parallax progress indicators, editorial layouts, and side navigation.
-- **Event Details Pages**: Dedicated pages rendering event itineraries, venue maps, organizer profiles, and ticket tiers via dynamic URL query parameters.
-- **Interactive Booking System**: Step-by-step ticket reservation modal with tier selection, dynamic quantity counters, and price computation including GST and fees.
-- **Client-Side Form Validation**: Real-time validation for attendee names (letters only), valid email formats, 10-digit mobile numbers, and ticket limits.
-- **LocalStorage Booking Persistence**: Bookings are stored securely in browser LocalStorage for reliable demo session persistence.
-- **My Bookings Dashboard**: Dedicated management page displaying active passes, ticket details, and cancel booking capabilities.
-- **Digital Gate Pass & QR Code Generation**: Instant digital gate pass with perforated ticket styling, reference code, barcode, and scannable QR code matrix rendered on HTML5 Canvas.
-- **Calendar Download (.ics)**: One-click standard iCalendar invitation export for Apple Calendar, Google Calendar, and Outlook.
-- **Supabase Authentication**: User registration and login powered by Supabase Auth with persistent browser sessions.
-- **Attendee Support & Pass Lookup**: Built-in support dialog with lost pass lookup by email or phone, demo guidelines, and FAQ accordion.
-- **Dark / Light Theme Toggle**: Luxury dark mode and crisp light mode with preferences remembered across sessions.
-- **Responsive Design**: Mobile-first design optimized from 320px mobile screens to 1440px+ widescreen desktop displays.
+🌐 **Live Website:**  
+[Visit EventSync](PASTE-YOUR-LIVE-WEBSITE-LINK-HERE)
 
 ---
 
-## Event Categories
+## 📌 About the Project
 
-The demo dataset contains 11 distinct event categories:
+EventSync is designed as a modern event discovery and booking platform covering different types of experiences such as:
 
-- **Art**: Contemporary exhibitions, digital art showcases, and gallery openings.
-- **Business**: Startup summits, leadership conclaves, and investment forums.
-- **Comedy**: Stand-up comedy specials and improv nights.
-- **Culture**: Traditional heritage performances and literary festivals.
-- **Education**: Workshops, masterclasses, and hands-on skill intensives.
-- **Festival**: Multi-day music and cultural celebrations.
-- **Food & Drink**: Gourmet festivals, wine tastings, and culinary pop-ups.
-- **Music**: Arena concerts, classical recitals, and indie music gigs.
-- **Sports**: Marathons, athletic championships, and live sporting fixtures.
-- **Technology**: Developer conferences, AI expos, and tech hackathons.
-- **Theatre**: Drama, stage plays, and musical productions.
+- 🎵 Music
+- 💻 Technology
+- 🎭 Theatre
+- 🎨 Art
+- 🍴 Food & Drink
+- ⚽ Sports
+- 😂 Comedy
+- 💼 Business
+- 📚 Education
+- 🎉 Festivals
+- 🏛️ Culture
 
----
+The project contains **30 realistic demo events** distributed across major Indian cities.
 
-## Demo Events
-
-EventSync includes **30 realistic demo events** distributed across major Indian cities:
-
-- **Hyderabad**
-- **Bengaluru**
-- **Mumbai**
-- **Delhi**
-- **Pune**
-- **Chennai**
-- **Kolkata**
-- **Ahmedabad**
-- **Jaipur**
-- **Kochi**
-
-_(Note: All events, artists, venues, and schedules in this project are simulated demo data created for academic demonstration.)_
+All event information is simulated demo data created for academic/project demonstration.
 
 ---
 
-## Authentication
+# ✨ Features
 
-EventSync integrates **Supabase Auth** for account management:
+## 🏠 Home Page
 
-- **Email & Password Authentication**: Attendee registration and sign-in with client-side validation.
-- **Persistent Browser Sessions**: Authentication tokens persist across page reloads and browser restarts.
-- **Protected Actions**: Key operations such as accessing booking passes and personal profile details require an authenticated session.
-- **Navbar Profile State**: Navigation bar dynamically updates to show attendee initials, avatar, and account options.
-- **Sign Out**: Instant session termination and cache clearing.
-
-Credentials are configured via environment variables and never hard-coded in source files.
-
----
-
-## Booking System
-
-The booking workflow is engineered entirely using vanilla JavaScript:
-
-1. **Ticket Selection**: Choose from multiple tiers (General Admission, VIP Circle, Lounge passes) with dynamic pricing calculation.
-2. **Attendee Validation**: Name, email, and 10-digit phone number validation prior to checkout.
-3. **Demo Persistence**: Booking records and ticket quantities are saved to **HTML5 LocalStorage** under the `eventsync_bookings` key.
-4. **Digital Pass Generation**: Generates a unique booking reference (e.g. `ES-824190`) with a scannable QR code matrix rendered onto an HTML5 Canvas.
-5. **Calendar Export**: Generates and downloads a `.ics` calendar invitation for easy scheduling.
-6. **Pass Management**: Passes appear immediately in **My Bookings**, where attendees can re-open their QR pass or cancel bookings.
+- Modern event-focused hero section
+- Event search
+- Category navigation
+- Featured event discovery
+- Scroll-driven event gallery
+- Full-screen event presentation
+- Event counter
+- Previous / Next event navigation
+- TOP and BOTTOM navigation controls
+- Responsive layout
 
 ---
 
-## Technologies Used
+## 🔎 Event Discovery
 
-- **HTML5**: Semantic markup (`<header>`, `<main>`, `<article>`, `<section>`, `<nav>`, `<aside>`, `<footer>`, `<canvas>`).
-- **CSS3**: CSS Custom Properties (Variables), Flexbox, CSS Grid, media queries, and keyframe animations.
-- **JavaScript (ES6+)**: ES Modules (`import`/`export`), async/await, DOM manipulation, Fetch API, and LocalStorage API.
-- **HTML5 Canvas**: Procedural 2D canvas drawing used for generating scannable digital QR passes.
-- **Supabase Auth**: Authentication SDK (`@supabase/supabase-js`) providing session management.
-- **Vite**: Modern development server and production multi-page application (MPA) bundler.
-- **JSON**: Structured demo event database (`data/events.json`).
+Users can explore the complete event catalog with:
 
-_(This project is built purely with web standards and does not rely on React, TanStack, or Tailwind CSS runtime frameworks.)_
+- Real-time search
+- Category filtering
+- City filtering
+- Price filtering
+- Sorting
+- Recommended events
+- Price: Low to High
+- Price: High to Low
+- Nearest date
+- Highest rated events
 
 ---
 
-## Project Structure
+## 🎫 Event Details
 
-```
+Each event includes detailed information such as:
+
+- Event title
+- Category
+- Date
+- Time
+- Venue
+- City
+- Organizer
+- Description
+- Pricing
+- Ticket tiers
+- Availability
+- Event images
+- Additional event information
+
+---
+
+## 🎟️ Ticket Booking
+
+Users can book tickets through an interactive booking system.
+
+The booking flow includes:
+
+1. Select an event
+2. Select ticket type
+3. Select ticket quantity
+4. Enter attendee information
+5. Validate the information
+6. Calculate the booking amount
+7. Generate the booking confirmation
+8. Generate a digital event pass
+
+---
+
+## 📱 Digital Event Pass
+
+After booking, EventSync generates a digital pass containing:
+
+- Event information
+- Attendee information
+- Booking reference
+- Ticket information
+- QR code
+- Digital pass design
+
+The QR code is generated using HTML5 Canvas.
+
+---
+
+## 📅 Calendar Integration
+
+Users can download an `.ics` calendar file for their booked event.
+
+The calendar file can be used with supported calendar applications such as:
+
+- Google Calendar
+- Apple Calendar
+- Microsoft Outlook
+
+---
+
+## 👤 Authentication
+
+EventSync uses **Supabase Auth** for user authentication.
+
+Authentication includes:
+
+- User registration
+- Email/password login
+- Persistent sessions
+- Session restoration
+- Sign out
+- Protected user features
+- User profile state in the navigation bar
+
+Supabase credentials are stored through environment variables and are not hard-coded into the project.
+
+---
+
+## 📂 My Bookings
+
+The My Bookings section allows users to:
+
+- View their booked events
+- View ticket information
+- Re-open digital passes
+- View QR codes
+- Download calendar invitations
+- Cancel demo bookings
+
+Booking information is stored in browser LocalStorage for demonstration purposes.
+
+---
+
+## 🆘 Support & FAQ
+
+EventSync also includes a demo support interface with:
+
+- Lost pass lookup
+- Attendee lookup
+- FAQ accordion
+- Demo instructions
+- Ticket/pass assistance
+
+These features are implemented for the college/demo project and are not connected to a production customer-support system.
+
+---
+
+# 🌆 Demo Events
+
+EventSync currently contains **30 realistic demo events**.
+
+The events are distributed across:
+
+| City |
+|---|
+| Hyderabad |
+| Bengaluru |
+| Mumbai |
+| Delhi |
+| Pune |
+| Chennai |
+| Kolkata |
+| Ahmedabad |
+| Jaipur |
+| Kochi |
+
+### Event Categories
+
+The project contains 11 event categories:
+
+- Art
+- Business
+- Comedy
+- Culture
+- Education
+- Festival
+- Food & Drink
+- Music
+- Sports
+- Technology
+- Theatre
+
+> **Note:** All events, artists, venues, schedules, pricing, and related information are simulated demo data created for academic demonstration.
+
+---
+
+# 🛠️ Technologies Used
+
+EventSync is built using modern web technologies.
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript ES6+
+- JavaScript Modules
+- DOM Manipulation
+- Fetch API
+- LocalStorage
+- HTML5 Canvas
+
+### Authentication
+
+- Supabase Auth
+- `@supabase/supabase-js`
+
+### Data
+
+- JSON
+- Fetch API
+
+### Development
+
+- Vite
+- ESLint
+- Prettier
+- npm
+
+The application uses a **vanilla HTML/CSS/JavaScript architecture** and does not use React, TanStack, or Tailwind CSS.
+
+---
+
+# 📱 Responsive Design
+
+EventSync is designed to work across different screen sizes.
+
+### Mobile
+
+- Responsive single-column layouts
+- Touch-friendly controls
+- Mobile navigation drawer
+- Responsive event gallery
+- Responsive booking forms
+
+### Tablet
+
+- Adaptive layouts
+- Touch-friendly filtering
+- Responsive event cards
+- Optimized navigation
+
+### Laptop & Desktop
+
+- Multi-column layouts
+- Expanded navigation
+- Large event imagery
+- Editorial event gallery
+- Optimized content spacing
+
+The website is designed for screen sizes ranging from approximately **320px mobile screens to large desktop displays**.
+
+---
+
+# 📁 Project Structure
+
+```text
 EventSync/
-├── index.html              # Home page: Hero, search, category chips, scroll-driven event gallery
-├── events.html             # Events catalog: Live search, category/city/price filters, sorting, responsive card grid
-├── event-details.html      # Event details: Gallery switcher, itinerary, venue, organizer, tiers, booking sidebar
-├── my-bookings.html        # My passes: Stored in LocalStorage, digital QR pass, calendar export, cancellation
-├── auth.html               # Authentication: Supabase email & password signup / signin with session restoration
+│
+├── index.html
+├── events.html
+├── event-details.html
+├── my-bookings.html
+├── auth.html
+│
 ├── css/
-│   └── style.css           # Complete responsive CSS3 design system (Dark/Light mode, amber theme, spacious mobile layout)
+│   └── style.css
+│
 ├── js/
-│   ├── api.js              # Fetch API client: Loads data/events.json (30 demo events), filtering, and sorting
-│   ├── auth.js             # Supabase Authentication manager: signup, login, session persistence, auth listeners
-│   ├── booking.js          # Booking engine: LocalStorage persistence, modal, scannable QR code matrix
-│   ├── script.js           # Core UI: Theme toggle, mobile navigation drawer, scroll progress bar, toast alerts
-│   ├── support.js          # Attendee care: Demo pass lookup by email/phone, demo guidelines, FAQ accordion
-│   └── validation.js       # Client-side form validations (Name, Email, 10-digit Phone, Quantity limits)
+│   ├── api.js
+│   ├── auth.js
+│   ├── booking.js
+│   ├── script.js
+│   ├── support.js
+│   └── validation.js
+│
 ├── data/
-│   └── events.json         # Structured demo dataset containing 30 realistic demo events across India
+│   └── events.json
+│
 ├── public/
 │   ├── data/
-│   │   └── events.json     # Mirrored static dataset for production builds
-│   ├── images/             # Static image assets
-│   ├── favicon.ico         # Website favicon
-│   └── robots.txt          # Search engine crawler instructions
-├── images/                 # Venue photography, concert artwork, and icons
+│   │   └── events.json
+│   ├── images/
+│   ├── favicon.ico
+│   └── robots.txt
+│
+├── images/
+│
 ├── scripts/
-│   └── post-build.js       # Build script ensuring static data and images are mirrored in dist/
-├── .env.example            # Environment variables template
-├── package.json            # Project manifest, Vite dev server, ESLint, and Supabase client
-├── vite.config.ts          # Multi-Page Application (MPA) build configuration
-├── tsconfig.json           # TypeScript configuration for build tool support
-├── eslint.config.js        # ESLint code quality configuration
-└── README.md               # Project documentation and execution instructions
-```
-
----
-
-## Setup
-
-### Prerequisites
-
-- Node.js (version 18 or later recommended)
-- npm or bun
-
-### Installation Steps
-
-1. **Clone or extract the repository**:
-
-   ```bash
-   cd EventSync
-   ```
-
-2. **Install dependencies**:
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**:
-   Copy `.env.example` to `.env`:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Add your Supabase project credentials in `.env`:
-
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-4. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   Open your browser at `http://localhost:3000`.
-
-### Alternative Static Serving
-
-Because EventSync is built with standard HTML, CSS, and JavaScript modules, it can also be served statically:
-
-- **VS Code Live Server**: Right-click `index.html` and choose **"Open with Live Server"**.
-- **Python HTTP Server**: Run `python -m http.server 3000` in the project root.
-
----
-
-## Supabase Configuration
-
-To connect your own Supabase backend for user authentication:
-
-1. Create a project at [supabase.com](https://supabase.com).
-2. Go to **Project Settings** > **API**.
-3. Copy the **Project URL** and the **Anon / Public API Key**.
-4. Paste these values into your `.env` file:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-5. Enable **Email / Password** provider under **Authentication** > **Providers** in the Supabase dashboard.
-
-_(Never expose your `service_role` or secret API keys in frontend configuration files.)_
-
----
-
-## Build
-
-To create a production-ready build:
-
-```bash
-# Build the multi-page application into dist/
-npm run build
-```
-
-To run code quality linting:
-
-```bash
-# Verify code quality and syntax with ESLint
-npm run lint
-```
-
-To format code with Prettier:
-
-```bash
-# Format HTML, CSS, JavaScript, and configuration files
-npm run format
-```
-
----
-
-## Responsive Design
-
-The EventSync design system is built to provide an optimal viewing experience across all device categories:
-
-- **Mobile (320px – 480px)**: Single-column reflow, full-width touch targets (44px+ minimum), comfortable padding, and a sliding navigation drawer.
-- **Tablet (768px – 820px)**: Two-column responsive event cards, touch-friendly filter scrolling, and compact sidebars.
-- **Laptop (1024px – 1280px)**: Multi-column catalog grid with sticky filter sidebar and expanded navigation.
-- **Desktop (1440px+)**: Wide-screen layout with maximum content containment and enhanced visual hierarchy.
-
-All layouts adapt naturally using fluid percentages, CSS Grid, and Flexbox without unwanted horizontal page scrolling or clipped text.
-
----
-
-## Project Architecture
-
-```
-HTML Pages (index, events, event-details, my-bookings, auth)
-    │
-    ▼
-CSS3 Design System (css/style.css: variables, responsive grid, dark/light theme)
-    │
-    ▼
-JavaScript Modules (js/api.js, js/auth.js, js/booking.js, js/script.js, js/support.js, js/validation.js)
-    ├── Fetch API & JSON Event Data (data/events.json — 30 demo events)
-    ├── Supabase Auth (@supabase/supabase-js — persistent sessions & auth state)
-    └── HTML5 LocalStorage (eventsync_bookings — demo booking persistence & QR passes)
-```
-
----
-
-## Important Demo Limitation
-
-> **Academic / College Project Notice**: This project is intended strictly as a college/demo application. Event listings, pricing, attendee profiles, booking persistence, support features, and related services are implemented for demonstration purposes and should not be treated as production infrastructure.
-
----
-
-## License
-
-Academic and College Project Submission — MIT License.
+│   └── post-build.js
+│
+├── .env.example
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+├── eslint.config.js
+└── README.md
