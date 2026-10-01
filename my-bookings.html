@@ -197,7 +197,7 @@
       // Guard page access with Supabase Auth
       const authUser = await requireAuth();
       if (!authUser) {
-        throw new Error("Redirecting to authentication...");
+        return; // requireAuth handles redirection to auth.html cleanly
       }
 
       const authGate = document.getElementById("page-auth-gate");

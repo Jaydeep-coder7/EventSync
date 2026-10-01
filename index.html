@@ -18,15 +18,6 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <!-- Protected Page Auth Gate (Guards against unauthenticated view) -->
-    <div id="page-auth-gate" class="page-auth-gate">
-      <div class="auth-gate-inner">
-        <div class="auth-gate-logo">🎟️</div>
-        <div class="auth-gate-spinner"></div>
-        <div class="auth-gate-text">Authenticating EventSync session...</div>
-      </div>
-    </div>
-
     <!-- Top Scroll Progress Bar -->
     <div id="scroll-progress-bar"></div>
 
@@ -522,23 +513,8 @@
     <!-- Global Application Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module">
-      import { requireAuth } from "./js/auth.js";
       import { fetchEvents, filterAndSortEvents } from "./js/api.js";
       import { openBookingModal } from "./js/booking.js";
-
-      // Guard page access with real Supabase Auth session
-      const authUser = await requireAuth();
-      if (!authUser) {
-        // requireAuth will redirect to auth.html automatically
-        throw new Error("Redirecting to authentication...");
-      }
-
-      // Dismiss auth gate cleanly
-      const authGate = document.getElementById("page-auth-gate");
-      if (authGate) {
-        authGate.classList.add("hidden");
-        setTimeout(() => authGate.remove(), 350);
-      }
 
       // Load and render all events in the scroll-driven event gallery on the Home Page
       async function loadHomePageEvents() {
