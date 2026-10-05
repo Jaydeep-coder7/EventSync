@@ -29,4 +29,12 @@ if (fs.existsSync(imagesSrc)) {
   console.log("Copied images/ to dist/images/");
 }
 
+// Ensure src/assets/images/ directory is in dist
+const srcAssetsImagesSrc = path.resolve(rootDir, "src/assets/images");
+const srcAssetsImagesDest = path.resolve(distDir, "src/assets/images");
+if (fs.existsSync(srcAssetsImagesSrc)) {
+  fs.cpSync(srcAssetsImagesSrc, srcAssetsImagesDest, { recursive: true });
+  console.log("Copied src/assets/images/ to dist/src/assets/images/");
+}
+
 console.log("Post-build completed successfully.");

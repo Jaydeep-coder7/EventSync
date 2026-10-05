@@ -310,9 +310,6 @@ EventSync/
 │   └── events.json
 │
 ├── public/
-│   ├── data/
-│   │   └── events.json
-│   ├── images/
 │   ├── favicon.ico
 │   └── robots.txt
 │
@@ -323,7 +320,10 @@ EventSync/
 │
 ├── .env.example
 ├── package.json
+├── package-lock.json
+├── metadata.json
 ├── vite.config.ts
 ├── tsconfig.json
 ├── eslint.config.js
 └── README.md
+```

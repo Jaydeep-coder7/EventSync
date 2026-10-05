@@ -18,6 +18,15 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- Protected Page Auth Gate (Guards against unauthenticated view & flicker) -->
+    <div id="page-auth-gate" class="page-auth-gate" aria-live="polite">
+      <div class="auth-gate-inner">
+        <div class="auth-gate-logo">🎟️</div>
+        <div class="auth-gate-spinner"></div>
+        <div class="auth-gate-text">Authenticating EventSync session...</div>
+      </div>
+    </div>
+
     <!-- Top Scroll Progress Bar -->
     <div id="scroll-progress-bar"></div>
 
@@ -89,7 +98,7 @@
             </div>
 
             <!-- Natural Human Headline -->
-            <h1 class="hero-title">Find live events worth going to.</h1>
+            <h1 class="hero-title">Don't Just Hear About It. Be There With EventSync.</h1>
             <p class="hero-subtitle">
               Book verified tickets for concerts, tech summits, theatre, and sports across major
               Indian cities with guaranteed gate entry.
@@ -138,11 +147,8 @@
           aria-label="Curated Event Gallery"
         >
           <!-- Floating Top Header Bar -->
-          <div class="gallery-floating-header">
-            <div class="gallery-header-left">
-              <span class="badge-amber-sm">Live Showcase</span>
-              <span class="gallery-header-label">Scroll to browse experiences</span>
-            </div>
+          <div class="gallery-floating-header" style="display: none">
+            <div class="gallery-header-left"></div>
 
             <!-- Dynamic Event Counter: e.g. 01 / 16 (hidden per user selection) -->
             <div
@@ -513,8 +519,31 @@
     <!-- Global Application Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module">
+      import { requireAuth } from "./js/auth.js";
       import { fetchEvents, filterAndSortEvents } from "./js/api.js";
       import { openBookingModal } from "./js/booking.js";
+
+      // Verify Supabase session before revealing Home page
+      const authUser = await requireAuth();
+      if (!authUser) {
+        // Halt further execution while browser redirects to auth.html
+        throw new Error("Redirecting to authentication...");
+      }
+
+      // Smoothly hide and remove auth gate
+      const authGate = document.getElementById("page-auth-gate");
+      if (authGate) {
+        authGate.classList.add("hidden");
+        setTimeout(() => authGate.remove(), 350);
+      }
+
+      // Guard against browser back-forward cache (bfcache) navigation
+      window.addEventListener("pageshow", async (e) => {
+        if (e.persisted) {
+          const u = await requireAuth();
+          if (!u) return;
+        }
+      });
 
       // Load and render all events in the scroll-driven event gallery on the Home Page
       async function loadHomePageEvents() {
@@ -591,10 +620,11 @@
               <div class="gallery-card-media">
                 ${tagHtml}
                 <img
-                  src="${event.image}"
+                  src="${event.image || "images/eventsync-classy-venue.jpg"}"
                   alt="${event.title}"
                   class="gallery-card-img"
                   loading="${index < 2 ? "eager" : "lazy"}"
+                  onerror="this.onerror=null;this.src='images/eventsync-classy-venue.jpg';"
                 />
               </div>
 

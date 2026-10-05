@@ -304,7 +304,20 @@
 
       // Retrieve destination URL from query params if available
       const urlParams = new URLSearchParams(window.location.search);
-      const redirectUrl = urlParams.get("redirect") || "index.html";
+      const rawRedirect = urlParams.get("redirect");
+      let redirectUrl = "index.html";
+
+      if (rawRedirect) {
+        const decoded = decodeURIComponent(rawRedirect).trim();
+        if (
+          decoded &&
+          decoded !== "/" &&
+          decoded !== "auth.html" &&
+          !decoded.startsWith("auth.html")
+        ) {
+          redirectUrl = decoded;
+        }
+      }
 
       // Show alert inside auth card
       function showAlert(message, type = "error") {

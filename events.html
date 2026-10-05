@@ -18,6 +18,15 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- Protected Page Auth Gate (Guards against unauthenticated view & flicker) -->
+    <div id="page-auth-gate" class="page-auth-gate" aria-live="polite">
+      <div class="auth-gate-inner">
+        <div class="auth-gate-logo">🎟️</div>
+        <div class="auth-gate-spinner"></div>
+        <div class="auth-gate-text">Authenticating EventSync session...</div>
+      </div>
+    </div>
+
     <!-- Top Scroll Progress Bar -->
     <div id="scroll-progress-bar"></div>
 
@@ -345,8 +354,30 @@
     <!-- Global Application Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module">
+      import { requireAuth } from "./js/auth.js";
       import { fetchEvents, filterAndSortEvents } from "./js/api.js";
       import { openBookingModal } from "./js/booking.js";
+
+      // Verify Supabase session before revealing Events page
+      const authUser = await requireAuth();
+      if (!authUser) {
+        throw new Error("Redirecting to authentication...");
+      }
+
+      // Smoothly hide and remove auth gate
+      const authGate = document.getElementById("page-auth-gate");
+      if (authGate) {
+        authGate.classList.add("hidden");
+        setTimeout(() => authGate.remove(), 350);
+      }
+
+      // Guard against browser back-forward cache (bfcache) navigation
+      window.addEventListener("pageshow", async (e) => {
+        if (e.persisted) {
+          const u = await requireAuth();
+          if (!u) return;
+        }
+      });
 
       let rawEvents = [];
 
@@ -443,7 +474,14 @@
           <article class="event-card" id="card-${event.id}">
             <div class="event-card-media">
               ${tagHtml}
-              <img src="${event.image}" alt="${event.title}" class="event-card-img" loading="lazy" />
+              <img
+                src="${event.image || "images/eventsync-classy-venue.jpg"}"
+                alt="${event.title}"
+                class="event-card-img"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+                onerror="this.onerror=null;this.src='images/eventsync-classy-venue.jpg';"
+              />
               <span class="event-category-badge">${event.category}</span>
             </div>
             <div class="event-card-body">

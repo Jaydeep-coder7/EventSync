@@ -374,9 +374,23 @@ export async function requireAuth() {
   const { user } = await restoreSession();
 
   if (!user) {
-    const currentPath = window.location.pathname + window.location.search;
-    const redirectTarget = encodeURIComponent(currentPath);
-    window.location.replace(`auth.html?redirect=${redirectTarget}`);
+    const pathname = window.location.pathname || "";
+    const fileName = pathname.split("/").pop() || "";
+    const search = window.location.search || "";
+
+    // If opening root "/" or plain "index.html" with no query params
+    if ((!fileName || fileName === "index.html") && !search) {
+      window.location.replace("auth.html");
+      return null;
+    }
+
+    // Direct access to specific pages or query targets
+    const target = (fileName || "index.html") + search;
+    if (target === "index.html") {
+      window.location.replace("auth.html");
+    } else {
+      window.location.replace(`auth.html?redirect=${encodeURIComponent(target)}`);
+    }
     return null;
   }
 
@@ -394,8 +408,22 @@ export async function redirectIfAuthenticated() {
 
   if (user) {
     const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect") || "index.html";
-    window.location.replace(redirect);
+    const redirectParam = params.get("redirect");
+    let target = "index.html";
+
+    if (redirectParam) {
+      const decoded = decodeURIComponent(redirectParam).trim();
+      if (
+        decoded &&
+        decoded !== "/" &&
+        decoded !== "auth.html" &&
+        !decoded.startsWith("auth.html")
+      ) {
+        target = decoded;
+      }
+    }
+
+    window.location.replace(target);
   }
 }
 

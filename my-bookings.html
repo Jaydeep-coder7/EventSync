@@ -194,16 +194,28 @@
       } from "./js/booking.js";
       import { showToast } from "./js/script.js";
 
-      // Guard page access with Supabase Auth
-      const authUser = await requireAuth();
-      if (!authUser) {
-        return; // requireAuth handles redirection to auth.html cleanly
-      }
+      async function initPage() {
+        // Guard page access with Supabase Auth
+        const authUser = await requireAuth();
+        if (!authUser) {
+          return; // Valid return inside async function
+        }
 
-      const authGate = document.getElementById("page-auth-gate");
-      if (authGate) {
-        authGate.classList.add("hidden");
-        setTimeout(() => authGate.remove(), 350);
+        const authGate = document.getElementById("page-auth-gate");
+        if (authGate) {
+          authGate.classList.add("hidden");
+          setTimeout(() => authGate.remove(), 350);
+        }
+
+        // Guard against browser back-forward cache (bfcache) navigation
+        window.addEventListener("pageshow", async (e) => {
+          if (e.persisted) {
+            const u = await requireAuth();
+            if (!u) return;
+          }
+        });
+
+        renderBookings();
       }
 
       const container = document.getElementById("bookings-container");
@@ -235,9 +247,10 @@
             <article class="booking-item-card" id="booking-${booking.bookingId}">
               <div class="booking-main-info">
                 <img 
-                  src="${booking.eventImage || "images/eventsync-stage-background.jpg"}" 
+                  src="${booking.eventImage || "images/eventsync-classy-venue.jpg"}" 
                   alt="${booking.eventTitle}" 
                   class="booking-thumb" 
+                  onerror="this.onerror=null;this.src='images/eventsync-classy-venue.jpg';"
                 />
                 <div>
                   <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.35rem;">
@@ -333,7 +346,7 @@
 
       // Render on load and when bookings update
       window.addEventListener("eventsync:booking-updated", renderBookings);
-      renderBookings();
+      initPage();
     </script>
   </body>
 </html>

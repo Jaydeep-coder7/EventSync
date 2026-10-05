@@ -18,6 +18,15 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <!-- Protected Page Auth Gate (Guards against unauthenticated view & flicker) -->
+    <div id="page-auth-gate" class="page-auth-gate" aria-live="polite">
+      <div class="auth-gate-inner">
+        <div class="auth-gate-logo">🎟️</div>
+        <div class="auth-gate-spinner"></div>
+        <div class="auth-gate-text">Authenticating EventSync session...</div>
+      </div>
+    </div>
+
     <!-- Top Scroll Progress Bar -->
     <div id="scroll-progress-bar"></div>
 
@@ -173,8 +182,30 @@
     <!-- Global Application Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module">
+      import { requireAuth } from "./js/auth.js";
       import { fetchEvents, getEventById } from "./js/api.js";
       import { openBookingModal } from "./js/booking.js";
+
+      // Verify Supabase session before revealing Event Details
+      const authUser = await requireAuth();
+      if (!authUser) {
+        throw new Error("Redirecting to authentication...");
+      }
+
+      // Smoothly hide and remove auth gate
+      const authGate = document.getElementById("page-auth-gate");
+      if (authGate) {
+        authGate.classList.add("hidden");
+        setTimeout(() => authGate.remove(), 350);
+      }
+
+      // Guard against browser back-forward cache (bfcache) navigation
+      window.addEventListener("pageshow", async (e) => {
+        if (e.persisted) {
+          const u = await requireAuth();
+          if (!u) return;
+        }
+      });
 
       const container = document.getElementById("event-details-container");
 
@@ -240,7 +271,13 @@
           <div class="details-left">
             <!-- Media Gallery -->
             <div class="details-media-gallery">
-              <img id="details-hero-img" src="${event.image}" alt="${event.title}" class="details-main-img" />
+              <img
+                id="details-hero-img"
+                src="${event.image || "images/eventsync-classy-venue.jpg"}"
+                alt="${event.title}"
+                class="details-main-img"
+                onerror="this.onerror=null;this.src='images/eventsync-classy-venue.jpg';"
+              />
               
               ${
                 allImages.length > 1
@@ -250,7 +287,7 @@
                     .map(
                       (img, idx) => `
                     <button class="thumbnail-btn ${idx === 0 ? "active" : ""}" data-img-src="${img}" aria-label="View photo ${idx + 1}">
-                      <img src="${img}" alt="Thumbnail ${idx + 1}" />
+                      <img src="${img}" alt="Thumbnail ${idx + 1}" onerror="this.onerror=null;this.src='images/eventsync-classy-venue.jpg';" />
                     </button>
                   `,
                     )

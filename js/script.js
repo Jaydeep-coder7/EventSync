@@ -7,6 +7,26 @@ import { getBookings } from "./booking.js";
 import { initCustomerSupportTriggers } from "./support.js";
 import { restoreSession, getCurrentUser, signOut, listenForAuthChanges } from "./auth.js";
 
+// Verified local EventSync fallback image
+export const FALLBACK_EVENT_IMAGE = "images/eventsync-classy-venue.jpg";
+
+// Safe image fallback: automatically replaces any broken image with a verified local EventSync image
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "error",
+    (event) => {
+      const target = event.target;
+      if (target && target.tagName === "IMG") {
+        if (!target.dataset.fallbackApplied) {
+          target.dataset.fallbackApplied = "true";
+          target.src = FALLBACK_EVENT_IMAGE;
+        }
+      }
+    },
+    true, // Capture phase catches image load errors immediately
+  );
+}
+
 // Initialize on DOM Ready
 document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
