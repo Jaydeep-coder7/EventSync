@@ -7,7 +7,7 @@ EventSync is a responsive event discovery, booking, and digital pass management 
 The platform allows users to explore events, search and filter events, view detailed event information, book tickets, generate digital passes with QR codes, and manage their bookings.
 
 🌐 **Live Website:**  
-[Visit EventSync](PASTE-YOUR-LIVE-WEBSITE-LINK-HERE)
+[Visit EventSync](https://event-sync-pied.vercel.app/)
 
 ---
 
